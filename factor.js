@@ -1,16 +1,23 @@
 const cp = require("child_process");
 
-const DEBUG = false;
+let VERBOSE = false;
+const setVerbose = function (newVerbose) {
+	VERBOSE = newVerbose;
+}
+exports.setVerbose = setVerbose;
+let PIXDEPTH = 999999;
+const setPiXDepth = function (piXDeep) {
+	if (piXDeep === true) PIXDEPTH = 1;
+}
+exports.setPiXDepth = setPiXDepth;
 const regexSub = [null, null];
 const factorsRegex = new RegExp(/p\d+: (\d+)/gm);
 const numberRegex = new RegExp(/\d+/gm);
 var output = {};
 const Prime = new (function Prime () {
 	this.getFactors = function (number, callback) {
-		if (this.factorHistory[number] !== undefined) {
-			//console.log("using previous work for prime: " + number);
-			return callback(this.factorHistory[number]);
-		} else cp.exec(".\\factorization-dependencies\\msieve.core2.exe -q " + number.toString()).stdout.on("data", this.parseFactorsOutput.bind(this, number, callback));
+		if (this.factorHistory[number] !== undefined) callback(this.factorHistory[number]);
+		else cp.exec(".\\factorization-dependencies\\msieve.core2.exe -q " + number.toString()).stdout.on("data", this.parseFactorsOutput.bind(this, number, callback));
 	}
 	this.factorHistory = {};
 	this.piXHistory = {};
@@ -29,12 +36,10 @@ const Prime = new (function Prime () {
 		callback(factorsArray);
 	}
 	this.getPiX = function (number, callback) {
-		if (number <= 1) {
-			callback(1);
-		} else if (this.piXHistory[number] !== undefined) {
-			callback(this.piXHistory[number]);
-		} else if (number > 999999999999) cp.exec(".\\factorization-dependencies\\primecount.exe --Li" + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
-		else if (number > 999999) cp.exec(".\\factorization-dependencies\\primecount.exe " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		if (number <= 1) callback(1);
+		else if (this.piXHistory[number] !== undefined) callback(this.piXHistory[number]);
+		else if (number > 999999999999) cp.exec(".\\factorization-dependencies\\primecount.exe --Li" + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		else if (number >= PIXDEPTH) cp.exec(".\\factorization-dependencies\\primecount.exe " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
 		else callback(null);
 	}
 	this.parsePiXOutput = function (number, callback, stdout) {
@@ -99,7 +104,7 @@ Factor.prototype.deepClone = function () {
 	} else {
 		var child = "";
 		var ii = this.factors.length;
-		var currClone = "{\"value\": " + this.value + ", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === 1 ? this.power : this.power.deepClone()) + (this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", piX: " + this.piX + ", \"factors\": [");
+		var currClone = "{\"value\": " + this.value + ", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === 1 ? this.power : this.power.deepClone()) + (this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
 		while (ii--) {
 			currClone += this.factors[ii].deepClone();
 			if (ii !== 0) currClone += ", ";
@@ -112,7 +117,7 @@ Factor.prototype.childDone = function (type) {
 	if (type === "power") this.powerDone = true;
 	else if (type === "piX") this.piXDone = true;
 	else this.factorsCounter = this.factorsCounter + 1;
-	if (DEBUG === true) console.log("ConfirmDone of type: " + type, "factorsCounter: " + this.factorsCounter + " / " + this.factorsLength, "comparison: " + (this.factorsCounter === this.factorsLength), this.isPrime, this.value, "powerDone: " + this.powerDone, "piXDone: " + this.piXDone);
+	if (VERBOSE === true) console.log("ConfirmDone of type: " + type, "factorsCounter: " + this.factorsCounter + " / " + this.factorsLength, "comparison: " + (this.factorsCounter === this.factorsLength), this.isPrime, this.value, "powerDone: " + this.powerDone, "piXDone: " + this.piXDone);
 	if ((this.factorsCounter === this.factorsLength || this.isPrime === true) && this.powerDone && this.piXDone) {
 		this.onCompletelyDone();
 	}
