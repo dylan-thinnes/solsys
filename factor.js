@@ -10,7 +10,7 @@ const Prime = new (function Prime () {
 		if (this.factorHistory[number] !== undefined) {
 			//console.log("using previous work for prime: " + number);
 			return callback(this.factorHistory[number]);
-		} else cp.exec("msieve.lnk -q " + number.toString()).stdout.on("data", this.parseFactorsOutput.bind(this, number, callback));
+		} else cp.exec("./factorization-dependencies/msieve.core2.exe -q " + number.toString()).stdout.on("data", this.parseFactorsOutput.bind(this, number, callback));
 	}
 	this.factorHistory = {};
 	this.piXHistory = {};
@@ -33,8 +33,8 @@ const Prime = new (function Prime () {
 			callback(1);
 		} else if (this.piXHistory[number] !== undefined) {
 			callback(this.piXHistory[number]);
-		} else if (number > 999999999999) cp.exec("primecount.lnk --Li" + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
-		else if (number > 999999) cp.exec("primecount.lnk " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		} else if (number > 999999999999) cp.exec("./factorization-dependencies/primecount,exe --Li" + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		else if (number > 999999) cp.exec("./factorization-dependencies/primecount,exe " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
 		else callback(null);
 	}
 	this.parsePiXOutput = function (number, callback, stdout) {
