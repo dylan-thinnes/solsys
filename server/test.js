@@ -6,5 +6,5 @@ let power = parseInt(argv[argv.indexOf("-p") + 1]);
 if (isNaN(power)) power = 1;
 setPiXDepth(argv.includes("-d"));
 setVerbose(argv.includes("-v"));
-setWindowsPaths(argv.includes("-w"));
+setWindowsPaths(!argv.includes("-l"));
 const currfactor = new Factor(number, power, false, function () { console.log(this.deepClone()); });
