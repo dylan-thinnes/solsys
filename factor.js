@@ -33,8 +33,8 @@ const Prime = new (function Prime () {
 			callback(1);
 		} else if (this.piXHistory[number] !== undefined) {
 			callback(this.piXHistory[number]);
-		} else if (number > 999999999999) cp.exec("./factorization-dependencies/primecount,exe --Li" + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
-		else if (number > 999999) cp.exec("./factorization-dependencies/primecount,exe " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		} else if (number > 999999999999) cp.exec("./factorization-dependencies/primecount.exe --Li" + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		else if (number > 999999) cp.exec("./factorization-dependencies/primecount.exe " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
 		else callback(null);
 	}
 	this.parsePiXOutput = function (number, callback, stdout) {
