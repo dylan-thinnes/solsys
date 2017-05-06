@@ -5,9 +5,13 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 var geometry = new THREE.BoxGeometry(2, 2, 2);
-var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+var material = new THREE.MeshLambertMaterial({color: 0x00FF00});
 var cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
+
+var light = new THREE.PointLight(0xFFFF00);
+light.position.set(0, 0, 5);
+scene.add(light);
 
 camera.position.z = 5;
 
