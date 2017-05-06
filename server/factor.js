@@ -10,6 +10,15 @@ const setPiXDepth = function (piXDeep) {
 	if (piXDeep === true) PIXDEPTH = 1;
 }
 exports.setPiXDepth = setPiXDepth;
+let msievePath = "./factorization-dependencies/msieve-rpi";
+let primecountPath = "./factorization-dependencies/primecount-rpi";
+const setWindowsPaths = function (windowsPaths) {
+	if (windowsPaths === true) {
+		msievePath = ".\\factorization-dependencies\\msieve.core2.exe -q ";
+		primecountPath = ".\\factorization-dependencies\\primecount.exe ";
+	}
+}
+exports.setWindowsPaths = setWindowsPaths;
 const regexSub = [null, null];
 const factorsRegex = new RegExp(/p\d+: (\d+)/gm);
 const numberRegex = new RegExp(/\d+/gm);
@@ -17,7 +26,7 @@ var output = {};
 const Prime = new (function Prime () {
 	this.getFactors = function (number, callback) {
 		if (this.factorHistory[number] !== undefined) callback(this.factorHistory[number]);
-		else cp.exec(".\\factorization-dependencies\\msieve.core2.exe -q " + number.toString()).stdout.on("data", this.parseFactorsOutput.bind(this, number, callback));
+		else cp.exec(msievePath + number.toString()).stdout.on("data", this.parseFactorsOutput.bind(this, number, callback));
 	}
 	this.factorHistory = {};
 	this.piXHistory = {};
@@ -38,8 +47,8 @@ const Prime = new (function Prime () {
 	this.getPiX = function (number, callback) {
 		if (number <= 1) callback(1);
 		else if (this.piXHistory[number] !== undefined) callback(this.piXHistory[number]);
-		else if (number > 999999999999) cp.exec(".\\factorization-dependencies\\primecount.exe --Li" + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
-		else if (number >= PIXDEPTH) cp.exec(".\\factorization-dependencies\\primecount.exe " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		else if (number > 999999999999) cp.exec(primecountPath + "--Li " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		else if (number >= PIXDEPTH) cp.exec(primecountPath + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
 		else callback(null);
 	}
 	this.parsePiXOutput = function (number, callback, stdout) {
