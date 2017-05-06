@@ -7,5 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dylan Thinnes",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dylan-thinnes/solsys.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dylan-thinnes/solsys/issues"
+  },
+  "homepage": "https://github.com/dylan-thinnes/solsys#readme"
 }
