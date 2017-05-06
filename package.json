@@ -1,0 +1,11 @@
+{
+  "name": "solsys",
+  "version": "1.0.0",
+  "description": "a nodejs script which uses the msieve and primecount c libraries, running in the shell, to recursively factorize prime numbers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dylan Thinnes",
+  "license": "ISC"
+}
