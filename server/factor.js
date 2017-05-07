@@ -80,7 +80,8 @@ Factor.prototype.setValue = function (newValue) {
 }
 Factor.prototype.setFactors = function (newFactors) {
 	var newFactorsLength = newFactors.length;
-	if (newFactorsLength <= 1) {
+	if (newFactorsLength === 1) console.log(newFactors[0]);
+	if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === 1)) {
 		this.factorsLength = null;
 		this.factors = [];
 		this.isPrime = true;
