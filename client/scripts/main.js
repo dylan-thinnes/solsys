@@ -4,6 +4,8 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+window.addEventListener("resize", resizeCanvas);
+
 var geometry = new THREE.BoxGeometry(2, 2, 2);
 var material = new THREE.MeshLambertMaterial({color: 0x00FF00});
 var cube = new THREE.Mesh(geometry, material);
@@ -25,3 +27,9 @@ var render = function(){
 };
 
 render();
+
+function resizeCanvas(){
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+}
