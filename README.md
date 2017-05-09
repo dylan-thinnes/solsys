@@ -6,7 +6,7 @@ By using existing prime factorization libraries such as primecount and msieve, t
 Everything in this program and document is set to change at any moment depending on needs.
 
 # Usage
-Solsys Server is the only currently (rudimentarily) operational part of this program. There are three files of note: `factors.js`, `server.js`, and `test.js`. `factor.js` is a node module that does all of the heavy lifting and processing by using command line requests to primecount and msieve in server/factorization-dependencies/. test.js is a node program which allows you to run the module a total of once with command line arguments, whereas server.js is a node program that runs a server which will respond to http requests with the JSON representation of any number in the request url. server.js has only been tested for Windows 10, it might not work elsewhere.
+Solsys Server is the only currently (rudimentarily) operational part of this program. There are three files of note: `factors.js`, `server.js`, and `test.js`. `factor.js` is a node module that does all of the heavy lifting and processing by using command line requests to primecount and msieve in server/factorization-dependencies/. `test.js` is a node program which allows you to run the module a total of once with command line arguments, whereas `server.js` is a node program that runs a server which will respond to http requests with the JSON representation of any number in the request url. `server.js` has only been tested for Windows 10, it might not work elsewhere.
 
 The command line arguments are as follows:  
 `-n <number>` (REQUIRED & ONLY FOR test.js) Tells test.js the number you want to factorize.  
