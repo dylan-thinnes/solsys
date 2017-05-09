@@ -7,9 +7,9 @@ const setVerbose = function (newVerbose) {
 }
 exports.setVerbose = setVerbose;
 let PIXDEPTH = 999999;
-const setPiXDepth = function (piXDeep) {
-	console.log("setting deep...", piXDeep);
-	if (piXDeep === true) PIXDEPTH = 1;
+const setPiXDepth = function (newPiXDepth) {
+	console.log("setting deep...", newPiXDepth);
+	if (typeof newPiXDepth === "number") PIXDEPTH = newPiXDepth;
 }
 exports.setPiXDepth = setPiXDepth;
 let msievePath = "./factorization-dependencies/msieve-rpi -q ";
@@ -34,6 +34,7 @@ const Prime = new (function Prime () {
 	}
 	this.factorHistory = {};
 	this.piXHistory = {};
+	this.piXHistory[2] = 1;
 	this.requests = {};
 	this.parseFactorsOutput = function (number, callback, stdout) {
 		let factorsArray = [];
@@ -63,11 +64,13 @@ const Prime = new (function Prime () {
 })();
 
 const Factor = function (value, power, isPrime, onCompletelyDone) {
+	console.log(value, power);
 	this.onCompletelyDone = onCompletelyDone;
 	this.isPrime = isPrime;
 	this.factors = new Array();
 	this.setValue(value);
 	this.setPower(power);
+	console.log(this.value, this.power);
 }
 Factor.prototype.getValue = function () {
 	return this.value;
@@ -102,11 +105,13 @@ Factor.prototype.setFactors = function (newFactors) {
 			this.factors.push(new Factor(newFactors[ii].value, newFactors[ii].power, true, this.childDone.bind(this)));
 		}
 	}
+	this.childDone("factorsInit");
 }
 Factor.prototype.getPower = function () {
 	return this.power;
 }
 Factor.prototype.setPower = function (newPower) {
+	if (VERBOSE) console.log("newPower: ", newPower);
 	if (newPower === 1) {
 		this.power = 1;
 		this.childDone("power");
@@ -124,7 +129,7 @@ Factor.prototype.deepClone = function () {
 	} else {
 		var child = "";
 		var ii = this.factors.length;
-		if (VERBOSE === true) console.log("This factors: " + this.factors);
+		if (VERBOSE === true) console.log(this.value, "This factors: " + this.factors.length, "piX: " + this.piX);
 		var currClone = "{\"value\": " + this.value + ", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === 1 ? this.power : this.power.deepClone()) + (this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
 		while (ii--) {
 			currClone += this.factors[ii].deepClone();
@@ -137,9 +142,10 @@ Factor.prototype.deepClone = function () {
 Factor.prototype.childDone = function (type) {
 	if (type === "power") this.powerDone = true;
 	else if (type === "piX") this.piXDone = true;
+	else if (type === "factorsInit") this.factorsInitDone = true;
 	else this.factorsCounter = this.factorsCounter + 1;
-	if (VERBOSE === true) console.log("ConfirmDone of type: " + type, "factorsCounter: " + this.factorsCounter + " / " + this.factorsLength, "comparison: " + (this.factorsCounter === this.factorsLength), this.isPrime, this.value, "powerDone: " + this.powerDone, "piXDone: " + this.piXDone);
-	if ((this.factorsCounter === this.factorsLength || this.isPrime === true) && this.powerDone && this.piXDone) {
+	if (VERBOSE === true) console.log("ConfirmDone of type: " + type, "factorsCounter: " + this.factorsCounter + " / " + this.factorsLength, "comparison: " + (this.factorsCounter === this.factorsLength), this.isPrime, this.value, "powerDone: " + this.powerDone, "piXDone: " + this.piXDone, "factorsInitDone: " + this.factorsInitDone);
+	if ((this.factorsCounter === this.factorsLength || this.isPrime === true) && this.powerDone && this.piXDone && this.factorsInitDone) {
 		this.onCompletelyDone();
 	}
 }
@@ -151,5 +157,6 @@ Factor.prototype.powerDone = false;
 Factor.prototype.piXDone = false;
 Factor.prototype.factorsCounter = 0;
 Factor.prototype.factorsLength = undefined;
+Factor.prototype.factorsInitDone = false;
 
 exports.Factor = Factor;
