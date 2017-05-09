@@ -41,10 +41,16 @@ var resizeCanvas = function(){
     camera.updateProjectionMatrix();
 }
 
-if(Detector.webgl){
+try {
+	var canvas = document.createElement('canvas');
+	supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+} catch ( e ) {
+	supportsWebGL = false;
+}
+if (supportsWebGL) {
     init();
     render();
-} else{
+} else {
     var warning = Detector.getWebGLErrorMessage();
     document.getElementById("container").appendChild(warning);
 }
