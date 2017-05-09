@@ -28,7 +28,7 @@ const numberRegex = new RegExp(/\d+/gm);
 var output = {};
 const Prime = new (function Prime () {
 	this.getFactors = function (number, callback) {
-		console.log(this.factorHistory[number], msievePath + number.toString());
+		if (VERBOSE === true) console.log(this.factorHistory[number], msievePath + number.toString());
 		if (this.factorHistory[number] !== undefined) callback(this.factorHistory[number]);
 		else cp.exec(msievePath + number.toString()).stdout.on("data", this.parseFactorsOutput.bind(this, number, callback));
 	}
@@ -64,13 +64,11 @@ const Prime = new (function Prime () {
 })();
 
 const Factor = function (value, power, isPrime, onCompletelyDone) {
-	console.log(value, power);
 	this.onCompletelyDone = onCompletelyDone;
 	this.isPrime = isPrime;
 	this.factors = new Array();
 	this.setValue(value);
 	this.setPower(power);
-	console.log(this.value, this.power);
 }
 Factor.prototype.getValue = function () {
 	return this.value;
@@ -95,11 +93,9 @@ Factor.prototype.setFactors = function (newFactors) {
 		this.isPrime = true;
 		Prime.getPiX(this.value, this.setPiX.bind(this));
 	} else {
-		if (VERBOSE === true) console.log(newFactorsLength);
 		this.factorsLength = newFactorsLength;
 		this.isPrime = false;
 		this.childDone("piX");
-		if (VERBOSE === true) console.log(newFactorsLength);
 		for (var ii = 0; ii < newFactorsLength; ii++) {
 			if (VERBOSE === true) console.log(this.value, newFactorsLength, newFactors[ii]);
 			this.factors.push(new Factor(newFactors[ii].value, newFactors[ii].power, true, this.childDone.bind(this)));
