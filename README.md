@@ -11,7 +11,7 @@ Solsys Server is the only currently (rudimentarily) operational part of this pro
 The command line arguments are as follows:  
 `-n <number>` (REQUIRED & ONLY FOR test.js) Tells test.js the number you want to factorize.  
 `-p <power>` (ONLY FOR test.js) Tells test.js which power to attribute to the factorized number. Defaults to 1.  
-`-d <minNumber>` The minimum number for which to find pi(<number>). Defaults to 999999.  
+`-d <minNumber>` The minimum number for which to find π(<number>). Defaults to 999999.  
 `-v` Runs the program in VERBOSE mode, akin to debug mode for now.  
 `-l` Runs the program with linux command line arguments, necessary to run on linux.
 
