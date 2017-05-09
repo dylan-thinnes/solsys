@@ -2,17 +2,20 @@ const cp = require("child_process");
 
 let VERBOSE = false;
 const setVerbose = function (newVerbose) {
+	console.log("setting verbose...", newVerbose);
 	VERBOSE = newVerbose;
 }
 exports.setVerbose = setVerbose;
 let PIXDEPTH = 999999;
 const setPiXDepth = function (piXDeep) {
+	console.log("setting deep...", piXDeep);
 	if (piXDeep === true) PIXDEPTH = 1;
 }
 exports.setPiXDepth = setPiXDepth;
-let msievePath = "./factorization-dependencies/msieve-rpi";
-let primecountPath = "./factorization-dependencies/primecount-rpi";
+let msievePath = "./factorization-dependencies/msieve-rpi -q ";
+let primecountPath = "./factorization-dependencies/primecount-rpi ";
 const setWindowsPaths = function (windowsPaths) {
+	//console.log("switching to Windows paths...", windowsPaths);
 	if (windowsPaths === true) {
 		msievePath = ".\\factorization-dependencies\\msieve.core2.exe -q ";
 		primecountPath = ".\\factorization-dependencies\\primecount.exe ";
@@ -25,6 +28,7 @@ const numberRegex = new RegExp(/\d+/gm);
 var output = {};
 const Prime = new (function Prime () {
 	this.getFactors = function (number, callback) {
+		console.log(this.factorHistory[number], msievePath + number.toString());
 		if (this.factorHistory[number] !== undefined) callback(this.factorHistory[number]);
 		else cp.exec(msievePath + number.toString()).stdout.on("data", this.parseFactorsOutput.bind(this, number, callback));
 	}
@@ -80,7 +84,7 @@ Factor.prototype.setValue = function (newValue) {
 }
 Factor.prototype.setFactors = function (newFactors) {
 	var newFactorsLength = newFactors.length;
-	if (newFactorsLength === 1) console.log(newFactors[0]);
+	if (newFactorsLength === 1) if (VERBOSE === true) console.log(newFactors[0]);
 	if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === 1)) {
 		this.factorsLength = null;
 		this.factors = [];
