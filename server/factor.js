@@ -2,20 +2,20 @@ const cp = require("child_process");
 
 let VERBOSE = false;
 const setVerbose = function (newVerbose) {
-	console.log("setting verbose...", newVerbose);
 	VERBOSE = newVerbose;
+	if (VERBOSE === true) console.log("setting verbose...", newVerbose);
 }
 exports.setVerbose = setVerbose;
 let PIXDEPTH = 999999;
 const setPiXDepth = function (newPiXDepth) {
-	console.log("setting deep...", newPiXDepth);
+	if (VERBOSE === true) console.log("setting deep...", newPiXDepth);
 	if (typeof newPiXDepth === "number") PIXDEPTH = newPiXDepth;
 }
 exports.setPiXDepth = setPiXDepth;
 let msievePath = "./factorization-dependencies/msieve-rpi -q ";
 let primecountPath = "./factorization-dependencies/primecount-rpi ";
 const setWindowsPaths = function (windowsPaths) {
-	//console.log("switching to Windows paths...", windowsPaths);
+	if (VERBOSE === true) console.log("switching to Windows paths...", windowsPaths);
 	if (windowsPaths === true) {
 		msievePath = ".\\factorization-dependencies\\msieve.core2.exe -q ";
 		primecountPath = ".\\factorization-dependencies\\primecount.exe ";
