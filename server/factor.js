@@ -32,7 +32,7 @@ const Prime = new (function Prime () {
 	this.piXHistory = {};
 	this.requests = {};
 	this.parseFactorsOutput = function (number, callback, stdout) {
-		var factorsArray = [];
+		let factorsArray = [];
 		var factorsArrayIndex = 0;
 		var currPrime = "";
 		var tempPrime = factorsRegex.exec(stdout);
@@ -41,6 +41,7 @@ const Prime = new (function Prime () {
 			if (parseInt(tempPrime[1]) === currPrime) factorsArray[factorsArrayIndex].power++;
 			else factorsArrayIndex = factorsArray.push({value: (currPrime = parseInt(tempPrime[1])), power: 1}) - 1;
 		}
+		if (VERBOSE === true) console.log(factorsArray);
 		this.factorHistory[number] = factorsArray;
 		callback(factorsArray);
 	}
@@ -80,17 +81,22 @@ Factor.prototype.setValue = function (newValue) {
 }
 Factor.prototype.setFactors = function (newFactors) {
 	var newFactorsLength = newFactors.length;
-	if (newFactorsLength === 1) console.log(newFactors[0]);
+	if (VERBOSE === true) console.log(newFactors, newFactors.length, newFactorsLength);
 	if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === 1)) {
 		this.factorsLength = null;
 		this.factors = [];
 		this.isPrime = true;
 		Prime.getPiX(this.value, this.setPiX.bind(this));
 	} else {
+		if (VERBOSE === true) console.log(newFactorsLength);
 		this.factorsLength = newFactorsLength;
 		this.isPrime = false;
 		this.childDone("piX");
-		for (var ii = 0; ii < newFactorsLength; ii++) this.factors.push(new Factor(newFactors[ii].value, newFactors[ii].power, true, this.childDone.bind(this)));
+		if (VERBOSE === true) console.log(newFactorsLength);
+		for (var ii = 0; ii < newFactorsLength; ii++) {
+			if (VERBOSE === true) console.log(this.value, newFactorsLength, newFactors[ii]);
+			this.factors.push(new Factor(newFactors[ii].value, newFactors[ii].power, true, this.childDone.bind(this)));
+		}
 	}
 }
 Factor.prototype.getPower = function () {
@@ -114,6 +120,7 @@ Factor.prototype.deepClone = function () {
 	} else {
 		var child = "";
 		var ii = this.factors.length;
+		if (VERBOSE === true) console.log("This factors: " + this.factors);
 		var currClone = "{\"value\": " + this.value + ", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === 1 ? this.power : this.power.deepClone()) + (this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
 		while (ii--) {
 			currClone += this.factors[ii].deepClone();
