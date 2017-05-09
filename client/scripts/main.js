@@ -51,6 +51,6 @@ if (supportsWebGL) {
     init();
     render();
 } else {
-    var warning = "Your graphics card does not seem to support WebGL. Find out how to get it here.";
-    document.getElementById("container").appendChild(warning);
+    var warning = "Your graphics card does not seem to support WebGL. <br /> Find out how to get it here.";
+    document.getElementById("container").innerHTML = warning;
 }
