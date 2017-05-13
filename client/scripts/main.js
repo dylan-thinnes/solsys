@@ -6,6 +6,9 @@ var init = function(){
     document.getElementById("container").appendChild(renderer.domElement);
 
     document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mousewheel", onMouseWheel);
+    document.addEventListener("DOMMouseScroll", onMouseWheel); //why firefox
+
     window.addEventListener("resize", resizeCanvas);
 
     quaternion = new THREE.Quaternion();
@@ -37,12 +40,6 @@ var render = function(){
     renderer.render(scene, camera);
 }
 
-var resizeCanvas = function(){
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-}
-
 var onMouseDown = function(e){
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
@@ -71,6 +68,18 @@ var onMouseOut = function(e){
     document.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("mouseup", onMouseUp);
     document.removeEventListener("mouseout", onMouseOut);
+}
+
+var onMouseWheel = function(e){
+    var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+    console.log(e.wheelDelta || -e.detail);
+    camera.position.z -= (e.wheelDelta || -e.detail) * 0.1;
+}
+
+var resizeCanvas = function(){
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
 }
 
 try {
