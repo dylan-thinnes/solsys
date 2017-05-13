@@ -5,12 +5,24 @@ var init = function(){
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById("container").appendChild(renderer.domElement);
 
+    document.addEventListener("mousedown", onMouseDown);
     window.addEventListener("resize", resizeCanvas);
 
+    quaternion = new THREE.Quaternion();
+
+    group = new THREE.Group();
+    
     var geometry = new THREE.BoxGeometry(2, 2, 2);
     var material = new THREE.MeshLambertMaterial({color: 0x00FF00});
     cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    cube.rotation.x = Math.PI / 3;
+    cube.rotation.y = Math.PI / 3;
+    cube2 = new THREE.Mesh(geometry, material);
+    cube2.position.set(5, 0, 0);
+
+    group.add(cube);
+    group.add(cube2);
+    scene.add(group);
 
     light = new THREE.PointLight(0xFFFF00);
     light.position.set(0, 0, 5);
@@ -22,9 +34,6 @@ var init = function(){
 var render = function(){
     requestAnimationFrame(render);
 
-    cube.rotation.x += 0.03;
-	cube.rotation.y += 0.03;
-
     renderer.render(scene, camera);
 }
 
@@ -32,6 +41,36 @@ var resizeCanvas = function(){
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+}
+
+var onMouseDown = function(e){
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+    document.addEventListener("mouseout", onMouseOut);
+
+    startX = e.clientX;
+    startY = e.clientY;
+}
+
+var onMouseMove = function(e){
+    var dx = e.clientX - startX;
+    var dy = e.clientY - startY;
+    quaternion.setFromAxisAngle(new THREE.Vector3(dy, dx, 0).normalize(), Math.sqrt(dx * dx + dy * dy) * 0.01);
+    group.quaternion.premultiply(quaternion);
+    startX = e.clientX;
+    startY = e.clientY;
+}
+
+var onMouseUp = function(e){
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+    document.removeEventListener("mouseout", onMouseOut);
+}
+
+var onMouseOut = function(e){
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+    document.removeEventListener("mouseout", onMouseOut);
 }
 
 try {
