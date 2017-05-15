@@ -8,6 +8,9 @@ var init = function(){
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mousewheel", onMouseWheel);
     document.addEventListener("DOMMouseScroll", onMouseWheel); //why firefox
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+    document.addEventListener("mouseout", onMouseOut);
 
     window.addEventListener("resize", resizeCanvas);
 
@@ -32,6 +35,7 @@ var init = function(){
     scene.add(light);
 
     camera.position.z = 5;
+    mouseDown = false;
 }
 
 var render = function(){
@@ -41,33 +45,28 @@ var render = function(){
 }
 
 var onMouseDown = function(e){
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-    document.addEventListener("mouseout", onMouseOut);
-
-    startX = e.clientX;
+	mouseDown = true;
+	startX = e.clientX;
     startY = e.clientY;
 }
 
 var onMouseMove = function(e){
-    var dx = e.clientX - startX;
-    var dy = e.clientY - startY;
-    quaternion.setFromAxisAngle(new THREE.Vector3(dy, dx, 0).normalize(), Math.sqrt(dx * dx + dy * dy) * 0.01);
-    group.quaternion.premultiply(quaternion);
-    startX = e.clientX;
-    startY = e.clientY;
+	if (mouseDown === true) {
+	    var dx = e.clientX - startX;
+	    var dy = e.clientY - startY;
+	    quaternion.setFromAxisAngle(new THREE.Vector3(dy, dx, 0).normalize(), Math.sqrt(dx * dx + dy * dy) * 0.01);
+	    group.quaternion.premultiply(quaternion);
+	    startX = e.clientX;
+	    startY = e.clientY;
+	}
 }
 
 var onMouseUp = function(e){
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
-    document.removeEventListener("mouseout", onMouseOut);
+	mouseDown = false;
 }
 
 var onMouseOut = function(e){
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
-    document.removeEventListener("mouseout", onMouseOut);
+	mouseDown = false;
 }
 
 var onMouseWheel = function(e){
