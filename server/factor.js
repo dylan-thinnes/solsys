@@ -41,24 +41,25 @@ const Prime = new (function Prime () {
 		var factorsArrayIndex = 0;
 		var currPrime = "";
 		var tempPrime = factorsRegex.exec(stdout);
-		factorsArray.push({value: (currPrime = parseInt(tempPrime[1])), power: 1});
+		factorsArray.push({value: (currPrime = tempPrime[1]), power: 1});
 		while (tempPrime = factorsRegex.exec(stdout)) {
-			if (parseInt(tempPrime[1]) === currPrime) factorsArray[factorsArrayIndex].power++;
-			else factorsArrayIndex = factorsArray.push({value: (currPrime = parseInt(tempPrime[1])), power: 1}) - 1;
+			if (tempPrime[1] === currPrime) factorsArray[factorsArrayIndex].power++;
+			else factorsArrayIndex = factorsArray.push({value: (currPrime = tempPrime[1]), power: 1}) - 1;
 		}
 		if (VERBOSE === true) console.log(factorsArray);
 		this.factorHistory[number] = factorsArray;
 		callback(factorsArray);
 	}
 	this.getPiX = function (number, callback) {
+		if (VERBOSE === true) console.log(number, callback);
 		if (number <= 1) callback(1);
 		else if (this.piXHistory[number] !== undefined) callback(this.piXHistory[number]);
-		else if (number > 999999999999) cp.exec(primecountPath + "--Li " + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
-		else if (number >= PIXDEPTH) cp.exec(primecountPath + number.toString() + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		else if (number > 999999999999) console.log(primecountPath + "--Li " + number + "\n"); //cp.exec(primecountPath + "--Li " + number + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		else if (number >= PIXDEPTH) cp.exec(primecountPath + number + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
 		else callback(null);
 	}
 	this.parsePiXOutput = function (number, callback, stdout) {
-		this.piXHistory[number] = parseInt((/\d+/g).exec(stdout)[0]);
+		this.piXHistory[number] = (/\d+/g).exec(stdout)[0];
 		callback(this.piXHistory[number]);
 	}
 })();
@@ -74,8 +75,7 @@ Factor.prototype.getValue = function () {
 	return this.value;
 }
 Factor.prototype.setValue = function (newValue) {
-	newValue = parseInt(newValue);
-	if (newValue <= 1 || isNaN(newValue)) {
+	if (parseInt(newValue) <= 1 || isNaN(newValue)) {
 		this.value = 1;
 		this.setFactors([]);
 	} else {
