@@ -1,6 +1,8 @@
+console.log("Start time: " + (startTime = Date.now()).toString());
 const {Factor, setPiXDepth, setVerbose, setWindowsPaths} = require("./factor.js");
 const argv = process.argv.slice(2);
 let number = argv[argv.indexOf("-n") + 1];
+console.log(number);
 if (isNaN(number)) process.exit(-1);
 let power = parseInt(argv[argv.indexOf("-p") + 1]);
 if (isNaN(power)) power = 1;
@@ -8,4 +10,4 @@ setVerbose(argv.includes("-v"));
 var piXDepthPos = argv.indexOf("-d");
 if (piXDepthPos > -1) setPiXDepth(parseInt(argv[piXDepthPos + 1]));
 setWindowsPaths(!argv.includes("-l"));
-const currfactor = new Factor(number, power, false, function () { console.log(this.deepClone()); });
+const currfactor = new Factor(number, power, false, function () { console.log(this.deepClone()); console.log("Time elapsed: " + (Date.now() - startTime).toString()); });

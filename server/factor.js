@@ -54,7 +54,7 @@ const Prime = new (function Prime () {
 		if (VERBOSE === true) console.log(number, callback);
 		if (number <= 1) callback(1);
 		else if (this.piXHistory[number] !== undefined) callback(this.piXHistory[number]);
-		else if (number > 999999999999) console.log(primecountPath + "--Li " + number + "\n"); //cp.exec(primecountPath + "--Li " + number + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
+		else if (number > 999999999999) /*console.log(primecountPath + "--Li " + number + "\n"); //*/cp.exec(primecountPath + "--Li " + number + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
 		else if (number >= PIXDEPTH) cp.exec(primecountPath + number + "\n").stdout.on("data", this.parsePiXOutput.bind(this, number, callback));
 		else callback(null);
 	}
