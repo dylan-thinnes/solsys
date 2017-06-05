@@ -1,7 +1,6 @@
 //This is a logarithmic integral function lifted directly from primecount's own logarithmic integral code. It is not fully precise in the larger ranges it is designed to operate in (>1e13), however the error in the logarithmic integral is large anyways so this is not a concern. Copying this code into a separate executable is an easy way to circumvent the unnecessary 2^63 limit imposed by primecount's parser.
 
 #include <iostream>
-#include <string>
 #include <cmath>
 #include <limits>
 #include <iomanip>
@@ -50,9 +49,17 @@ long double Li(long double x)
 
 int main (int argc, char* argv[]) {
     long double userNum;
-    cin >> userNum;
-    long double result = Li(userNum);
+    long double result;
     cout.precision(0);
-    cout << fixed << result << endl;
-    return 0;
+    cin >> userNum;
+    cin.ignore(1000, '\n');
+    do
+    {
+      if (userNum == 0) break;
+      long double result = Li(userNum);
+      cout << fixed << result << endl;
+      cin >> userNum;
+      cin.ignore(1000,'\n');
+    }
+    while (userNum != 0);
 }
