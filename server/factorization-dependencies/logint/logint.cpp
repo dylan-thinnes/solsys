@@ -1,5 +1,6 @@
 //This is a logarithmic integral function lifted directly from primecount's own logarithmic integral code. It is fully precise in the larger ranges it is designed to operate in (>1e13) thanks to 512-bit floating point formats provided by mpfr.
 #include <stdio.h>
+#include <iostream>
 #include <string>
 #include <gmp.h>
 #include <mpfr.h>
@@ -21,10 +22,8 @@ mpfr_t logx;
 mpfr_t sqrtx;
 mpfr_t result;
 
-void Li(mpfr_t output, mpfr_t x)
-{
-	if (mpfr_cmp_ui (x, 2) >= 0)
-	{
+void Li(mpfr_t output, mpfr_t x) {
+	if (mpfr_cmp_ui (x, 2) >= 0) {
 		mpfr_init_set_si (sum, 0, MPFR_RNDN);
 		mpfr_init_set_si (inner_sum, 0, MPFR_RNDN);
 		mpfr_init_set_si (inner_increment, 1, MPFR_RNDN);
@@ -42,15 +41,13 @@ void Li(mpfr_t output, mpfr_t x)
 		mpfr_init_set_ui (sqrtx, 0, MPFR_RNDN);
 		mpfr_sqrt(sqrtx, x, MPFR_RNDN);
 
-		for (int n = 1; n < 200; n++)
-		{
+		for (int n = 1; n < 200; n++) {
 			mpfr_mul (p, p, logx, MPFR_RNDN);
 			mpfr_neg (p, p, MPFR_RNDN);
 			mpfr_mul_si (factorial, factorial, n, MPFR_RNDN);
 			mpfr_mul (q, factorial, power2, MPFR_RNDN);
 			mpfr_mul_si (power2, power2, 2, MPFR_RNDN);
-			for (; k <= (n - 1) / 2; k++)
-			{
+			for (; k <= (n - 1) / 2; k++) {
 				mpfr_set_ui (inner_increment, 1, MPFR_RNDN);
 				mpfr_div_ui (inner_increment, inner_increment, 2 * k + 1, MPFR_RNDN);
 				mpfr_add (inner_sum, inner_sum, inner_increment, MPFR_RNDN);
@@ -72,26 +69,34 @@ void Li(mpfr_t output, mpfr_t x)
 		mpfr_floor (result, result);
 
 		mpfr_set (output, result, MPFR_RNDN);
-	}
-	else
-	{
+	} else {
 		mpfr_set_ui (output, 0, MPFR_RNDN);
 	}
 }
 
-int main ()
-{
+int main () {
+	using namespace std;
+	int ii = 0;
 	mpfr_set_default_prec(512);
 	mpfr_init_set_str (GAMMA, "0.577215664901532860606512090082402431042159335939923598805767234884867726777664670936947063291746749", 10, MPFR_RNDN);
 	mpfr_init_set_str (LI2, "1.04516378011749278484458888919461313652261557815120157583290914407501320521035953017271740562638335630602", 10, MPFR_RNDN);
 	mpfr_init_set_str (LIMIT, "0.000000000000000000000000000000000000000000000000001", 10, MPFR_RNDN);
 	mpfr_t input;
 	mpfr_init_set_ui (input, 0, MPFR_RNDN);
-	mpfr_inp_str (input, stdin, 10, MPFR_RNDN);
-	while (mpfr_zero_p(input) == 0)
-	{
-		Li(input, input);
-		mpfr_printf ("%.0Rf\n", input);
-		mpfr_inp_str (input, stdin, 10, MPFR_RNDN);
+	string strInput;
+	cin >> strInput;
+	cin.ignore(1000,'\n');
+	mpfr_set_str (input, strInput.c_str(), 10, MPFR_RNDN);
+	mpfr_t output;
+	mpfr_init_set_ui (output, 0, MPFR_RNDN);
+	while (mpfr_zero_p(input) == 0 && ii < 10000) {
+		Li (output, input);
+		mpfr_fprintf (stdout, "%.0Rf: %.0Rf\n", input, output);
+		cin >> strInput;
+		cin.ignore(1000,'\n');
+		if (strInput[0] < 48 || strInput[0] > 57) break;
+		mpfr_set_str (input, strInput.c_str(), 10, MPFR_RNDN);
+		ii++;
 	}
+	return 0;
 }
