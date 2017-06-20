@@ -11,12 +11,17 @@ var init = function(){
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("mouseout", onMouseOut);
-
     window.addEventListener("resize", resizeCanvas);
 
-    quaternion = new THREE.Quaternion();
+    solSysRotation = new THREE.Quaternion();
+    solSys = new THREE.Group();
 
-    group = new THREE.Group();
+    var textureLoader = new THREE.TextureLoader();
+    var planetMap = textureLoader.load("../data/planetRyan.png");
+    var planetMaterial = new THREE.SpriteMaterial({map: planetMap, color: 0xffffff});
+    var planetSprite = new THREE.Sprite(planetMaterial);
+    planetSprite.position.set(0, 0, -2);
+    solSys.add(planetSprite);
     
     var geometry = new THREE.BoxGeometry(2, 2, 2);
     var material = new THREE.MeshLambertMaterial({color: 0x00FF00});
@@ -25,10 +30,10 @@ var init = function(){
     cube.rotation.y = Math.PI / 3;
     cube2 = new THREE.Mesh(geometry, material);
     cube2.position.set(5, 0, 0);
-
-    group.add(cube);
-    group.add(cube2);
-    scene.add(group);
+    solSys.add(cube);
+    solSys.add(cube2);
+    
+    scene.add(solSys);
 
     light = new THREE.PointLight(0xFFFF00);
     light.position.set(0, 0, 5);
@@ -54,8 +59,8 @@ var onMouseMove = function(e){
 	if (mouseDown === true) {
 	    var dx = e.clientX - startX;
 	    var dy = e.clientY - startY;
-	    quaternion.setFromAxisAngle(new THREE.Vector3(dy, dx, 0).normalize(), Math.sqrt(dx * dx + dy * dy) * 0.01);
-	    group.quaternion.premultiply(quaternion);
+	    solSysRotation.setFromAxisAngle(new THREE.Vector3(dy, dx, 0).normalize(), Math.sqrt(dx * dx + dy * dy) * 0.01);
+	    solSys.quaternion.premultiply(solSysRotation);
 	    startX = e.clientX;
 	    startY = e.clientY;
 	}
@@ -71,7 +76,6 @@ var onMouseOut = function(e){
 
 var onMouseWheel = function(e){
     var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-    console.log(e.wheelDelta || -e.detail);
     camera.position.z -= (e.wheelDelta || -e.detail) * 0.1;
 }
 
