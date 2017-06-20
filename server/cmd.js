@@ -3,8 +3,8 @@ const {RootFactor, setPiXDepth, setVerbose, setPaths} = require("./factor.js");
 const argv = process.argv.slice(2);
 let random = argv.includes("-r");
 if (random) {
-	var number = "";
-	for (var ii = 0; ii < 50; ii++) {
+	var number = (Math.floor(Math.random()*9) + 1).toString();
+	for (var ii = 0; ii < 49; ii++) {
 		number += (Math.floor(Math.random()*10)).toString();
 	}
 	console.log("Random number chosen: " + number);
