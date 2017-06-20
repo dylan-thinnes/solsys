@@ -18,24 +18,20 @@ var init = function(){
 
     var textureLoader = new THREE.TextureLoader();
     var planetMap = textureLoader.load("../data/planetRyan.png");
-    var planetMaterial = new THREE.SpriteMaterial({map: planetMap, color: 0xffffff});
-    var planetSprite = new THREE.Sprite(planetMaterial);
-    planetSprite.position.set(0, 0, -2);
+    var planetMaterial = new THREE.SpriteMaterial({map: planetMap});
+    planetSprite = new THREE.Sprite(planetMaterial);
+    planetSprite.position.set(3, 0, 0);
     solSys.add(planetSprite);
-    
-    var geometry = new THREE.BoxGeometry(2, 2, 2);
-    var material = new THREE.MeshLambertMaterial({color: 0x00FF00});
-    cube = new THREE.Mesh(geometry, material);
-    cube.rotation.x = Math.PI / 3;
-    cube.rotation.y = Math.PI / 3;
-    cube2 = new THREE.Mesh(geometry, material);
-    cube2.position.set(5, 0, 0);
-    solSys.add(cube);
-    solSys.add(cube2);
-    
+
+    var geometry = new THREE.PlaneGeometry(2, 2);
+    var material = new THREE.MeshLambertMaterial({map: planetMap});
+    planetPlane = new THREE.Mesh(geometry, material);
+    planetPlane.position.set(-3, 0, 0);
+    solSys.add(planetPlane);
+
     scene.add(solSys);
 
-    light = new THREE.PointLight(0xFFFF00);
+    light = new THREE.PointLight(0xffffff);
     light.position.set(0, 0, 5);
     scene.add(light);
 
