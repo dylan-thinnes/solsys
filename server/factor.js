@@ -246,7 +246,7 @@ Factor.prototype.deepClone = function () {
 		var child = "";
 		var ii = this.factors.length;
 		if (VERBOSE === true) console.log(this.value, "This factors: " + this.factors.length, "piX: " + this.piX);
-		var currClone = "{\"value\": " + this.value + ", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === 1 ? this.power : this.power.deepClone()) + (this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
+		var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === 1 ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
 		while (ii--) {
 			currClone += this.factors[ii].deepClone();
 			if (ii !== 0) currClone += ", ";
