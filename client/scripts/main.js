@@ -1,5 +1,6 @@
 var init = function(){
     scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x000000, 1, 15);
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -11,28 +12,28 @@ var init = function(){
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("mouseout", onMouseOut);
-
     window.addEventListener("resize", resizeCanvas);
 
-    quaternion = new THREE.Quaternion();
+    solSysRotation = new THREE.Quaternion();
+    solSys = new THREE.Group();
 
-    group = new THREE.Group();
-    
-    var geometry = new THREE.BoxGeometry(2, 2, 2);
-    var material = new THREE.MeshLambertMaterial({color: 0x00FF00});
-    cube = new THREE.Mesh(geometry, material);
-    cube.rotation.x = Math.PI / 3;
-    cube.rotation.y = Math.PI / 3;
-    cube2 = new THREE.Mesh(geometry, material);
-    cube2.position.set(5, 0, 0);
+    var textureLoader = new THREE.TextureLoader();
+    var planetMap = textureLoader.load("../data/planetRyan.png");
+    var planetMaterial = new THREE.SpriteMaterial({map: planetMap, fog: true});
+    planetSprite = new THREE.Sprite(planetMaterial);
+    planetSprite.position.set(3, 0, 0);
+    solSys.add(planetSprite);
+    planetSprite2 = new THREE.Sprite(planetMaterial);
+    planetSprite2.position.set(-3, 0, 0);
+    solSys.add(planetSprite2);
+    planetSprite3 = new THREE.Sprite(planetMaterial);
+    planetSprite3.position.set(0, 0, -3);
+    solSys.add(planetSprite3);
+    planetSprite4 = new THREE.Sprite(planetMaterial);
+    planetSprite4.position.set(0, 0, 3);
+    solSys.add(planetSprite4);
 
-    group.add(cube);
-    group.add(cube2);
-    scene.add(group);
-
-    light = new THREE.PointLight(0xFFFF00);
-    light.position.set(0, 0, 5);
-    scene.add(light);
+    scene.add(solSys);
 
     camera.position.z = 5;
     mouseDown = false;
@@ -54,8 +55,8 @@ var onMouseMove = function(e){
 	if (mouseDown === true) {
 	    var dx = e.clientX - startX;
 	    var dy = e.clientY - startY;
-	    quaternion.setFromAxisAngle(new THREE.Vector3(dy, dx, 0).normalize(), Math.sqrt(dx * dx + dy * dy) * 0.01);
-	    group.quaternion.premultiply(quaternion);
+	    solSysRotation.setFromAxisAngle(new THREE.Vector3(dy, dx, 0).normalize(), Math.sqrt(dx * dx + dy * dy) * 0.01);
+	    solSys.quaternion.premultiply(solSysRotation);
 	    startX = e.clientX;
 	    startY = e.clientY;
 	}
@@ -71,7 +72,6 @@ var onMouseOut = function(e){
 
 var onMouseWheel = function(e){
     var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-    console.log(e.wheelDelta || -e.detail);
     camera.position.z -= (e.wheelDelta || -e.detail) * 0.1;
 }
 
