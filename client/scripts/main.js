@@ -1,5 +1,6 @@
 var init = function(){
     scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x000000, 1, 15);
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -18,7 +19,7 @@ var init = function(){
 
     var textureLoader = new THREE.TextureLoader();
     var planetMap = textureLoader.load("../data/planetRyan.png");
-    var planetMaterial = new THREE.SpriteMaterial({map: planetMap});
+    var planetMaterial = new THREE.SpriteMaterial({map: planetMap, fog: true});
     planetSprite = new THREE.Sprite(planetMaterial);
     planetSprite.position.set(3, 0, 0);
     solSys.add(planetSprite);
