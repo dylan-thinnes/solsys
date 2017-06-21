@@ -6,13 +6,18 @@ var init = function(){
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById("container").appendChild(renderer.domElement);
 
+    /*
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mousewheel", onMouseWheel);
     document.addEventListener("DOMMouseScroll", onMouseWheel); //why firefox
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("mouseout", onMouseOut);
+    */
+
     window.addEventListener("resize", resizeCanvas);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
 
     solSysRotation = new THREE.Quaternion();
     solSys = new THREE.Group();
