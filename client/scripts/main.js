@@ -23,18 +23,17 @@ var init = function(){
     planetSprite = new THREE.Sprite(planetMaterial);
     planetSprite.position.set(3, 0, 0);
     solSys.add(planetSprite);
-
-    var geometry = new THREE.PlaneGeometry(2, 2);
-    var material = new THREE.MeshLambertMaterial({map: planetMap});
-    planetPlane = new THREE.Mesh(geometry, material);
-    planetPlane.position.set(-3, 0, 0);
-    solSys.add(planetPlane);
+    planetSprite2 = new THREE.Sprite(planetMaterial);
+    planetSprite2.position.set(-3, 0, 0);
+    solSys.add(planetSprite2);
+    planetSprite3 = new THREE.Sprite(planetMaterial);
+    planetSprite3.position.set(0, 0, -3);
+    solSys.add(planetSprite3);
+    planetSprite4 = new THREE.Sprite(planetMaterial);
+    planetSprite4.position.set(0, 0, 3);
+    solSys.add(planetSprite4);
 
     scene.add(solSys);
-
-    light = new THREE.PointLight(0xffffff);
-    light.position.set(0, 0, 5);
-    scene.add(light);
 
     camera.position.z = 5;
     mouseDown = false;
