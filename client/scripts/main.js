@@ -6,15 +6,6 @@ var init = function(){
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById("container").appendChild(renderer.domElement);
 
-    /*
-    document.addEventListener("mousedown", onMouseDown);
-    document.addEventListener("mousewheel", onMouseWheel);
-    document.addEventListener("DOMMouseScroll", onMouseWheel); //why firefox
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-    document.addEventListener("mouseout", onMouseOut);
-    */
-
     window.addEventListener("resize", resizeCanvas);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -41,43 +32,12 @@ var init = function(){
     scene.add(solSys);
 
     camera.position.z = 5;
-    mouseDown = false;
 }
 
 var render = function(){
     requestAnimationFrame(render);
 
     renderer.render(scene, camera);
-}
-
-var onMouseDown = function(e){
-	mouseDown = true;
-	startX = e.clientX;
-    startY = e.clientY;
-}
-
-var onMouseMove = function(e){
-	if (mouseDown === true) {
-	    var dx = e.clientX - startX;
-	    var dy = e.clientY - startY;
-	    solSysRotation.setFromAxisAngle(new THREE.Vector3(dy, dx, 0).normalize(), Math.sqrt(dx * dx + dy * dy) * 0.01);
-	    solSys.quaternion.premultiply(solSysRotation);
-	    startX = e.clientX;
-	    startY = e.clientY;
-	}
-}
-
-var onMouseUp = function(e){
-	mouseDown = false;
-}
-
-var onMouseOut = function(e){
-	mouseDown = false;
-}
-
-var onMouseWheel = function(e){
-    var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-    camera.position.z -= (e.wheelDelta || -e.detail) * 0.1;
 }
 
 var resizeCanvas = function(){
