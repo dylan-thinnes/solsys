@@ -12,9 +12,9 @@ const setPiXDepth = function (newPiXDepth) {
 	if (typeof newPiXDepth === "number") PIXDEPTH = newPiXDepth;
 }
 exports.setPiXDepth = setPiXDepth;
-let msievePath = "./factorization-dependencies/msieve-rpi -q ";
-let primecountPath = "./factorization-dependencies/primecount-rpi ";
-let logintPath = "./factorization-dependencies/logint"
+let msievePath = "./factorization-dependencies/msieve-x86-64 -q ";
+let primecountPath = "./factorization-dependencies/primecount-x86-64 ";
+let logintPath = "./factorization-dependencies/logint-x86-64"
 const setPaths = function (windowsPaths) {
 	if (VERBOSE === true) console.log("switching to Windows paths...", windowsPaths);
 	if (windowsPaths === true) {
