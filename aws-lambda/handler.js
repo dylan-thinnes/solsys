@@ -5,9 +5,9 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT'];
 	const cp = require("child_process");
 	let PIXDEPTH = 999999;
-	let msievePath = "/var/task/factorization-dependencies/msieve-x86-64 -q -m";
-	let primecountPath = "/var/task/factorization-dependencies/primecount-x86-64 -c 1";
-	let logintPath = "/var/task/factorization-dependencies/logint-x86-64";
+	let msievePath = "/var/task/factorization-dependencies/aws-msieve -q -m";
+	let primecountPath = "/var/task/factorization-dependencies/aws-primecount -c 1";
+	let logintPath = "/var/task/factorization-dependencies/aws-logint";
 	const factorsRegex = new RegExp(/p\d+: (\d+)/gm);
 	const numberRegex = new RegExp(/\d+/gm);
 	const piXRegex = new RegExp(/\d+/gm);
@@ -232,7 +232,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	}
 	RootFactor.prototype = Factor.prototype;
 	Prime.launchAsyncProcesses();
-	//Prime.close();
+	Prime.close();
 	/*var dirContents = "Dir contents: ";
 	fs.readdirSync(process.env["LAMBDA_TASK_ROOT"]).forEach(file => {
 		dirContents += file;
