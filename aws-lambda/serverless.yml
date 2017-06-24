@@ -1,0 +1,17 @@
+service: solsys-factorize
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: prod
+  region: us-west-2
+functions:
+  factorize:
+    handler: handler.factorize
+    events:
+      - http:
+          path: /factorize
+          method: get
+          integration: lambda
+          request:
+            template:
+              application/json: '{ "number" : "$input.params(''number'')" }'
