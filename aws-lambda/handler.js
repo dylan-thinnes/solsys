@@ -17,7 +17,13 @@ module.exports.factorize = (event, context, AWSCallback) => {
 			this.msieveProcess = cp.exec(msievePath);
 			this.logintProcess = cp.exec(logintPath);
 			this.primecountProcess = cp.exec(primecountPath);
-			this.msieveProcess.stdout.on("data", this.parseMSieveOutput.bind(this));
+			//this.msieveProcess.stdout.on("data", this.parseMSieveOutput.bind(this));
+			this.msieveProcess.stdout.on("data", function (stdout) {
+				AWSCallback(null, {
+					statusCode: 200,
+					body: stdout
+				});
+			})
 			this.logintProcess.stdout.on("data", this.parseLogintOutput.bind(this));
 			this.primecountProcess.stdout.on("data", this.parsePrimecountOutput.bind(this));
 		}
@@ -228,10 +234,11 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		this.isPrime = false;
 		this.factors = new Array();
 		this.setValue(value);
-		this.setPower(power);
+		this.setPower(1);
 	}
 	RootFactor.prototype = Factor.prototype;
 	Prime.launchAsyncProcesses();
+	//Prime.msieveProcess.stdin.write("123\n");
 	Prime.close();
 	/*var dirContents = "Dir contents: ";
 	fs.readdirSync(process.env["LAMBDA_TASK_ROOT"]).forEach(file => {
@@ -241,10 +248,9 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	fs.readdirSync("./factorization-dependencies").forEach(file => {
 		depContents += file;
 	});*/
-	AWSCallback(null, {
+	/*AWSCallback(null, {
 		statusCode: 200,
-		body: "Reached end of init!"
-	});
-	//process.exit();
+		body: number
+	});*/
 	//const currfactor = new RootFactor(number);
 };
