@@ -2,12 +2,28 @@
 
 module.exports.factorize = (event, context, AWSCallback) => {
 	const number = event.number;
-	process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT'];
+	/*const fs = require("fs");
+	var dirContents = "Dir contents: ";
+	fs.readdirSync(process.env["LAMBDA_TASK_ROOT"]).forEach(file => {
+		dirContents += file;
+	});
+	var depContents = "Dep contents: ";
+	fs.readdirSync("./factorization-dependencies").forEach(file => {
+		depContents += file;
+	});
+	var msievePerms = parseInt(fs.statSync("./factorization-dependencies/aws-msieve").mode.toString(8), 10);
+	var logintPerms = parseInt(fs.statSync("./factorization-dependencies/aws-logint").mode.toString(8), 10);
+	var primecountPerms = parseInt(fs.statSync("./factorization-dependencies/aws-primecount").mode.toString(8), 10);
+	AWSCallback(null, {
+		statusCode: 200,
+		body: dirContents + " " + depContents + " " + msievePerms + " " + logintPerms + " " + primecountPerms
+	});*/
+	//process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT'];
 	const cp = require("child_process");
 	let PIXDEPTH = 999999;
-	let msievePath = "/var/task/factorization-dependencies/aws-msieve -q -m";
-	let primecountPath = "/var/task/factorization-dependencies/aws-primecount -c 1";
-	let logintPath = "/var/task/factorization-dependencies/aws-logint";
+	let msievePath = "./factorization-dependencies/aws-msieve -q -m";
+	let primecountPath = "./factorization-dependencies/aws-primecount -c 1";
+	let logintPath = "./factorization-dependencies/aws-logint";
 	const factorsRegex = new RegExp(/p\d+: (\d+)/gm);
 	const numberRegex = new RegExp(/\d+/gm);
 	const piXRegex = new RegExp(/\d+/gm);
@@ -17,13 +33,13 @@ module.exports.factorize = (event, context, AWSCallback) => {
 			this.msieveProcess = cp.exec(msievePath);
 			this.logintProcess = cp.exec(logintPath);
 			this.primecountProcess = cp.exec(primecountPath);
-			//this.msieveProcess.stdout.on("data", this.parseMSieveOutput.bind(this));
-			this.msieveProcess.stdout.on("data", function (stdout) {
+			this.msieveProcess.stdout.on("data", this.parseMSieveOutput.bind(this));
+			/*this.msieveProcess.stdout.on("data", function (stdout) {
 				AWSCallback(null, {
 					statusCode: 200,
 					body: stdout
 				});
-			})
+			})*/
 			this.logintProcess.stdout.on("data", this.parseLogintOutput.bind(this));
 			this.primecountProcess.stdout.on("data", this.parsePrimecountOutput.bind(this));
 		}
@@ -56,28 +72,34 @@ module.exports.factorize = (event, context, AWSCallback) => {
 				else factorsArrayIndex = factorsArray.push({value: (currPrime = tempPrime[1]), power: 1}) - 1;
 			}
 			this.factorHistory[number] = factorsArray;
-			this.msieveQueueCallbacks[this.msieveQueueCurrentIndex](factorsArray);
-			this.msieveQueueCurrentIndex++;
-			if (this.msieveQueueCeilingIndex > this.msieveQueueCurrentIndex) {
-				this.msieveProcess.stdin.write(this.msieveQueueInputs[this.msieveQueueCurrentIndex]+"\n");
+			if (typeof this.msieveQueueCallbacks[this.msieveQueueCurrentIndex] === "function") {
+				this.msieveQueueCallbacks[this.msieveQueueCurrentIndex](factorsArray);
+				this.msieveQueueCurrentIndex++;
+				if (this.msieveQueueCeilingIndex > this.msieveQueueCurrentIndex) {
+					this.msieveProcess.stdin.write(this.msieveQueueInputs[this.msieveQueueCurrentIndex]+"\n");
+				}
 			}
 		}
 		this.parsePrimecountOutput = function (stdout) {
 			var output = stdout.match(piXRegex);
 			this.piXHistory[output[0]] = output[1]; 
-			this.primecountQueueCallbacks[this.primecountQueueCurrentIndex](output[1]);
-			this.primecountQueueCurrentIndex++;
-			if (this.primecountQueueCeilingIndex > this.primecountQueueCurrentIndex) {
-				this.primecountProcess.stdin.write(this.primecountQueueInputs[this.primecountQueueCurrentIndex]+"\n");
+			if (typeof this.primecountQueueCallbacks[this.primecountQueueCurrentIndex] === "function") {
+				this.primecountQueueCallbacks[this.primecountQueueCurrentIndex](output[1]);
+				this.primecountQueueCurrentIndex++;
+				if (this.primecountQueueCeilingIndex > this.primecountQueueCurrentIndex) {
+					this.primecountProcess.stdin.write(this.primecountQueueInputs[this.primecountQueueCurrentIndex]+"\n");
+				}
 			}
 		}
 		this.parseLogintOutput = function (stdout) {
 			var output = stdout.match(piXRegex);
 			this.piXHistory[output[0]] = output[1];
-			this.logintQueueCallbacks[this.logintQueueCurrentIndex](output[1]);
-			this.logintQueueCurrentIndex++;
-			if (this.logintQueueCeilingIndex > this.logintQueueCurrentIndex) {
-				this.logintProcess.stdin.write(this.logintQueueInputs[this.logintQueueCurrentIndex]+"\n");
+			if (typeof this.logintQueueCallbacks[this.logintQueueCurrentIndex] === "function") {
+				this.logintQueueCallbacks[this.logintQueueCurrentIndex](output[1]);
+				this.logintQueueCurrentIndex++;
+				if (this.logintQueueCeilingIndex > this.logintQueueCurrentIndex) {
+					this.logintProcess.stdin.write(this.logintQueueInputs[this.logintQueueCurrentIndex]+"\n");
+				}
 			}
 		}
 		this.primecountQueueCallbacks = [];
@@ -222,14 +244,14 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.factorsLength = undefined;
 	Factor.prototype.factorsInitDone = false;
 
-	const RootFactor = function (value) {
+	const RootFactor = function (value, AWSCallback) {
+		this.callback = AWSCallback;
 		this.onCompletelyDone = function () {
 			Prime.close();
-			AWSCallback(null, {
+			this.callback(null, {
 				statusCode: 200,
 				body: this.deepClone()
 			});
-			process.exit();
 		}
 		this.isPrime = false;
 		this.factors = new Array();
@@ -238,19 +260,27 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	}
 	RootFactor.prototype = Factor.prototype;
 	Prime.launchAsyncProcesses();
-	//Prime.msieveProcess.stdin.write("123\n");
-	Prime.close();
-	/*var dirContents = "Dir contents: ";
-	fs.readdirSync(process.env["LAMBDA_TASK_ROOT"]).forEach(file => {
-		dirContents += file;
+	/*Prime.msieveProcess.stdout.on("data", function (stdout) {
+		AWSCallback(null, {
+			statusCode: 200,
+			body: stdout
+		});
 	});
-	var depContents = "Dep contents: ";
-	fs.readdirSync("./factorization-dependencies").forEach(file => {
-		depContents += file;
-	});*/
-	/*AWSCallback(null, {
-		statusCode: 200,
-		body: number
-	});*/
-	//const currfactor = new RootFactor(number);
+	Prime.msieveProcess.stdin.write("123\n");*/
+	/*Prime.logintProcess.stdout.on("data", function (stdout) {
+		AWSCallback(null, {
+			statusCode: 200,
+			body: stdout
+		});
+	});
+	Prime.logintProcess.stdin.write("123\n");*/
+	/*Prime.primecountProcess.stdout.on("data", function (stdout) {
+		AWSCallback(null, {
+			statusCode: 200,
+			body: stdout
+		});
+	});
+	Prime.primecountProcess.stdin.write("123\n");*/
+	//Prime.close();
+	const currfactor = new RootFactor(number, AWSCallback);
 };
