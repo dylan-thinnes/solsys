@@ -4,20 +4,19 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	var number = event.number;
 	if (isNaN(number) || number === "") {
 		number = "1";
-		console.log("Factorization being done with 1");
+		//console.log("Factorization being done with 1");
 		AWSCallback(null, {
 			statusCode: 200,
 			body: "{\"value\": \"1\"}"
 		})
 		return;
 	}
-	console.log("Factorization being done with number: " + number);
-	const fs = require("fs");
+	//console.log("Factorization being done with number: " + number);
 	//console.log("Current permissions of tmp " + fs.statSync("/tmp/").mode.toString(8));
 	const cp = require("child_process");
 	var PIXDEPTH = 999999;
 	var msievePath = "/var/task/factorization-dependencies/aws-msieve -s /tmp/msieve.dat -q -m";
-	var primecountPath = "/var/task/./factorization-dependencies/aws-primecount -c 1";
+	var primecountPath = "/var/task/factorization-dependencies/aws-primecount -c 1";
 	var logintPath = "/var/task/factorization-dependencies/aws-logint";
 	const factorsRegex = new RegExp(/p\d+: (\d+)/gm);
 	const numberRegex = new RegExp(/\d+/gm);
@@ -33,7 +32,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 			this.primecountProcess.stdout.on("data", this.parsePrimecountOutput.bind(this));
 		}
 		this.getFactors = function (number, callback) {
-			console.log("Getting factors for " + number);
+			//console.log("Getting factors for " + number);
 			if (this.factorHistory[number] !== undefined) callback(this.factorHistory[number]);
 			else {
 				if (this.msieveQueueCurrentIndex === this.msieveQueueCeilingIndex) {
@@ -47,12 +46,12 @@ module.exports.factorize = (event, context, AWSCallback) => {
 					this.msieveQueueCallbacks.push(callback);
 				}
 			}
-			console.log("Exiting getFactors for number " + number)
+			//console.log("Exiting getFactors for number " + number)
 		}
 		this.parseMSieveOutput = function (stdout) {
 			var number = stdout.match(numberRegex);
 			if (number === null) return;
-			console.log("output from msieve: " + number);
+			//console.log("output from msieve: " + number);
 			number = number[0];
 			var factorsArray = [];
 			var factorsArrayIndex = 0;
@@ -76,7 +75,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 			var output = stdout.match(piXRegex);
 			if (this.piXHistory[output[0]] === undefined) this.piXHistory[output[0]] = output[1];
 			else AWSCallback("overwrite error!");
-			console.log("output from primecount: " + output[0] + " " + output[1]);
+			//console.log("output from primecount: " + output[0] + " " + output[1]);
 			if (typeof this.primecountQueueCallbacks[this.primecountQueueCurrentIndex] === "function") {
 				this.primecountQueueCallbacks[this.primecountQueueCurrentIndex](output[1]);
 				this.primecountQueueCurrentIndex++;
@@ -89,7 +88,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 			var output = stdout.match(piXRegex);
 			if (this.piXHistory[output[0]] === undefined) this.piXHistory[output[0]] = output[1];
 			else AWSCallback("overwrite error!");
-			console.log("output from logint: " + output[0] + " " + output[1]);
+			//console.log("output from logint: " + output[0] + " " + output[1]);
 			if (typeof this.logintQueueCallbacks[this.logintQueueCurrentIndex] === "function") {
 				this.logintQueueCallbacks[this.logintQueueCurrentIndex](output[1]);
 				this.logintQueueCurrentIndex++;
@@ -121,13 +120,13 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		};
 		this.piXHistory["2"] = "1";
 		this.getPiX = function (number, callback) {
-			console.log("Getting piX for " + number, typeof number);
+			//console.log("Getting piX for " + number, typeof number);
 			if (number <= 1) callback(1);
 			else if (this.piXHistory[number] !== undefined) {
-				console.log("Using pre-processed callback for number: " + number + "with piX value: " + this.piXHistory[number]);
+				//console.log("Using pre-processed callback for number: " + number + "with piX value: " + this.piXHistory[number]);
 				callback(this.piXHistory[number]);
 			} else if (number > 9999999999999) {
-				console.log("Using logint for number: " + number);
+				//console.log("Using logint for number: " + number);
 				if (this.logintQueueCurrentIndex === this.logintQueueCeilingIndex) {
 					this.logintQueueCeilingIndex++;
 					this.logintQueueInputs.push(number.toString());
@@ -139,7 +138,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 					this.logintQueueCallbacks.push(callback);
 				}
 			} else if (number >= PIXDEPTH) {
-				console.log("Using primecount for number: " + number);
+				//console.log("Using primecount for number: " + number);
 				if (this.primecountQueueCurrentIndex === this.primecountQueueCeilingIndex) {
 					this.primecountQueueCeilingIndex++;
 					this.primecountQueueInputs.push(number.toString());
@@ -151,14 +150,14 @@ module.exports.factorize = (event, context, AWSCallback) => {
 					this.primecountQueueCallbacks.push(callback);
 				}
 			} else callback(null);
-			console.log("Exiting getPiX");
+			//console.log("Exiting getPiX");
 		}
 		this.close = function () {
-			console.log("Closing primes...");
+			//console.log("Closing primes...");
 			this.msieveProcess.kill();
 			this.logintProcess.stdin.write("a\n");
 			this.primecountProcess.stdin.write("a\n");
-			console.log("Primes closed...");
+			//console.log("Primes closed...");
 		}
 	})();
 
@@ -173,7 +172,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		return this.value;
 	}
 	Factor.prototype.setValue = function (newValue) {
-		console.log("Starting setValue");
+		//console.log("Starting setValue");
 		if (parseInt(newValue) <= 1 || isNaN(newValue)) {
 			this.value = 1;
 			this.setFactors([]);
@@ -182,16 +181,16 @@ module.exports.factorize = (event, context, AWSCallback) => {
 			if (this.isPrime !== true) Prime.getFactors(this.value, this.setFactors.bind(this));
 			else this.setFactors([]);
 		}
-		console.log("Exiting setValue");
+		//console.log("Exiting setValue");
 	}
 	Factor.prototype.setFactors = function (newFactors) {
 		var newFactorsLength = newFactors.length;
 		if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === "1")) {
-			console.log("Setting empty factors");
+			//console.log("Setting empty factors");
 			this.factorsLength = null;
 			this.factors = [];
 			this.isPrime = true;
-			console.log("Calling getPiX for Factor with the following value: " + this.value, typeof this.value);
+			//console.log("Calling getPiX for Factor with the following value: " + this.value, typeof this.value);
 			Prime.getPiX(this.value, this.setPiX.bind(this));
 		} else {
 			this.factorsLength = newFactorsLength;
@@ -207,20 +206,20 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		return this.power;
 	}
 	Factor.prototype.setPower = function (newPower) {
-		console.log("Setting power " + newPower);
+		//console.log("Setting power " + newPower);
 		if (parseInt(newPower) === 1) {
 			this.power = "1";
 			this.childDone("power");
 		} else this.power = new Factor(newPower, "1", false, this.childDone.bind(this, "power"));
-		console.log("Exiting setPower");
+		//console.log("Exiting setPower");
 	}
 	Factor.prototype.setPiX = function (newPiX) {
-		console.log("Setting piX " + newPiX);
+		//console.log("Setting piX " + newPiX);
 		if (parseInt(newPiX) === 1 || newPiX === null) {
 			this.piX = newPiX;
 			this.childDone("piX");
 		} else this.piX = new Factor(newPiX, "1", false, this.childDone.bind(this, "piX"));
-		console.log("Exiting piX");
+		//console.log("Exiting piX");
 	}
 	Factor.prototype.deepClone = function () {
 		if (this.value === 1) {
@@ -256,11 +255,11 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.factorsInitDone = false;
 
 	const RootFactor = function (value, AWSCallback) {
-		console.log("Root factorization beginning...");
+		//console.log("Root factorization beginning...");
 		this.callback = AWSCallback;
 		this.onCompletelyDone = function () {
 			Prime.close();
-			console.log("Root factorization ending...");
+			//console.log("Root factorization ending...");
 			this.callback(null, {
 				statusCode: 200,
 				body: this.deepClone()
@@ -273,13 +272,5 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	}
 	RootFactor.prototype = Factor.prototype;
 	Prime.launchAsyncProcesses();
-	/*Prime.msieveProcess.stdout.on("data", function (stdout) {
-		AWSCallback(null, {
-			statusCode: 200,
-			body: stdout
-		});
-	});
-	Prime.msieveProcess.stdin.write(number.toString()+"\n");
-	Prime.close();*/
 	var currfactor = new RootFactor(number, AWSCallback);
 };
