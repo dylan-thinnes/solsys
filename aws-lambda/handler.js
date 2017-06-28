@@ -2,32 +2,18 @@
 
 module.exports.factorize = (event, context, AWSCallback) => {
 	var number = event.number;
-	//var number = "97854915142572079569490518470603982554907279910526";
-	/*const numberType = typeof number;
-	AWSCallback(null, {
-		statusCode: 200,
-		body: number,
-		type: numberType
-	});*/
+	if (isNaN(number) || number === "") {
+		number = "1";
+		console.log("Factorization being done with 1");
+		AWSCallback(null, {
+			statusCode: 200,
+			body: "{\"value\": \"1\"}"
+		})
+		return;
+	}
+	console.log("Factorization being done with number: " + number);
 	const fs = require("fs");
-	console.log(fs.statSync("/tmp/").mode.toString(8));
-	/*var dirContents = "Dir contents: ";
-	fs.readdirSync(process.env["LAMBDA_TASK_ROOT"]).forEach(file => {
-		dirContents += file;
-	});
-	var depContents = "Dep contents: ";
-	fs.readdirSync("./factorization-dependencies").forEach(file => {
-		depContents += file;
-	});
-	var msievePerms = parseInt(fs.statSync("./factorization-dependencies/aws-msieve").mode.toString(8), 10);
-	var logintPerms = parseInt(fs.statSync("./factorization-dependencies/aws-logint").mode.toString(8), 10);
-	var primecountPerms = parseInt(fs.statSync("./factorization-dependencies/aws-primecount").mode.toString(8), 10);
-	AWSCallback(null, {
-		statusCode: 200,
-		body: dirContents + " " + depContents + " " + msievePerms + " " + logintPerms + " " + primecountPerms
-	});*/
-	//process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT'];
-	console.log(process.env['LAMBDA_TASK_ROOT']);
+	//console.log("Current permissions of tmp " + fs.statSync("/tmp/").mode.toString(8));
 	const cp = require("child_process");
 	var PIXDEPTH = 999999;
 	var msievePath = "/var/task/factorization-dependencies/aws-msieve -s /tmp/msieve.dat -q -m";
@@ -200,7 +186,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	}
 	Factor.prototype.setFactors = function (newFactors) {
 		var newFactorsLength = newFactors.length;
-		if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === 1)) {
+		if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === "1")) {
 			console.log("Setting empty factors");
 			this.factorsLength = null;
 			this.factors = [];
@@ -222,18 +208,18 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	}
 	Factor.prototype.setPower = function (newPower) {
 		console.log("Setting power " + newPower);
-		if (newPower === 1) {
-			this.power = 1;
+		if (parseInt(newPower) === 1) {
+			this.power = "1";
 			this.childDone("power");
-		} else this.power = new Factor(newPower, 1, false, this.childDone.bind(this, "power"));
+		} else this.power = new Factor(newPower, "1", false, this.childDone.bind(this, "power"));
 		console.log("Exiting setPower");
 	}
 	Factor.prototype.setPiX = function (newPiX) {
 		console.log("Setting piX " + newPiX);
-		if (newPiX === 1 || newPiX === null) {
+		if (parseInt(newPiX) === 1 || newPiX === null) {
 			this.piX = newPiX;
 			this.childDone("piX");
-		} else this.piX = new Factor(newPiX, 1, false, this.childDone.bind(this, "piX"));
+		} else this.piX = new Factor(newPiX, "1", false, this.childDone.bind(this, "piX"));
 		console.log("Exiting piX");
 	}
 	Factor.prototype.deepClone = function () {
@@ -242,12 +228,12 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		} else {
 			var child = "";
 			var ii = this.factors.length;
-			var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === 1 ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
+			var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === "1" ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
 			while (ii--) {
 				currClone += this.factors[ii].deepClone();
 				if (ii !== 0) currClone += ", ";
 			}
-			if (!(this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined)) currClone += "]";
+			if (!(this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined)) currClone += "]";
 			return currClone + "}";
 		}
 	}
@@ -283,7 +269,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		this.isPrime = false;
 		this.factors = new Array();
 		this.setValue(value);
-		this.setPower(1);
+		this.setPower("1");
 	}
 	RootFactor.prototype = Factor.prototype;
 	Prime.launchAsyncProcesses();
