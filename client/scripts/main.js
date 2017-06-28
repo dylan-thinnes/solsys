@@ -52,7 +52,7 @@ var remoteFactorize = function (number, callback) {
     req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
     req.onreadystatechange = (function (callback) {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-            callback(this.response);
+            callback(JSON.parse(JSON.parse(this.response).body));
         }
     }).bind(req, callback);
     req.send();
