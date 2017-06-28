@@ -46,6 +46,18 @@ var resizeCanvas = function(){
     camera.updateProjectionMatrix();
 }
 
+var remoteFactorize = function (number, callback) {
+    var req = new XMLHttpRequest();
+    req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=" + number.toString());
+    req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
+    req.onreadystatechange = (function (callback) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+            callback(this.response);
+        }
+    }).bind(req, callback);
+    req.send();
+} 
+
 try {
 	var canvas = document.createElement('canvas');
 	supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
