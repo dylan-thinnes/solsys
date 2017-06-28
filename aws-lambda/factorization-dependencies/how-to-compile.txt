@@ -1,0 +1,36 @@
+====================
+Getting aws-logint
+====================
+
+To compile aws-logint to be static and therefore compatible with AMI
+1. Install the gmp and mpfr libraries.
+2. Get a copy of logint.cpp from factorization-dependencies-mods/logint.cpp.
+3. Compile with "g++ -o logint logint.o -static -lmpfr -lgmp"
+4. Use "ldd logint" to make sure that the executable is statically linked
+5. (optional) Rename the "logint" executable to "aws-logint"
+
+====================
+Getting aws-msieve
+====================
+
+To get aws-msieve
+1. Clone into MersenneForum/msieve
+2. Make msieve as its built-in instructions tell you.
+3. The produced "msieve" executable should automatically be compatible with AMI.
+4. (optional) Rename the "msieve" executable to "aws-msieve"
+
+========================
+Getting aws-primecount
+========================
+
+To make aws-primecount to be static and therefore compatible with AMI.
+1. Get a copy of primecount by cloning into kimwalisch/primecount
+2. There are changes to the files "src/app/main.cpp", "src/app/cmdoptions.cpp", and "src/app/cmdoptions.hpp" which I've made that are not in the kimwalisch directory. Get these at factorization-dependencies-mods/
+3. Edit CMakeLists.txt and insert the following two lines before "# Build options #":
+
+SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+SET(CMAKE_EXE_LINKER_FLAGS "-static")
+
+4. Make as its built-in instructions tell you to.
+5. Use "ldd primecount" to be sure that the executable is statically linked
+6. (optional) Rename the "primecount" executable to "aws-primecount"
