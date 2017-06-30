@@ -281,7 +281,6 @@ const RootFactor = function (value, power, callback) {
 		Prime.close();
 		console.log(this.deepClone());
 		callback();
-		process.exit();
 	}
 	this.isPrime = false;
 	this.factors = new Array();
