@@ -1,7 +1,7 @@
 var SieveOfEratosthenes = function (initSize, benchmark) {
-	this.primeList = [];
+	//this.primeList = [2];
 	this.setMultiples = function (prime) {
-		this.primeList.push(prime);
+		//this.primeList.push(prime);
 		var primeMultiple = (prime * 2) - 1;
 		while (primeMultiple < this.bitSize) {
 			var largeCursor = Math.floor(primeMultiple / 32);
