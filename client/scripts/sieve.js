@@ -1,11 +1,12 @@
 'use strict';
 
 var SieveOfEratosthenes = function (initSize, benchmark) {
-	this.count = 0;
-	this.cursor = [0, 0];
-	this.list = [2];
-	if (!isNaN(initSize) && typeof initSize === "number") this.genSieve(initSize, benchmark);
+	if (!isNaN(initSize) && typeof initSize === "number") this.gen(initSize, benchmark);
 };
+SieveOfEratosthenes.prototype.gen = function (size, benchmark) {
+	this.genSieve(size, benchmark);
+	this.genList(benchmark);
+}
 SieveOfEratosthenes.prototype.genSieve = function (size, benchmark) {
 	if (benchmark === true) var startTime = Date.now();
 	this.elements = size / 4;
@@ -43,11 +44,17 @@ SieveOfEratosthenes.prototype.genSieve = function (size, benchmark) {
 SieveOfEratosthenes.prototype.genList = function (benchmark) {
 	if (benchmark === true) var startTime = Date.now();
 	this.upperLimit = this.bitSize / 32;
+	this.list = new Uint32Array(Math.ceil(this.pi()));
+	this.list[0] = 2;
+	var kk = 1;
 	var jj = 1;
 	var prime = 1;
 	for (var ii = 0; ii < this.upperLimit; ii++) {
 		while (jj > 0) {
-			if ((this.sieveReader[ii] & jj) === 0) this.list.push(prime);
+			if ((this.sieveReader[ii] & jj) === 0) {
+				this.list[kk] = prime;
+				kk++;
+			}
 			jj <<= 2;
 			prime += 2;
 		}
