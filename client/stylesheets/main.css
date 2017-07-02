@@ -4,7 +4,7 @@ body {
 	border: 0;
 	width: 100vw;
 	height: 100vh;
-	overflow: hidden;
+	background-color: black;
 }
 
 #overlay {
@@ -13,33 +13,55 @@ body {
 	left: 0px;
 	width: 100vw;
 	height: 100vh;
-	display: flex;
-	flex-direction: row;
-	background-color: white;
-	align-items: center;
-	justify-content: center;
-}
-
-#leftUI, #rightUI {
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
-	flex: 0 0 auto;
-	width: 100px;
 }
 
 #leftUI {
-	border-right: 2px solid grey;
+	width: 100px;
+	height: 100vh;
+	background-color: black;
 }
 
-#rightUI {
-	border-left: 2px solid grey;
+.largeButton {
+	position: relative;
+	margin-left: 10%;
+	margin-top: 20%;
+	width: 80%;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
 }
 
-#solarUI {
-	width: 100vmin;
-	height: 100vmin;
+.largeButton > .detector {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	border-radius: 50%;
+	z-index: 1000;
+	cursor: pointer;
+}
+
+.detector:hover + img {
+	opacity: 1;
+}
+
+.largeButton > img {
+	width: 100%;
+	opacity: 0.2;
 }
 
 canvas {
     display: block;
+}
+
+#test {
+	flex: 0 0 auto;
+	height: 100px;
+	width: 100px;
+	border-radius: 50px;
+}
+
+#test:hover {
+	background-color: grey;
 }
