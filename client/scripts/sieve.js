@@ -14,11 +14,11 @@ SieveOfEratosthenes.prototype.genSieve = function (size, benchmark) {
 	this.sieve = new ArrayBuffer(size);
 	this.sieveReader = new Uint32Array(this.sieve);
 	this.sieveReader[0] = 2863311529;
-	this.upperLimit = Math.ceil(Math.sqrt(this.bitSize) / 32);
+	var upperLimit = Math.ceil(Math.sqrt(this.bitSize) / 32);
 	var jj = 1;
 	var prime = 1;
 	var primeMultiple = 0;
-	for (var ii = 0; ii < this.upperLimit; ii++) {
+	for (var ii = 0; ii < upperLimit; ii++) {
 		while (jj > 0) {
 			if ((this.sieveReader[ii] & jj) === 0) {
 				primeMultiple = (prime * prime) - 1;
@@ -37,19 +37,19 @@ SieveOfEratosthenes.prototype.genSieve = function (size, benchmark) {
 	}
 	if (benchmark === true) {
 		var endTime = Date.now();
-		console.log("Started at: " + startTime + "\nEnded at: " + endTime + "\nTime elapsed: " + (endTime - startTime));
+		console.log("genSieve:\nStarted at: " + startTime + "\nEnded at: " + endTime + "\nTime elapsed: " + (endTime - startTime));
 		return (endTime - startTime);
 	}
 }
 SieveOfEratosthenes.prototype.genList = function (benchmark) {
 	if (benchmark === true) var startTime = Date.now();
-	this.upperLimit = this.bitSize / 32;
-	this.list = new Uint32Array(Math.ceil(this.pi()));
+	var upperLimit = this.bitSize / 32;
+	this.list = new Uint32Array(Math.ceil(1.25506 * this.bitSize / Math.log(this.bitSize)));
 	this.list[0] = 2;
 	var kk = 1;
 	var jj = 1;
 	var prime = 1;
-	for (var ii = 0; ii < this.upperLimit; ii++) {
+	for (var ii = 0; ii < upperLimit; ii++) {
 		while (jj > 0) {
 			if ((this.sieveReader[ii] & jj) === 0) {
 				this.list[kk] = prime;
@@ -62,7 +62,7 @@ SieveOfEratosthenes.prototype.genList = function (benchmark) {
 	}
 	if (benchmark === true) {
 		var endTime = Date.now();
-		console.log("Started at: " + startTime + "\nEnded at: " + endTime + "\nTime elapsed: " + (endTime - startTime));
+		console.log("genList:\nStarted at: " + startTime + "\nEnded at: " + endTime + "\nTime elapsed: " + (endTime - startTime));
 		return (endTime - startTime);
 	}
 }
