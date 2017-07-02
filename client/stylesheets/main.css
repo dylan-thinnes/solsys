@@ -1,3 +1,21 @@
+::selection {
+	background: transparent; /* WebKit/Blink Browsers */
+}
+
+::-moz-selection {
+	background: transparent; /* Gecko Browsers */
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
 body {
 	padding: 0;
 	margin: 0;
@@ -5,6 +23,7 @@ body {
 	width: 100vw;
 	height: 100vh;
 	background-color: black;
+	/*overflow: hidden;*/
 }
 
 #overlay {
@@ -13,11 +32,15 @@ body {
 	left: 0px;
 	width: 100vw;
 	height: 100vh;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: left;
 }
 
 #leftUI {
 	width: 100px;
-	height: 100vh;
+	height: 100%;
 	background-color: black;
 }
 
@@ -42,8 +65,12 @@ body {
 	cursor: pointer;
 }
 
+.detector:active + img {
+	opacity: 1 !important;
+}
+
 .detector:hover + img {
-	opacity: 1;
+	opacity: 0.6;
 }
 
 .largeButton > img {
