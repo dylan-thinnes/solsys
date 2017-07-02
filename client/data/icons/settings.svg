@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:lc="http://www.librecad.org" xmlns:xlink="http://www.w3.org/1999/xlink" width="282.84271247mm" height="282.84271247mm" viewBox="0 0 282.84271247 282.84271247">
-    <rect width="100%" height="100%" fill="black"></rect>
     <g lc:layername="0" lc:is_locked="false" lc:is_construction="false" fill="none" stroke="white" stroke-width="1">
         <circle cx="141.42135624" cy="141.42135624" r="141.42135624"/>
         <path d="M51.42135624,121.42135624 A30.8468769,30.8468769 0 0,0 79.10084816,73.4790699 "/>
