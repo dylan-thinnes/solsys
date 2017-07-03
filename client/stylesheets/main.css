@@ -38,16 +38,29 @@ body {
 	justify-content: left;
 }
 
-.leftUI {
+.UIStage {
 	width: 100px;
-	height: 100%;
 	background-color: black;
+	display: flex;
+	flex: 0 0 auto;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+#stage1 {
+	padding-right: 10px;
+}
+
+#stage2 {
+	padding-left: 10px;
+	/*border-radius: 20px;*/
+	border-left: 1px solid rgba(255,255,255,0.4);
 }
 
 .largeButton {
+	flex: 0 0 auto;
 	position: relative;
-	margin-left: 10%;
-	margin-top: 20%;
+	margin: 10%;
 	width: 80%;
 	/*display: flex;*/
 	align-items: flex-end;
@@ -66,11 +79,27 @@ body {
 	cursor: pointer;
 }
 
-.detector:active + img {
-	opacity: 1 !important;
+.largeButton > .background {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background-color: white;
+	opacity: 0.2;
+	display: none;
+	z-index: 500;
 }
 
-.detector:hover + img {
+.detector:active ~ img {
+	opacity: 1 !important;
+	z-index: 750;
+}
+
+.detector:active ~ .background {
+	display: inline-block !important;
+}
+
+.detector:hover ~ img {
 	opacity: 0.7;
 }
 
@@ -79,17 +108,14 @@ body {
 	opacity: 0.4;
 }
 
+#back, #no {
+	order: -1;
+}
+
+.largeButton.spacer {
+
+}
+
 canvas {
     display: block;
-}
-
-#test {
-	flex: 0 0 auto;
-	height: 100px;
-	width: 100px;
-	border-radius: 50px;
-}
-
-#test:hover {
-	background-color: grey;
 }
