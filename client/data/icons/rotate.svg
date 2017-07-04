@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:lc="http://www.librecad.org" xmlns:xlink="http://www.w3.org/1999/xlink" width="282.84271247mm" height="282.84271247mm" viewBox="-5 -5 292.84271247 292.84271247">
-    <g lc:layername="0" lc:is_locked="false" lc:is_construction="false" fill="none" stroke="white" stroke-width="5">
-        <circle cx="141.42135624" cy="141.42135624" r="141.42135624"/>
+    <g lc:layername="0" lc:is_locked="false" lc:is_construction="false" fill="none" stroke="white" stroke-width="1">
+        <circle cx="141.42135624" cy="141.42135624" r="141.42135624" stroke-width="5"/>
         <circle fill="white" cx="141.42135624" cy="141.42135624" r="28.28427125"/>
         <circle fill="white" cx="231.42135624" cy="141.42135624" r="20"/>
         <circle fill="white" cx="63.4790699" cy="96.42135624" r="20"/>
-        <path d="M55.46549089,114.74572666 A90,90 0 1,0 229.19913402,161.29751604 "/>
-        <path fill="white" d="M227.52059601,101.27262137 L222.98905707,103.38571268 L218.45751814,105.49880399 A85,85 0 0,0 126.66126114,57.71269723 L127.52950202,62.636736 L86.57513151,63.85273092 A95,95 0 0,1 227.52059601,101.27262137 Z "/>
+        <path d="M55.46549089,114.74572666 A90,90 0 1,0 229.19913402,161.29751604 " stroke-width="5"/>
+        <path fill="white" d="M227.52059601,101.27262137 L222.98905707,103.38571268 L218.45751814,105.49880399 A85,85 0 0,0 126.66126114,57.71269723 L127.52950202,62.636736 L86.57513151,63.85273092 A95,95 0 0,1 227.52059601,101.27262137 Z " stroke-width="5"/>
     </g>
 </svg>

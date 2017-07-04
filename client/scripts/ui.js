@@ -17,7 +17,7 @@ var stageLists = {
 	"root": ["view", "edit", "share"],
 	"view": ["orbit", "move", "zoom-in", "zoom-out"],
 	"edit": ["rotate", "paint"],
-	"share": ["link", "download"]
+	"share": ["link", "download", "reddit", "facebook", "twitter"]
 }
 
 var mode = "";
@@ -32,45 +32,14 @@ for (var ii = 0; ii < stageLists["root"].length; ii++) {
 console.log(stages);
 var largeButtonListener = function (event) {
 	var buttonId = event.target.parentNode.id;
-	/*if (stageLists[buttonId] !== undefined) {
-		if (keyHistory.length === 0) {
-			var oldKey = "root";
-			document.getElementById("back").style.display = "flex";
-		} else var oldKey = keyHistory[keyHistory.length - 1];
-		for (var ii = 0; ii < stageLists[oldKey].length; ii++) {
-			var elementToHide = document.getElementById(stageLists[oldKey][ii]);
-			elementToHide.style.display = "";
-			elementToHide.style.order = "";
-		}
-		var newKey = buttonId;
-		keyHistory.push(newKey);
-		for (var ii = 0; ii < stageLists[newKey].length; ii++) {
-			var elementToShow = document.getElementById(stageLists[newKey][ii]);
-			elementToShow.style.order = ii.toString();
-			elementToShow.style.display = "flex";
-		}
-	} else if (buttonId === "back") {
-		var oldKey = keyHistory.pop();
-		for (var ii = 0; ii < stageLists[oldKey].length; ii++) {
-			var elementToHide = document.getElementById(stageLists[oldKey][ii]);
-			elementToHide.style.display = "";
-			elementToHide.style.order = "";
-		}
-		if (keyHistory.length === 0) {
-			var newKey = "root";
-			document.getElementById("back").style.display = "";
-		} else var newKey = buttonId;
-		for (var ii = 0; ii < stageLists[newKey].length; ii++) {
-			var elementToShow = document.getElementById(stageLists[newKey][ii]);
-			elementToShow.style.order = ii.toString();
-			elementToShow.style.display = "flex";
-		}
-	}*/
 	if (buttonId === mode) {
 		resetMode();
 	} else if (stageLists[buttonId] !== undefined) {
-		if (mode !== "") resetMode();
+		if (mode !== "") {
+			resetMode();
+		}
 		setMode(buttonId);
+		resetTool();
 	} else if (buttonId === tool) {
 		resetTool();
 	} else {
@@ -86,8 +55,10 @@ var setTool = function (newTool) {
 	tool = newTool;
 }
 var resetTool = function () {
-	document.getElementById(tool).getElementsByClassName("icon")[0].style.opacity = "";
-	tool = "";
+	if (tool !== "") {
+		document.getElementById(tool).getElementsByClassName("icon")[0].style.opacity = "";
+		tool = "";
+	}
 }
 var setMode = function (newMode) {
 	for (var ii = 0; ii < stageLists[newMode].length; ii++) {
