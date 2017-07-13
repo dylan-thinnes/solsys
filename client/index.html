@@ -5,44 +5,43 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+		<link rel="stylesheet" type="text/css" href="stylesheets/mathquill.css">
 		<title>Solar System</title>
 	</head>
 	<body>
-		<!-- <div id="container"></div>
-		<script src="scripts/three.min.js"></script>
-		<script src="scripts/OrbitControls.js"></script>
-		<script src="scripts/main.js"></script> -->
 		<div id="overlay">
 			<div class="UIStage" id="stage1">
-				<div class="largeButton" id="view"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/view.svg" /></div>
-				<div class="largeButton" id="edit"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/edit.svg" /></div>
-				<div class="largeButton" id="share"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/share.svg" /></div>
+				<div class="largeButton" id="view"><a class="detector"></a><div class="background icon" id="view"></div></div>
+				<div class="largeButton" id="edit"><a class="detector"></a><div class="background icon" id="edit"></div></div>
+				<div class="largeButton" id="share"><a class="detector"></a><div class="background icon" id="share"></div></div>
 			</div>
 			<div class="UIStage" id="stage2">
-				<div class="largeButton spacer" id="spacer1"><img draggable="false" class="noselect icon" src="data/icons/spacer.svg" /></div>
-				<div class="largeButton spacer" id="spacer2"><img draggable="false" class="noselect icon" src="data/icons/spacer.svg" /></div>
-				<div class="largeButton spacer" id="spacer3"><img draggable="false" class="noselect icon" src="data/icons/spacer.svg" /></div>
+				<div class="largeButton" id="orbit"><a class="detector"></a><div class="background icon" id="orbit"></div></div>
+				<div class="largeButton" id="move"><a class="detector"></a><div class="background icon" id="move"></div></div>
+				<div class="largeButton" id="zoom-in"><a class="detector"></a><div class="background icon" id="zoom-in"></div></div>
+				<div class="largeButton" id="zoom-out"><a class="detector"></a><div class="background icon" id="zoom-out"></div></div>
 
-				<div class="largeButton" id="view"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/view.svg" /></div>
-				<div class="largeButton" id="share"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/share.svg" /></div>
-				<div class="largeButton" id="settings"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/settings.svg" /></div>
-				<div class="largeButton" id="edit"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/edit.svg" /></div>
+				<div class="largeButton" id="rotate"><a class="detector"></a><div class="background icon" id="rotate"></div></div>
+				<div class="largeButton" id="paint"><a class="detector"></a><div class="background icon" id="paint"></div></div>
 
-				<div class="largeButton" id="orbit"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/orbit.svg" /></div>
-				<div class="largeButton" id="move"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/move.svg" /></div>
-				<div class="largeButton" id="zoom-in"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/zoom-in.svg" /></div>
-				<div class="largeButton" id="zoom-out"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/zoom-out.svg" /></div>
-
-				<div class="largeButton" id="rotate"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/rotate.svg" /></div>
-				<div class="largeButton" id="paint"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/paint.svg" /></div>
-
-				<div class="largeButton" id="link"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/link.svg" /></div>
-				<div class="largeButton" id="download"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/download.svg" /></div>
-				<div class="largeButton" id="reddit"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/reddit.svg" /></div>
-				<div class="largeButton" id="facebook"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/facebook.svg" /></div>
-				<div class="largeButton" id="twitter"><a class="detector"></a><div class="background"></div><img draggable="false" class="noselect icon" src="data/icons/twitter.svg" /></div>
+				<div class="largeButton" id="link"><a class="detector"></a><div class="background icon" id="link"></div></div>
+				<div class="largeButton" id="download"><a class="detector"></a><div class="background icon" id="download"></div></div>
+				<div class="largeButton" id="reddit"><a class="detector"></a><div class="background icon" id="reddit"></div></div>
+				<div class="largeButton" id="facebook"><a class="detector"></a><div class="background icon" id="facebook"></div></div>
+				<div class="largeButton" id="twitter"><a class="detector"></a><div class="background icon" id="twitter"></div></div>
 			</div>
+			<div class="UIStage" id="stage3">
+				<div id="format">
+					<div class="formatButton" id="leftFormat"><a class="detector"></a><div class="background icon" id=""></div></div>
+					<div id="displayFormat"><div class="background icon" id=""></div></div>
+					<div class="formatButton" id="rightFormat"><a class="detector"></a><div class="background icon" id=""></div></div>
+				</div>
+				<div id="seed"></div>
+			</div>
+			<div class="UIStage" id="stage4"></div>
 		</div>
-		<script type="text/javascript" src="scripts/ui.js"></script>
+		<script src="scripts/jquery-1.12.4.min.js"></script>
+		<script src="scripts/mathquill-0.10.1.min.js"></script>
+		<script src="scripts/ui.js"></script>
 	</body>
 </html>
