@@ -5,7 +5,7 @@ const url = require("url");
 let mainWindow;
 
 var createWindow = function(){
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow = new BrowserWindow({width: 800, height: 600, show: false});
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, "../index.html"),
         protocol: "file:",
@@ -14,6 +14,9 @@ var createWindow = function(){
     //mainWindow.webContents.openDevTools();
     mainWindow.on("closed", function(){
         mainWindow = null;
+    });
+    mainWindow.on("ready-to-show", function(){
+        mainWindow.show();
     });
 }
 
