@@ -2,17 +2,21 @@
   "name": "solsys",
   "version": "1.0.0",
   "description": "a nodejs script which uses the msieve and primecount c libraries, running in the shell, to recursively factorize prime numbers.",
-  "main": "index.js",
+  "main": "client/scripts/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dylan Thinnes",
   "contributors": [
-    {"name": "Aaron Shappell"}
+    {
+      "name": "Aaron Shappell"
+    }
   ],
   "license": "ISC",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "electron": "^1.6.11"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dylan-thinnes/solsys.git"

@@ -1,0 +1,30 @@
+const {app, BrowserWindow} = require("electron");
+const path = require("path");
+const url = require("url");
+
+let win;
+
+var createWindow = function(){
+    win = new BrowserWindow({width: 800, height: 600});
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, "../index.html"),
+        protocol: "file:",
+        slashes: true
+    }));
+    //win.webContents.openDevTools();
+    win.on("closed", function(){
+        win = null;
+    });
+}
+
+app.on("ready", createWindow);
+app.on("window-all-closed", function(){
+    if(process.platform !== "darwin"){
+        app.quit();
+    }
+});
+app.on("activate", function(){
+    if(win === null){
+        createWindow();
+    }
+});
