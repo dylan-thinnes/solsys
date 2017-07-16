@@ -1,20 +1,23 @@
 var stageFunctions = {
 	"link": console.log,
 	"download": console.log,
+	"reddit": console.log,
+	"facebook": console.log,
+	"twitter": console.log,
 	"orbit": console.log,
 	"move": console.log,
 	"zoom-in": console.log,
 	"zoom-out": console.log,
-	"settings": console.log,
 	"rotate": console.log,
 	"paint": console.log,
 	"edit": console.log,
 	"view": console.log,
-	"share": console.log
+	"share": console.log,
+	"settings": console.log
 }
 var stageLists = {
 	"r34": ["tool"],
-	"root": ["view", "edit", "share"],
+	"root": ["view", "edit", "share", "settings"],
 	"view": ["orbit", "move", "zoom-in", "zoom-out"],
 	"edit": ["rotate", "paint"],
 	"share": ["link", "download", "reddit", "facebook", "twitter"]
