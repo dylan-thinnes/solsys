@@ -162,7 +162,12 @@ body {
 	box-sizing: border-box;
 }
 
-#seed.mq-focused {
+#seed:focus {
+	border: 1px solid white;
+	color: white;
+}
+
+/*#seed.mq-focused {
 	border: 1px solid white;
 	color: white;
 }
@@ -192,7 +197,7 @@ body {
 #seed .mq-math-mode var.mq-f, #seed.mq-math-mode var.mq-f{
   margin-right: 0em;
   margin-left: 0em;
-}
+}*/
 
 #stage4 {
 	width: 221px;
