@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:lc="http://www.librecad.org" xmlns:xlink="http://www.w3.org/1999/xlink" width="200mm" height="200mm" viewBox="-5 -5 210 210">
+    <g lc:layername="0" lc:is_locked="false" lc:is_construction="false" fill="none" stroke="white" stroke-width="4">
+        <line x1="0" y1="20" x2="0" y2="180"/>
+        <line x1="20" y1="200" x2="180" y2="200"/>
+        <line x1="200" y1="180" x2="200" y2="20"/>
+        <line x1="180" y1="0" x2="20" y2="0"/>
+        <path d="M20,0 A20,20 0 0,0 0,20 "/>
+        <path d="M0,180 A20,20 0 0,0 20,200 "/>
+        <path d="M180,200 A20,20 0 0,0 200,180 "/>
+        <path d="M200,20 A20,20 0 0,0 180,0 "/>
+        <path d="M80,160 L80,150 L60,150 L60,160 A20,20 0 0,0 80,180 L120,180 A20,20 0 0,0 140,160 L140,40 A20,20 0 0,0 120,20 L80,20 A20,20 0 0,0 60,40 L60,50 L80,50 L80,40 L120,40 L120,90 L80,90 L80,110 L120,110 L120,160 L80,160 Z "/>
+    </g>
+</svg>

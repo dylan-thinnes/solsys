@@ -1,16 +1,47 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
-        <title>Solar System</title>
-    </head>
-    <body>
-        <div id="container"></div>
-        <script src="scripts/three.min.js"></script>
-        <script src="scripts/OrbitControls.js"></script>
-        <script src="scripts/main.js"></script>
-    </body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+		<link rel="stylesheet" type="text/css" href="stylesheets/mathquill.css">
+		<title>Solar System</title>
+	</head>
+	<body>
+		<div id="overlay">
+			<div class="UIStage" id="stage1">
+				<div class="largeButton" id="view"><a class="detector"></a><div class="background icon" id="view"></div></div>
+				<div class="largeButton" id="edit"><a class="detector"></a><div class="background icon" id="edit"></div></div>
+				<div class="largeButton" id="share"><a class="detector"></a><div class="background icon" id="share"></div></div>
+			</div>
+			<div class="UIStage" id="stage2">
+				<div class="largeButton" id="orbit"><a class="detector"></a><div class="background icon" id="orbit"></div></div>
+				<div class="largeButton" id="move"><a class="detector"></a><div class="background icon" id="move"></div></div>
+				<div class="largeButton" id="zoom-in"><a class="detector"></a><div class="background icon" id="zoom-in"></div></div>
+				<div class="largeButton" id="zoom-out"><a class="detector"></a><div class="background icon" id="zoom-out"></div></div>
+
+				<div class="largeButton" id="rotate"><a class="detector"></a><div class="background icon" id="rotate"></div></div>
+				<div class="largeButton" id="paint"><a class="detector"></a><div class="background icon" id="paint"></div></div>
+
+				<div class="largeButton" id="link"><a class="detector"></a><div class="background icon" id="link"></div></div>
+				<div class="largeButton" id="download"><a class="detector"></a><div class="background icon" id="download"></div></div>
+				<div class="largeButton" id="reddit"><a class="detector"></a><div class="background icon" id="reddit"></div></div>
+				<div class="largeButton" id="facebook"><a class="detector"></a><div class="background icon" id="facebook"></div></div>
+				<div class="largeButton" id="twitter"><a class="detector"></a><div class="background icon" id="twitter"></div></div>
+			</div>
+			<div class="UIStage" id="stage3">
+				<div id="format">
+					<div class="formatButton" id="leftFormat"><a class="detector"></a><div class="background icon" id=""></div></div>
+					<div id="displayFormat"><div class="background icon" id=""></div></div>
+					<div class="formatButton" id="rightFormat"><a class="detector"></a><div class="background icon" id=""></div></div>
+				</div>
+				<div id="seed" contenteditable="true" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"></div>
+			</div>
+			<div class="UIStage" id="stage4"></div>
+		</div>
+		<script src="scripts/jquery-1.12.4.min.js"></script>
+		<script src="scripts/mathquill-0.10.1.min.js"></script>
+		<script src="scripts/ui.js"></script>
+	</body>
 </html>

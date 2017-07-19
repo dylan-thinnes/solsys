@@ -1,11 +1,254 @@
+#globalMove * {
+	cursor: move;
+}
+
 body {
 	padding: 0;
 	margin: 0;
 	border: 0;
 	width: 100vw;
 	height: 100vh;
+	background-color: black;
+	/*overflow: hidden;*/
+	font-family: monospace;
+}
+
+#overlay {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: left;
+}
+
+.UIStage {
+	width: 100px;
+	background-color: black;
+	display: flex;
+	flex: 0 0 auto;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+#stage1 {
+	padding-right: 10px;
+}
+
+#stage2 {
+	padding-left: 10px;
+	/*border-radius: 20px;*/
+	border-left: 1px solid rgba(255,255,255,0.4);
+}
+
+.largeButton {
+	flex: 0 0 auto;
+	position: relative;
+	margin: 10px;
+	width: 80px;
+	height: 80px;
+	/*display: flex;*/
+	align-items: flex-end;
+	justify-content: center;
+	display: none;
+}
+
+.detector {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	border-radius: 50%;
+	z-index: 1000;
+	cursor: pointer;
+}
+
+.background {
+	position: absolute;
+	height: 100%;
+	border-radius: 50%;
+	opacity: 0.2;
+	z-index: 500;
+	background-size: contain;
+	width: 100%;
+	opacity: 0.4;
+	box-sizing: border-box;
+}
+
+.detector:active ~ .background {
+	opacity: 1 !important;
+	z-index: 750;
+	background-color: rgba(255,255,255,0.2)
+}
+
+.detector:hover ~ .background {
+	opacity: 0.7;
+}
+
+#back, #no {
+	order: -1;
+}
+
+.largeButton.spacer {
+
+}
+
+#stage3 {
+	height: 100%;
+	flex: 1 1 auto;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+#format {
+	width: 100%;
+	display: none;
+	flex-direction: row;
+	justify-content: center;
+	margin-bottom: 5px;
+	align-items: center;
+}
+
+#format > .formatButton {
+	position: relative;
+	display: flex;
+	width: 30px;
+	height: 30px;
+	border-radius: 15px;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+.formatButton > .background {
+	border-radius: 15px;
+	border: 1px solid white;
+}
+
+#displayFormat {
+	position: relative;
+	display: flex;
+	height: 45px;
+	width: 117.8px;
+	border-radius: 10px;
+}
+
+#displayFormat > .background {
+	border-radius: 0.5rem;
+	border: 1px solid white;
+}
+
+#seed {
+	position: relative;
+	max-width: 99vw;
+	min-width: 61%;
+	min-height: 3rem;
+	padding: 0.5rem;
+	border: 1px solid rgba(255,255,255,0.4);
+	border-radius: /*0.3125em*/ 1rem;
+	margin-bottom: 10px;
+	color: rgba(255,255,255,0.4);
+	text-align: center;
+	outline: 0 !important;
+	box-shadow: none !important;
+	font-size: 2rem;
+	display: none;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+}
+
+#seed:focus {
+	border: 1px solid white;
+	color: white;
+}
+
+/*#seed.mq-focused {
+	border: 1px solid white;
+	color: white;
+}
+
+#seed .mq-cursor {
+	border-left: 1px solid white;
+}
+
+#seed.mq-math-mode .mq-empty {
+	background: rgba(255,255,255,0.1);
+}
+
+#seed.mq-math-mode .mq-empty.mq-root-block {
+	background: transparent;
+}
+
+#seed.mq-math-mode.mq-empty {
+	background: transparent;
+}
+
+#seed.mq-math-mode var,
+#seed.mq-math-mode i,
+#seed.mq-math-mode i.mq-font {
+  font-style: normal;
+}
+
+#seed .mq-math-mode var.mq-f, #seed.mq-math-mode var.mq-f{
+  margin-right: 0em;
+  margin-left: 0em;
+}*/
+
+#stage4 {
+	width: 221px;
 }
 
 canvas {
     display: block;
+}
+
+.largeButton .icon#view {
+	background-image: url(../data/icons/view.svg);
+}
+.largeButton .icon#edit {
+	background-image: url(../data/icons/edit.svg);
+}
+.largeButton .icon#share {
+	background-image: url(../data/icons/share.svg);
+}
+.largeButton .icon#settings {
+	background-image: url(../data/icons/settings.svg);
+}
+.largeButton .icon#orbit {
+	background-image: url(../data/icons/orbit.svg);
+}
+.largeButton .icon#move {
+	background-image: url(../data/icons/move.svg);
+}
+.largeButton .icon#zoom-in {
+	background-image: url(../data/icons/zoom-in.svg);
+}
+.largeButton .icon#zoom-out {
+	background-image: url(../data/icons/zoom-out.svg);
+}
+.largeButton .icon#rotate {
+	background-image: url(../data/icons/rotate.svg);
+}
+.largeButton .icon#paint {
+	background-image: url(../data/icons/paint.svg);
+}
+.largeButton .icon#link {
+	background-image: url(../data/icons/link.svg);
+}
+.largeButton .icon#download {
+	background-image: url(../data/icons/download.svg);
+}
+.largeButton .icon#reddit {
+	background-image: url(../data/icons/reddit.svg);
+}
+.largeButton .icon#facebook {
+	background-image: url(../data/icons/facebook.svg);
+}
+.largeButton .icon#twitter {
+	background-image: url(../data/icons/twitter.svg);
 }
