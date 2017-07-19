@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var ArbInt = function (value, length) {
 	this.length = length === undefined ? 100 : length;
 	this.buffer = new ArrayBuffer(this.length);
