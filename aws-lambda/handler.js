@@ -122,7 +122,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		this.getPiX = function (number, callback) {
 			//console.log("Getting piX for " + number, typeof number);
 			if (number <= 1) callback(1);
-			else if (this.piXHistory[number] !== undefined) {
+			else if (number >= PIXDEPTH && this.piXHistory[number] !== undefined) {
 				//console.log("Using pre-processed callback for number: " + number + "with piX value: " + this.piXHistory[number]);
 				callback(this.piXHistory[number]);
 			} else if (number > 9999999999999) {
