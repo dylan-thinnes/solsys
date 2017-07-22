@@ -1,5 +1,5 @@
 'use strict';
-
+// The SieveOfEratosthenes is a class used to produce sieves filled with primes by using a TypedArray. This implementation of the class can produce the first million primes in 300-400ms.
 var SieveOfEratosthenes = function (initSize, benchmark) {
 	if (!isNaN(initSize) && typeof initSize === "number") this.gen(initSize, benchmark);
 };
@@ -66,6 +66,7 @@ SieveOfEratosthenes.prototype.genList = function (benchmark) {
 		return (endTime - startTime);
 	}
 }
+//The pi function counts the primes up to a given number. If not passed a threshhold, it counts all of the primes in the existing sieve.
 SieveOfEratosthenes.prototype.pi = function (number) {
 	if (!isNaN(number)) {
 		var threshold = Math.floor((number - 1) / 32);

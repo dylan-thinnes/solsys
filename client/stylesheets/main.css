@@ -144,7 +144,8 @@ body {
 #seed {
 	position: relative;
 	max-width: 99vw;
-	min-width: 61%;
+	width: 61%;
+	min-width: 61vw;
 	min-height: 3rem;
 	padding: 0.5rem;
 	border: 1px solid rgba(255,255,255,0.4);

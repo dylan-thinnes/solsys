@@ -46,6 +46,7 @@ var resizeCanvas = function(){
     camera.updateProjectionMatrix();
 }
 
+// The remoteFactorize function is used to make requests for factorization to the AWS Lambda function that has been loaded onto the endpoint in the code below.
 var remoteFactorize = function (number, callback) {
     var req = new XMLHttpRequest();
     req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=" + number.toString());

@@ -1,3 +1,4 @@
+// The ArbInt class, named to represent "Arbitrary Integer", is designed to represent numbers as a collection of digits inside TypedArrays (default length 100), allowing a theoretically unlimited number size. They can be added and subtracted to/from other ArbInts. The ArbInt class also contains a static property, POW2, an array which contains all powers of 2 in ArbInt form, up until 2^166.
 var ArbInt = function (value, length) {
 	this.length = length === undefined ? 100 : length;
 	this.buffer = new ArrayBuffer(this.length);
@@ -246,6 +247,7 @@ ArbInt.POW2 = [
 	new ArbInt("93536104789177786765035829293842113257979682750464")
 ];
 
+// The Seed class is a class for creating ArbNums from strings that may or may not contain single-byte, double-byte, or quad-byte unicode characters. It analyzes the given input string and determines whether it is a number (type: Seed.NUMBER), an ASCII/single-byte string (type: Seed.ASCII), double-byte string (type: Seed.UTF16), or quad-byte string (type: Seed.UTF32). Using this information, it knows how many bits to allocate to each letter and produces a corresponding ArbInt from the stringed together bits.
 var Seed = function (input) {
 	this.input = input;
 	this.type = Seed.NUMBER;
@@ -291,7 +293,7 @@ Seed.ASCII = 1;
 Seed.UTF16 = 2;
 Seed.UTF32 = 3;
 
-
+// The Buttons class serves to create "groups" of buttons, with each Buttons object representing a singular group, with associated functions for hiding and showing the group entirely and choosing which button in the group should be focused and visually on (others will turn off automatically).
 var Buttons = function () {
 	this.buttons = {}
 	this.groups = {}
@@ -390,7 +392,9 @@ Buttons.prototype.groupToggle = function (name, event) {
 	if (this.groups[name].on === true) this.groupOff(name, event);
 	else this.groupOn(name, event);
 }
-document.body.onload = function () {
+
+// This function runs once the body loads and sets up the stages and modes and their associated buttons. Will be replaced with a better, compatible implementation.
+var loadUI = function () {
 	var stage1 = new Buttons();
 	var stage2 = new Buttons();
 
@@ -453,3 +457,4 @@ document.body.onload = function () {
 		}
 	});
 }
+document.body.onload = loadUI;
