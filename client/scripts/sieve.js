@@ -93,8 +93,14 @@ SieveOfEratosthenes.prototype.pi = function (number) {
 SieveOfEratosthenes.prototype.isPrime = function (number) {
 	if (number <= 1) return null;
 	else if (number > this.bitSize) return null;
+	else if (number % 2 === 0) return false; 
 	else if (this.sieveReader[Math.floor((number - 1) / 32)] & (1 << ((number - 1) % 32))) return false;
 	else return true;
+}
+SieveOfEratosthenes.prototype.primeAfter = function (number) {
+	number++;
+	while (!this.isPrime(number)) number++;
+	return number;
 }
 
 var SoE = SieveOfEratosthenes;
