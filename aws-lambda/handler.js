@@ -13,7 +13,9 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	}
 	//console.log("Factorization being done with number: " + number);
 	//console.log("Current permissions of tmp " + fs.statSync("/tmp/").mode.toString(8));
-	const cp = require("child_process");
+	if (process.cp === undefined) {
+		process.cp = require("child_process");
+	}
 	var PIXDEPTH = 999999;
 	var msievePath = "/var/task/factorization-dependencies/aws-msieve -s /tmp/msieve.dat -q -m";
 	var primecountPath = "/var/task/factorization-dependencies/aws-primecount -c 1";
