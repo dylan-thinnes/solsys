@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PlanetGen</title>
+</head>
+<body>
+	<!-- <img src="solar-system-icons/test.min.svg" style="position: absolute; top: 0px; left: 0px;" height="1000" width="1000"> -->
+	<canvas id="planetCanvas" width="1000" height="1000" style="outline: 1px solid black; position: absolute; top: 0px; left: 0px; background-color: transparent;"></canvas>
+	<script type="text/javascript" src="http://sinonjs.org/releases/sinon-3.2.0.js"></script>
+	<script type="text/javascript" src="solar-system-icons/rgbcolor.js"></script> 
+	<script type="text/javascript" src="solar-system-icons/StackBlur.js"></script>
+	<script type="text/javascript" src="solar-system-icons/canvg.js"></script>
+	<script type="text/javascript">
+		var ctx = document.getElementById("planetCanvas").getContext("2d");
+		/*ctx.scale(1000/26.458333, 1000/26.458333);
+		ctx.beginPath();
+		//ctx.moveTo(0, 0);
+		ctx.lineWidth = 0.1;
+		ctx.strokeStyle = "red";
+		//ctx.lineTo(5, 5);
+		ctx.moveTo(4.8595889, 15.76743);
+		ctx.bezierCurveTo(-0.2419086 + 4.8595889, 0 + 15.76743, -0.4943108 + 4.8595889, 0.0329 + 15.76743, -0.7558472 + 4.8595889, 0.10757 + 15.76743);
+		//ctx.lineTo(5 + 4.8595889, 5 + 15.76743);
+		ctx.bezierCurveTo(-.974 -0.7558472 + 4.8595889, .278 +  0.10757 + 15.76743, -2.198 -0.7558472 + 4.8595889, 1.627 +  0.10757 + 15.76743, -2.927 -0.7558472 + 4.8595889, 2.77 + 0.10757 + 15.76743);
+		//ctx.lineTo(2.56 -2.927 -0.7558472 + 4.8595889, 3.797 + 2.77 + 0.10757 + 15.76743);
+		ctx.arc();
+		ctx.stroke();*/
+		/*var commandString = "M 4.86 286.31 c -.242 -.002 -.495 .032 -.756 .107 -.974 .278 -2.198 1.627 -2.927 2.77 a 13.23 13.23 0 0 0 2.56 3.797 l .006 .007 a 13.23 13.23 0 0 0 .962 .896 l .004 .003 a 13.23 13.23 0 0 0 2.554 1.672 c .466 -1.391 .87 -5.336 .695 -6.301 -.224 -1.245 -1.405 -2.947 -3.098 -2.952 z M 13.23 270.542 a 13.23 13.23 0 0 0 -8.223 2.865 13.23 13.23 0 0 0 -.002 .002 13.23 13.23 0 0 0 -.987 .867 l -.013 .012 a 13.23 13.23 0 0 0 -.886 .952 l -.015 .017 A 13.23 13.23 0 0 0 0 283.771 c 2.603 -3.39 5.25 -1.035 6.413 -5.88 .871 -3.629 7.81 -6.195 8.612 -7.211 a 13.23 13.23 0 0 0 -1.796 -.138 z M 21.4 273.385 c -1.057 1.514 -.999 6.511 -3.55 6.511 -6.23 0 -8.363 .46 -7.35 4.065 .174 .623 2.094 1.706 2.332 2.505 .406 1.356 3.657 .015 3.236 1.094 -.861 2.21 .82 1.217 1.616 .303 1.663 -1.912 4.487 -4.69 4.833 -3.902 1.58 3.597 -1.192 3.277 -1.222 5.468 -.024 1.758 .555 3.04 2.606 2.136 a 13.23 13.23 0 0 0 2.557 -7.794 13.23 13.23 0 0 0 -5.058 -10.386 z";
+		var commandList = commandString.split(" ");
+		for (var ii = 0; ii < commandList.length; ii++) {
+			/*if (isNaN(commandList[ii]) && commandList[ii].match(/^[a-zA-Z]$/g) === null) console.log(commandList[ii], ii);*/
+			/*if (!isNaN(commandList[ii])) {
+				commandList[ii] = parseFloat(commandList[ii]);
+				if (commandList[ii] > 270.54165) commandList[ii] -= 270.54165;
+				commandList[ii] *= 1000/26.458333;
+			}
+		}*/
+		/*var cursorX = 0;
+		var cursorY = 0;
+		var pathBegun = false;
+		for (var ii = 0; ii < commandList.length; ii++) {
+			if (commandList[ii] === "M") {
+				if (pathBegun === false) ctx.closePath();
+				pathBegun = true;
+				cursorX = commandList[ii + 1];
+				cursorY = commandList[ii + 2];
+				ii += 2;
+				ctx.beginPath();
+				ctx.moveTo(cursorX, cursorY);
+			} else if (commandList[ii] === "q") {
+
+			}
+		}*/
+		//var proxyCTX = traceMethodCalls(ctx);
+		canvg(document.getElementById("planetCanvas"), '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 26.458333 26.458334"><g transform="translate(0 -270.542)"><ellipse cx="13.229" cy="283.771" rx="13.229" ry="13.229" fill="#0cf"/><path d="M4.86 286.31c-.242-.002-.495.032-.756.107-.974.278-2.198 1.627-2.927 2.77a13.23 13.23 0 0 0 2.56 3.797l.006.007a13.23 13.23 0 0 0 .962.896l.004.003a13.23 13.23 0 0 0 2.554 1.672c.466-1.391.87-5.336.695-6.301-.224-1.245-1.405-2.947-3.098-2.952zM13.23 270.542a13.23 13.23 0 0 0-8.223 2.865 13.23 13.23 0 0 0-.002.002 13.23 13.23 0 0 0-.987.867l-.013.012a13.23 13.23 0 0 0-.886.952l-.015.017A13.23 13.23 0 0 0 0 283.771c2.603-3.39 5.25-1.035 6.413-5.88.871-3.629 7.81-6.195 8.612-7.211a13.23 13.23 0 0 0-1.796-.138zM21.4 273.385c-1.057 1.514-.999 6.511-3.55 6.511-6.23 0-8.363.46-7.35 4.065.174.623 2.094 1.706 2.332 2.505.406 1.356 3.657.015 3.236 1.094-.861 2.21.82 1.217 1.616.303 1.663-1.912 4.487-4.69 4.833-3.902 1.58 3.597-1.192 3.277-1.222 5.468-.024 1.758.555 3.04 2.606 2.136a13.23 13.23 0 0 0 2.557-7.794 13.23 13.23 0 0 0-5.058-10.386z" fill="#c87137"/></g></svg>');
+		for (var spyName in spies) {spies[spyName].restore();};
+		ctx = document.getElementById("planetCanvas").getContext("2d");
+		var convertLogs = function (callLogs) {
+			var commands = [];
+			var methodDictionary = [];
+			for (var ii = 0; ii < callLogs.length; ii++) {
+				var commandString = "";
+				var isGet = typeof callLogs[ii][2] === "string";
+				//commandString += "ctx." + callLogs[ii][1] + (isGet ? "" : "(");
+				if (isGet) {
+					commandString += "ctx." + callLogs[ii][1] + "\"" + callLogs[ii][2] + "\";";
+				} else {
+					var index = methodDictionary.indexOf(callLogs[ii][1]);
+					if (index === -1) index = methodDictionary.push(callLogs[ii][1]) - 1;
+					var funcName = "f" + index.toString();
+					commandString += funcName + "(";
+					for (var jj = 1; jj < callLogs[ii][2].length; jj++) {
+						commandString += callLogs[ii][2][jj].toString() + (jj === (callLogs[ii][2].length - 1) ? "" : ", ");
+					}
+					commandString += ");";
+				}
+				commands[ii] = commandString;
+			}
+			//return methodDictionary;
+			var callLogsLength = callLogs.length;
+			/*for (var ii = 0; ii < callLogsLength; ii++) {
+				console.log("started evaluating " + ii, res[ii]);
+				ctx[callLogs[ii][1]].apply(ctx, Array.from(callLogs[ii][2]).slice(1));
+				//eval(res[ii]);
+				console.log("finished evaluating " + ii);
+			}*/
+			var dictionaryCommands = "var funcNames = " + JSON.stringify(methodDictionary) + ";\n" + 'for (var ii = 0; ii < funcNames.length; ii++) window["f" + ii.toString()] = ctx[funcNames[ii]].bind(ctx);';
+			/*for (var ii = 0; ii < methodDictionary.length; ii++) {
+				dictionaryCommands[ii] = "var f" + ii.toString() + " = ctx." + methodDictionary[ii] + ".bind(ctx);"
+			}*/
+			return 'var ctx = document.getElementById("planetCanvas").getContext("2d");\n' + dictionaryCommands + '\nctx.save()\nctx.strokeStyle = "transparent";\n' + commands.join("\n") + "\nctx.restore();";
+			//return document.getElementById("planetCanvas").toDataURL();
+		}
+	</script>
+</body>
+</html>
