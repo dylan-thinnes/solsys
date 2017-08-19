@@ -1,0 +1,1 @@
+{"statusCode":200,"body":"{\"value\": \"24817\", \"isPrime\": false, \"power\": 1, \"piX\": \"undefined\", \"factors\": [{\"value\": \"83\", \"isPrime\": true, \"power\": 1, \"piX\": null, \"factors\": []}, {\"value\": \"23\", \"isPrime\": true, \"power\": 1, \"piX\": null, \"factors\": []}, {\"value\": \"13\", \"isPrime\": true, \"power\": 1, \"piX\": null, \"factors\": []}]}"}

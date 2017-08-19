@@ -265,7 +265,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	if (process.cp === undefined) {
 		process.cp = require("child_process");
 	}
-	var PIXDEPTH = 1;
+	var PIXDEPTH = 999999;
 	var msievePath = "/var/task/factorization-dependencies/aws-msieve -s /tmp/msieve.dat -q -m";
 	var primecountPath = "/var/task/factorization-dependencies/aws-primecount -c 1";
 	var logintPath = "/var/task/factorization-dependencies/aws-logint";
@@ -493,7 +493,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		//console.log(newPiX, typeof newPiX, newPiX === null);
 		var postponePiX = false;
 		if (parseInt(newPiX) <= 1 || newPiX === null) {
-			console.log("caught terminating piX...", this.value, newPiX);
+			//console.log("caught terminating piX...", this.value, newPiX);
 			this.piX = newPiX;
 			this.childDone("piX");
 		} else {
@@ -503,7 +503,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 				if (pos > 0) {
 					var previousPiX = Prime.piXChains[this.piXChainID][pos - 1];
 					if (Prime.piXHistory[previousPiX] !== undefined) {
-						console.log(this.piXChainID, Prime.piXChains[this.piXChainID], this.value, "pos: " + pos);
+						//console.log(this.piXChainID, Prime.piXChains[this.piXChainID], this.value, "pos: " + pos);
 						//console.log(pos, Prime.piXHistory[Prime.piXChains[this.piXChainID][pos - 1]].value);
 						var deltaNewPiX = (new ArbInt(newPiX));
 						//console.log(deltaNewPiX.value, Prime.piXHistory[previousPiX].value);
@@ -517,7 +517,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 					}
 				}
 			}
-			console.log("postponePiX: " + postponePiX);
+			//console.log("postponePiX: " + postponePiX);
 			if (!postponePiX) {
 				if (parseInt(newPiX) <= 1 || newPiX === null) {
 					this.piX = newPiX;
@@ -590,5 +590,3 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Prime.launchAsyncProcesses();
 	var currfactor = new RootFactor(number, AWSCallback);
 };
-
-module.exports.factorize({number: "99999999999999999999999999999999999999999999999943"}, null, console.log);
