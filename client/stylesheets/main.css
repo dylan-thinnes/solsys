@@ -9,7 +9,7 @@ body {
 	width: 100vw;
 	height: 100vh;
 	background-color: black;
-	/*overflow: hidden;*/
+	overflow: hidden;
 	font-family: monospace;
 }
 
@@ -23,6 +23,16 @@ body {
 	flex-direction: row;
 	align-items: center;
 	justify-content: left;
+}
+
+#middlelay {
+	position: absolute;
+}
+
+#underlay {
+	position: absolute;
+	background-color: transparent;
+	z-index: -1;
 }
 
 .UIStage {
