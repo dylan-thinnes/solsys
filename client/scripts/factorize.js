@@ -121,23 +121,24 @@ var Factorizer = function (sieveSize) {
 
 		}
 	}
-	this.primeFactorize = function (numerator) {
+	this.remoteGetFactorization = function (number, basePiX, callback) {
+		
+	}
+	this.getPiX = function (x, callback) {
+		if (x > this.limit) this.remoteGetFactorization(x, callback);
+		else {
+
+		}
+	}
+	this.getFactors = function (numerator, callback) {
 		//Input sanitation begins here
-		//var startTime = Date.now();
-		//console.log("Factorize started at " + startTime);
-		if (isNaN(numerator) || numerator === 0) numerator = 1;
+		if (isNaN(numerator) || numerator === 0) {
+			numerator = 1;
+			return [];
+		}
 		numerator = Math.abs(numerator);
-		if (numerator === 1) return [];
 		//Input sanitation ends here
 		var factors = [];
-		if (numerator !== Math.floor(numerator)) {
-			var decimalLength = numerator.toString().length-2;
-			factors[0] = (factors[0] ? factors[0] : 0) - decimalLength;
-			factors[2] = (factors[2] ? factors[2] : 0) - decimalLength;
-			numerator = Math.floor(numerator*Math.pow(10,decimalLength));
-		}
-		//var decimalTime = Date.now();
-		//console.log("Done shifting decimal point at " + decimalTime + ", Delta: " + (decimalTime - startTime));
 		var remainder = numerator;
 		var lastIndex = -1;
 		var index = 0;
@@ -145,11 +146,13 @@ var Factorizer = function (sieveSize) {
 		var divisor = this.sieve.list[0];
 		while (divisor <= maxFactor && remainder > 1) {
 			if (numerator % divisor === 0) {
-				factors[index] = (factors[index] === undefined) ? 0 : factors[index];
+				//factors[index] = (factors[index] === undefined) ? 0 : factors[index];
+				var power = 0;
 				while (remainder % divisor === 0 && remainder > 1) {
 					remainder /= divisor;
-					factors[index]++;
+					power++;
 				}
+				factors.push({value: divisor, power: power});
 			}
 			index++;
 			/*if (index === this.sieve.list.length) { // If we have reached the end of sieve.list, throw an error declaring the number as too large
@@ -162,12 +165,129 @@ var Factorizer = function (sieveSize) {
 		//console.log("Done finding factors under sqrt(x) at " + rootTime + ", Delta: " + (rootTime - startTime));
 		if (remainder > 1) {
 			// We have exceeded the square root of the numerator, yet there is a remainder, which must therefore be prime. We return it in a special index titled "remainder".
-			if (remainder > this.sieve.bitSize) factors["remainder"] = remainder;
-			else factors[this.sieve.pi(remainder) - 1] = 1;
-		}
+			if (remainder > this.sieve.bitSize) this.remoteGetFactorization(remainder, );
+			else factors.push({value: this.sieve.pi(remainder) - 1, power: 1});
+		} else callback(factors);
 		//var remainderTime = Date.now();
 		//console.log("Done finding remainder at " + remainderTime + ", Delta: " + (remainderTime - startTime));
-		return factors;
 	}
 }
-var F = new Factorizer(2000000);
+var Prime = new Factorizer(2000000);
+
+const Factor = function (value, power, isPrime, onCompletelyDone) {
+	this.onCompletelyDone = onCompletelyDone;
+	this.isPrime = isPrime;
+	this.factors = new Array();
+	this.setValue(value);
+	this.setPower(power);
+}
+Factor.prototype.getValue = function () {
+	return this.value;
+}
+Factor.prototype.setValue = function (newValue) {
+	//console.log("Starting setValue");
+	if (parseInt(newValue) <= 1 || isNaN(newValue)) {
+		this.value = 1;
+		this.setFactors([]);
+	} else {
+		this.value = newValue;
+		if (this.isPrime !== true) Prime.getFactors(this.value, this.setFactors.bind(this));
+		else this.setFactors([]);
+	}
+	//console.log("Exiting setValue");
+}
+Factor.prototype.setFactors = function (newFactors, remainder) {
+	var newFactorsLength = newFactors.length;
+	if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === "1")) {
+		//console.log("Setting empty factors");
+		this.factorsLength = null;
+		this.factors = [];
+		this.isPrime = true;
+		//console.log("Calling getPiX for Factor with the following value: " + this.value, typeof this.value);
+		this.setPiX(Prime.getPiX(this.value));
+	} else {
+		this.factorsLength = newFactorsLength;
+		this.isPrime = false;
+		this.childDone("piX");
+		for (var ii = 0; ii < newFactorsLength; ii++) {
+			this.factors.push(new Factor(newFactors[ii].value, newFactors[ii].power, true, this.childDone.bind(this)));
+			console.log("getting server factors...");
+			this.factors.push();
+			Prime.getServerFactorizations(this.setServerFactors.bind(this));
+		}
+	}
+	this.childDone("factorsInit");
+}
+Factor.prototype.setServerFactors = function () {
+	console.log("setting server factors...");
+}
+Factor.prototype.getPower = function () {
+	return this.power;
+}
+Factor.prototype.setPower = function (newPower) {
+	//console.log("Setting power " + newPower);
+	if (parseInt(newPower) === 1) {
+		this.power = "1";
+		this.childDone("power");
+	} else this.power = new Factor(newPower, "1", false, this.childDone.bind(this, "power"));
+	//console.log("Exiting setPower");
+}
+Factor.prototype.setPiX = function (newPiX) {
+	//console.log("Setting piX " + newPiX);
+	if (parseInt(newPiX) === 1 || newPiX === null) {
+		this.piX = newPiX;
+		this.childDone("piX");
+	} else this.piX = new Factor(newPiX, "1", false, this.childDone.bind(this, "piX"));
+	//console.log("Exiting piX");
+}
+Factor.prototype.deepClone = function () {
+	if (this.value === 1) {
+		return "1";
+	} else {
+		var child = "";
+		var ii = this.factors.length;
+		var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === "1" ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
+		while (ii--) {
+			currClone += this.factors[ii].deepClone();
+			if (ii !== 0) currClone += ", ";
+		}
+		if (!(this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined)) currClone += "]";
+		return currClone + "}";
+	}
+}
+Factor.prototype.childDone = function (type) {
+	if (type === "power") this.powerDone = true;
+	else if (type === "piX") this.piXDone = true;
+	else if (type === "factorsInit") this.factorsInitDone = true;
+	else this.factorsCounter = this.factorsCounter + 1;
+	if ((this.factorsCounter === this.factorsLength || this.isPrime === true) && this.powerDone && this.piXDone && this.factorsInitDone) {
+		this.onCompletelyDone();
+	}
+}
+Factor.prototype.setChildrenLength = function (newChildrenLength) {
+	this.factorsLength = newChildrenLength;
+}
+Factor.prototype.powerDone = false;
+Factor.prototype.piXDone = false;
+Factor.prototype.factorsCounter = 0;
+Factor.prototype.factorsLength = undefined;
+Factor.prototype.factorsInitDone = false;
+
+const RootFactor = function (value, AWSCallback) {
+	//console.log("Root factorization beginning...");
+	this.callback = AWSCallback;
+	this.onCompletelyDone = function () {
+		Prime.close();
+		//console.log("Root factorization ending...");
+		this.callback(null, {
+			statusCode: 200,
+			body: this.deepClone()
+		});
+	}
+	this.isPrime = false;
+	this.factors = new Array();
+	this.setValue(value);
+	this.setPower("1");
+}
+RootFactor.prototype = Factor.prototype;
+//var currfactor = new RootFactor(number, AWSCallback);
