@@ -23,6 +23,7 @@ body {
 	flex-direction: row;
 	align-items: center;
 	justify-content: left;
+	/*z-index: 1;*/
 }
 
 #middlelay {
@@ -37,7 +38,6 @@ body {
 
 .UIStage {
 	width: 100px;
-	background-color: black;
 	display: flex;
 	flex: 0 0 auto;
 	flex-direction: column;
@@ -51,6 +51,10 @@ body {
 #stage2 {
 	padding-left: 10px;
 	/*border-radius: 20px;*/
+}
+
+#stage2-left-border {
+	z-index: 1;
 	border-left: 1px solid rgba(255,255,255,0.4);
 }
 
@@ -64,6 +68,7 @@ body {
 	align-items: flex-end;
 	justify-content: center;
 	display: none;
+	z-index: 2;
 }
 
 .detector {
@@ -73,30 +78,43 @@ body {
 	top: 0px;
 	left: 0px;
 	border-radius: 50%;
-	z-index: 1000;
+	z-index: 5;
 	cursor: pointer;
 }
 
-.background {
+.background-icon {
 	position: absolute;
 	height: 100%;
 	border-radius: 50%;
 	opacity: 0.2;
-	z-index: 500;
+	z-index: 3;
 	background-size: contain;
 	width: 100%;
 	opacity: 0.4;
 	box-sizing: border-box;
 }
 
-.detector:active ~ .background {
+.detector:active ~ .background-icon {
 	opacity: 1 !important;
-	z-index: 750;
+	z-index: 4;
 	background-color: rgba(255,255,255,0.2)
 }
 
-.detector:hover ~ .background {
+.detector:hover ~ .background-icon {
 	opacity: 0.7;
+}
+
+.background-shading {
+	position: absolute;
+	height: 100%;
+	border-radius: 50%;
+	opacity: 0.2;
+	z-index: 3;
+	background-size: contain;
+	width: 100%;
+	opacity: 0.7;
+	background-color: black;
+	box-sizing: border-box;
 }
 
 #back, #no {
@@ -133,7 +151,7 @@ body {
 	margin-left: 10px;
 }
 
-.formatButton > .background {
+.formatButton > .background-icon {
 	border-radius: 15px;
 	border: 1px solid white;
 }
@@ -146,7 +164,7 @@ body {
 	border-radius: 10px;
 }
 
-#displayFormat > .background {
+#displayFormat > .background-icon {
 	border-radius: 0.5rem;
 	border: 1px solid white;
 }
@@ -171,6 +189,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	box-sizing: border-box;
+	z-index: 5;
 }
 
 #seed:focus {
