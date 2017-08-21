@@ -189,6 +189,7 @@ body {
 	align-items: center;
 	box-sizing: border-box;
 	z-index: 5;
+	background-color: rgba(0,0,0,0.7);
 }
 
 #seed:focus {
@@ -229,7 +230,7 @@ body {
 }*/
 
 #stage4 {
-	width: 221px;
+	width: 121px;
 }
 
 canvas {
