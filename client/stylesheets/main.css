@@ -50,12 +50,11 @@ body {
 
 #stage2 {
 	padding-left: 10px;
-	/*border-radius: 20px;*/
-}
-
-#stage2-left-border {
-	z-index: 1;
+	position: relative;
+	width: 0px;
 	border-left: 1px solid rgba(255,255,255,0.4);
+	/*border-radius: 20px;*/
+	z-index: 1;
 }
 
 .largeButton {

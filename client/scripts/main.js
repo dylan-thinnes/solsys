@@ -1,7 +1,7 @@
 var init = function(){
     clock = new THREE.Clock();
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x000000, 1, 12);
+    //scene.fog = new THREE.Fog(0x000000, 1, 12);
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -21,8 +21,16 @@ var init = function(){
     
     planetCenter = new THREE.Sprite(planetMaterial);
     planet1 = new THREE.Sprite(planetMaterial);
+    var planet1Scaling = new THREE.Matrix4();
+    planet1Scaling.makeScale(0.66, 0.66, 0.66);
+    planet1.applyMatrix(planet1Scaling);
+
     planet1.position.set(3, 0, 0);
     planet2 = new THREE.Sprite(planetMaterial);
+    var planet2Scaling = new THREE.Matrix4();
+    planet2Scaling.makeScale(0.44, 0.44, 0.44);
+    planet2.applyMatrix(planet2Scaling);
+
     planet2.position.set(1.5, 0, 0);
     
     orbit2.position.set(planet1.position.x, planet1.position.y, planet1.position.z);
