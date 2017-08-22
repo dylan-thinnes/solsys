@@ -597,7 +597,3 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Prime.launchAsyncProcesses();
 	var currfactor = new RootFactor(number, AWSCallback);
 };
-module.exports.factorize({
-	"number": "243",
-	"piXDepth": "1"
-}, null, console.log);
