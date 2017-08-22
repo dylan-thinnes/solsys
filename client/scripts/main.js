@@ -66,7 +66,7 @@ var init = function(){
     scene.add(planetCenter);
     scene.add(orbit1);
 
-    camera.position.z = 5;
+    camera.position.z = 15;
 }
 
 var render = function(){
