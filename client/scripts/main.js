@@ -1,7 +1,7 @@
 var init = function(){
     clock = new THREE.Clock();
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById("middlelay").appendChild(renderer.domElement);
@@ -24,7 +24,7 @@ var init = function(){
     }
     var orbitPathMaterial = new THREE.LineBasicMaterial();
     orbitPathMaterial.transparent = true;
-    orbitPathMaterial.opacity = 0.7;
+    orbitPathMaterial.opacity = 0.4;
 
     orbit1Path = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
     var orbit1PathScale = new THREE.Matrix4();
