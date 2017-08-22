@@ -274,6 +274,8 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	const factorsRegex = new RegExp(/p\d+: (\d+)/gm);
 	const numberRegex = new RegExp(/\d+/gm);
 	const piXRegex = new RegExp(/\d+/gm);
+
+	// The Prime singleton, once initialized, serves as a utility object which provides a number of useful factorization related functions. Once of its main roles in this regard is taking user input, communicating it to the C++ libraries logint, msieve, and primecount, and parsing their output.
 	const Prime = new (function Prime () {
 		this.launchAsyncProcesses = function () {
 			this.msieveProcess = process.cp.exec(msievePath);
@@ -430,6 +432,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		}
 	})();
 
+	// The Factor class is used to organize and guide the factorization process and, as a result, the calls to msieve, logint, and primecount.
 	const Factor = function (value, power, isPrime, onCompletelyDone, piXChainID) {
 		this.onCompletelyDone = onCompletelyDone;
 		this.isPrime = isPrime;
@@ -541,6 +544,8 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.deepClone = function () {
 		if (this.value === 1) {
 			return "1";
+		} else if (this.factors.length === 1) {
+			return this.factors[0].deepClone();
 		} else {
 			var child = "";
 			var ii = this.factors.length;
@@ -571,6 +576,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.factorsLength = undefined;
 	Factor.prototype.factorsInitDone = false;
 
+	// The RootFactor is a unique extension to Factor that adds functionality necessary to administrate all other Factor nodes. In effect, it gets the ball rolling.
 	const RootFactor = function (value, AWSCallback, piX, isPrime) {
 		//console.log("Root factorization beginning...");
 		this.callback = AWSCallback;
@@ -591,3 +597,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Prime.launchAsyncProcesses();
 	var currfactor = new RootFactor(number, AWSCallback);
 };
+module.exports.factorize({
+	"number": "243",
+	"piXDepth": "1"
+}, null, console.log);
