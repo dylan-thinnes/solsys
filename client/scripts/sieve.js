@@ -1,11 +1,17 @@
 'use strict';
 // The SieveOfEratosthenes is a class used to produce sieves filled with primes by using a TypedArray. This implementation of the class can produce the first million primes in 300-400ms.
+var SoEBenchmark = function (count) {
+	for (var ii = 0; ii < count; ii++) {
+		var test = new SoE(2000000, true);
+	}
+}
+
 var SieveOfEratosthenes = function (initSize, benchmark) {
 	if (!isNaN(initSize) && typeof initSize === "number") this.gen(initSize, benchmark);
 };
 SieveOfEratosthenes.prototype.gen = function (size, benchmark) {
 	this.genSieve(size, benchmark);
-	this.genList(benchmark);
+	//this.genList(benchmark);
 }
 SieveOfEratosthenes.prototype.genSieve = function (size, benchmark) {
 	if (benchmark === true) var startTime = Date.now();
@@ -13,20 +19,24 @@ SieveOfEratosthenes.prototype.genSieve = function (size, benchmark) {
 	this.bitSize = size * 8;
 	this.sieve = new ArrayBuffer(size);
 	this.sieveReader = new Uint32Array(this.sieve);
+	var upperLimit = this.bitSize / 32;
+	this.list = new Uint32Array(Math.ceil(1.25506 * this.bitSize / Math.log(this.bitSize)));
+	this.list[0] = 2;
 	this.sieveReader[0] = 2863311529;
 	var upperLimit = Math.ceil(Math.sqrt(this.bitSize) / 32);
 	var jj = 1;
+	var kk = 1;
 	var prime = 1;
 	var primeMultiple = 0;
 	for (var ii = 0; ii < upperLimit; ii++) {
 		while (jj > 0) {
 			if ((this.sieveReader[ii] & jj) === 0) {
+				this.list[kk++] = prime;
 				primeMultiple = (prime * prime) - 1;
 				while (primeMultiple < this.bitSize) {
-					var largeCursor = Math.floor(primeMultiple / 32);
-					var smallCursor = 1 << (primeMultiple % 32);
-					var invertedSmallCursor = 4294967295 ^ smallCursor;
-					this.sieveReader[largeCursor] = (this.sieveReader[largeCursor] & invertedSmallCursor) + smallCursor;
+					/*var invertedSmallCursor = 4294967295 ^ smallCursor;
+					this.sieveReader[largeCursor] = (this.sieveReader[largeCursor] & invertedSmallCursor) + smallCursor;*/
+					this.sieveReader[Math.floor(primeMultiple / 32)] |= 1 << (primeMultiple % 32);
 					primeMultiple += prime;
 				}
 			}
