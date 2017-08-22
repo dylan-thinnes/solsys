@@ -331,8 +331,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		}
 		this.parsePrimecountOutput = function (stdout) {
 			var output = stdout.match(piXRegex);
-			if (this.piXHistory[output[0]] === undefined) this.piXHistory[output[0]] = new ArbInt(output[1]);
-			else AWSCallback("overwrite error!");
+			this.piXHistory[output[0]] = new ArbInt(output[1]);
 			//console.log("output from primecount: " + output[0] + " " + output[1]);
 			if (typeof this.primecountQueueCallbacks[this.primecountQueueCurrentIndex] === "function") {
 				this.primecountQueueCallbacks[this.primecountQueueCurrentIndex](output[1]);
@@ -345,8 +344,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		}
 		this.parseLogintOutput = function (stdout) {
 			var output = stdout.match(piXRegex);
-			if (this.piXHistory[output[0]] === undefined) this.piXHistory[output[0]] = new ArbInt(output[1]);
-			else AWSCallback("overwrite error!");
+			this.piXHistory[output[0]] = new ArbInt(output[1]);
 			//console.log("output from logint: " + output[0] + " " + output[1]);
 			if (typeof this.logintQueueCallbacks[this.logintQueueCurrentIndex] === "function") {
 				this.logintQueueCallbacks[this.logintQueueCurrentIndex](output[1]);
@@ -387,17 +385,17 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		this.msieveQueueCurrentIndex = 0;
 		this.msieveCallbacks = {};
 		this.factorHistory = {};
-		this.piXHistory = {
+		this.piXHistory = {/*
 			"2":  new ArbInt("1"),
 			"3":  new ArbInt("2"),
 			"5":  new ArbInt("3"),
 			"7":  new ArbInt("4"),
 			"11": new ArbInt("5")
-		};
+		*/};
 		this.getPiX = function (number, callback, ignoreDepth) {
 			//console.log("Getting piX for " + number, typeof number);
 			if (number <= 1) callback(1);
-			else if (number >= PIXDEPTH && this.piXHistory[number] !== undefined) {
+			else if (this.piXHistory[number] !== undefined) {
 				//console.log("Using pre-processed callback for number: " + number + "with piX value: " + this.piXHistory[number]);
 				callback(this.piXHistory[number].value);
 			} else if (number > 9999999999999) {
@@ -597,3 +595,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Prime.launchAsyncProcesses();
 	var currfactor = new RootFactor(number, AWSCallback);
 };
+/*module.exports.factorize({
+	"number": "a5978456497258694945674235954674267846395654398554",
+	"piXDepth": "1"
+}, null, console.log);*/
