@@ -8,73 +8,92 @@ var init = function(){
     
     window.addEventListener("resize", resizeCanvas);
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.z = 15;
 
     var textureLoader = new THREE.TextureLoader();
-    var planets = [planet1, planet2, planet3, planet4];
+    var planetJSVGs = [planet1, planet2, planet3, planet4];
     var planetMap;
     var planetMaterial;
+    var planetScaling;
+    var planet;
 
-    orbit1 = new THREE.Group();
-    orbit2 = new THREE.Group();
-
-    var orbitPathGeometry = new THREE.Geometry();
+    orbitPathGeometry = new THREE.Geometry();
     var orbitSegments = 256;
     for(var i = 0; i < orbitSegments; i++){
         orbitPathGeometry.vertices.push(new THREE.Vector3(Math.cos(i * (2 * Math.PI / orbitSegments)), Math.sin(i * (2 * Math.PI / orbitSegments)), 0));
     }
-    var orbitPathMaterial = new THREE.LineBasicMaterial();
+    orbitPathMaterial = new THREE.LineBasicMaterial();
     orbitPathMaterial.transparent = true;
     orbitPathMaterial.opacity = 0.4;
 
-    orbit1Path = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
-    var orbit1PathScale = new THREE.Matrix4();
-    orbit1PathScale.makeScale(3, 3, 3);
-    orbit1Path.applyMatrix(orbit1PathScale);
-    orbit1.add(orbit1Path);
-
-    orbit2Path = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
-    var orbit2PathScale = new THREE.Matrix4();
-    orbit2PathScale.makeScale(1.5, 1.5, 1.5);
-    orbit2Path.applyMatrix(orbit2PathScale);
-    orbit2.add(orbit2Path);
-
-    planetMap = textureLoader.load(planets[Math.floor(Math.random() * planets.length)]());
+    planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
     planetMaterial = new THREE.SpriteMaterial({map: planetMap});
-    planetCenter = new THREE.Sprite(planetMaterial);
+    planet = new THREE.Sprite(planetMaterial);
+    solSys = {
+        sprite: planet,
+        distance: 0,
+        speed: 0,
+        children: []
+    };
 
-    planetMap = textureLoader.load(planets[Math.floor(Math.random() * planets.length)]());
+    planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
     planetMaterial = new THREE.SpriteMaterial({map: planetMap});
-    planet1 = new THREE.Sprite(planetMaterial);
-    var planet1Scaling = new THREE.Matrix4();
-    planet1Scaling.makeScale(0.66, 0.66, 0.66);
-    planet1.applyMatrix(planet1Scaling);
-    planet1.position.set(3, 0, 0);
+    planet = new THREE.Sprite(planetMaterial);
+    planetScaling = new THREE.Matrix4();
+    planetScaling.makeScale(0.66, 0.66, 0.66);
+    planet.applyMatrix(planetScaling);
+    solSys.children.push({
+        sprite: planet,
+        distance: 3,
+        speed: 0.1,
+        children: []
+    });
 
-    planetMap = textureLoader.load(planets[Math.floor(Math.random() * planets.length)]());
+    planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
     planetMaterial = new THREE.SpriteMaterial({map: planetMap});
-    planet2 = new THREE.Sprite(planetMaterial);
-    var planet2Scaling = new THREE.Matrix4();
-    planet2Scaling.makeScale(0.44, 0.44, 0.44);
-    planet2.applyMatrix(planet2Scaling);
-    planet2.position.set(1.5, 0, 0);
-    
-    orbit2.position.set(planet1.position.x, planet1.position.y, planet1.position.z);
-    orbit2.add(planet2);
-    orbit1.add(planet1);
-    orbit1.add(orbit2);
+    planet = new THREE.Sprite(planetMaterial);
+    planetScaling = new THREE.Matrix4();
+    planetScaling.makeScale(0.44, 0.44, 0.44);
+    planet.applyMatrix(planetScaling);
+    solSys.children[0].children.push({
+        sprite: planet,
+        distance: 1.5,
+        speed: 0.5
+    });
 
-    scene.add(planetCenter);
-    scene.add(orbit1);
+    addPlanets(solSys, solSys.sprite.position);
+}
 
-    camera.position.z = 15;
+var addPlanets = function(planet, parentPosition){
+    var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
+    var orbitPathScale = new THREE.Matrix4();
+    orbitPathScale.makeScale(planet.distance, planet.distance, planet.distance);
+    orbitPath.applyMatrix(orbitPathScale);
+    planet.orbitPath = orbitPath;
+    scene.add(orbitPath);
+    scene.add(planet.sprite);
+    if(planet.children){
+        for(var i = 0; i < planet.children.length; i++){
+            addPlanets(planet.children[i], planet.sprite.position);
+        }
+    }
+}
+
+var updatePlanets = function(planet, parentPosition){
+    planet.sprite.position.set(parentPosition.x + Math.cos(clock.getElapsedTime() * planet.speed) * planet.distance, parentPosition.y + Math.sin(clock.getElapsedTime() * planet.speed) * planet.distance, parentPosition.z);
+    planet.orbitPath.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
+    if(planet.children){
+        for(var i = 0; i < planet.children.length; i++){
+            updatePlanets(planet.children[i], planet.sprite.position);
+        }
+    }
 }
 
 var render = function(){
     requestAnimationFrame(render);
     var delta = clock.getDelta();
 
-    orbit1.rotation.z += 0.125 * delta;
-    orbit2.rotation.z += 1 * delta;
+    updatePlanets(solSys, solSys.sprite.position);
 
     renderer.render(scene, camera);
 }
