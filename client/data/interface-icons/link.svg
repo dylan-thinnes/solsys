@@ -13,7 +13,7 @@
    version="1.1"
    id="svg12"
    sodipodi:docname="link.svg"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+   inkscape:version="0.92.2 (unknown)">
   <metadata
      id="metadata18">
     <rdf:RDF>
@@ -36,15 +36,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-width="1366"
+     inkscape:window-height="711"
      id="namedview14"
      showgrid="false"
      inkscape:zoom="0.31220833"
-     inkscape:cx="-263.07249"
-     inkscape:cy="281.90103"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:cx="837.1544"
+     inkscape:cy="410.02061"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg12" />
   <circle
@@ -54,17 +54,17 @@
      cy="141.42136"
      cx="141.42136" />
   <path
-     style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1;stroke-opacity:1"
+     style="fill:#55d400;stroke:#55d400;stroke-width:1;stroke-opacity:1;fill-opacity:1"
      inkscape:connector-curvature="0"
      id="path4"
      d="M 131.42136,171.42136 H 81.421356 a 30,30 0 1 1 0,-60 H 131.42136 V 91.421356 H 81.421356 a 50.000002,50.000002 0 0 0 0,100.000004 h 50.000004 z" />
   <path
-     style="fill:#b3b3b3;stroke:#b3b3b3;stroke-width:1;stroke-opacity:1"
+     style="fill:#55d400;stroke:#55d400;stroke-width:1;stroke-opacity:1;fill-opacity:1"
      inkscape:connector-curvature="0"
      id="path6"
      d="m 191.42136,131.42136 v 20 H 91.421356 v -20 z" />
   <path
-     style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1;stroke-opacity:1"
+     style="fill:#55d400;stroke:#55d400;stroke-width:1;stroke-opacity:1;fill-opacity:1"
      inkscape:connector-curvature="0"
      id="path8"
      d="m 201.42136,191.42136 h -50 v -20 h 50 a 30,30 0 0 0 0,-60 h -50 V 91.421356 h 50 a 50.000002,50.000002 0 1 1 0,100.000004 z" />

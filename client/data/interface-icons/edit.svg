@@ -13,7 +13,7 @@
    version="1.1"
    id="svg10"
    sodipodi:docname="edit.svg"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+   inkscape:version="0.92.2 (unknown)">
   <metadata
      id="metadata16">
     <rdf:RDF>
@@ -36,15 +36,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-width="1366"
+     inkscape:window-height="711"
      id="namedview12"
      showgrid="false"
      inkscape:zoom="0.31220834"
-     inkscape:cx="423.72586"
-     inkscape:cy="219.67211"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:cx="326.03468"
+     inkscape:cy="597.62486"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg10" />
   <circle
@@ -54,12 +54,12 @@
      cy="141.42136"
      cx="141.42136" />
   <path
-     style="fill:#ffe680;stroke:#ffe680;stroke-width:1;stroke-opacity:1"
+     style="fill:#ffdb38;stroke:#ffe680;stroke-width:1;stroke-opacity:1;fill-opacity:1"
      inkscape:connector-curvature="0"
      id="path4"
      d="M 61.421356,181.42136 171.42136,71.421356 l 40,40.000004 -110,110 H 61.421356 Z" />
   <path
-     style="fill:#ffaaee;stroke:#ffaaee;stroke-width:1;stroke-opacity:1"
+     style="fill:#ffdb38;stroke:#ffdb38;stroke-width:1;stroke-opacity:1;fill-opacity:1"
      inkscape:connector-curvature="0"
      id="path6"
      d="m 231.42136,71.421356 -20,-20 a 14.142136,14.142136 0 0 0 -20,0 l -10,10 40,40.000004 10,-10.000004 a 14.142136,14.142136 0 0 0 0,-20 z" />

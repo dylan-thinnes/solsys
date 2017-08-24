@@ -238,6 +238,51 @@ canvas {
 }
 
 .largeButton .icon#view {
+	background-image: url(../data/interface-icons/view.svg);
+}
+.largeButton .icon#edit {
+	background-image: url(../data/interface-icons/edit.svg);
+}
+.largeButton .icon#share {
+	background-image: url(../data/interface-icons/share.svg);
+}
+.largeButton .icon#orbit {
+	background-image: url(../data/interface-icons/orbit.svg);
+}
+.largeButton .icon#move {
+	background-image: url(../data/interface-icons/move.svg);
+}
+.largeButton .icon#zoom-in {
+	background-image: url(../data/interface-icons/zoom-in.svg);
+
+}
+.largeButton .icon#zoom-out {
+	background-image: url(../data/interface-icons/zoom-out.svg);
+}
+.largeButton .icon#rotate {
+	background-image: url(../data/interface-icons/rotate.svg);
+}
+.largeButton .icon#paint {
+	background-image: url(../data/interface-icons/paint.svg);
+}
+.largeButton .icon#link {
+	background-image: url(../data/interface-icons/link.svg);
+}
+.largeButton .icon#download {
+	background-image: url(../data/interface-icons/download.svg);
+}
+.largeButton .icon#reddit {
+	background-image: url(../data/interface-icons/reddit.svg);
+}
+.largeButton .icon#facebook {
+	background-image: url(../data/interface-icons/facebook.svg);
+}
+.largeButton .icon#twitter {
+	background-image: url(../data/interface-icons/twitter.svg);
+}
+
+
+/*.largeButton .icon#view {
 	background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221069.012%22%20height%3D%221069.012%22%20viewBox%3D%22-5%20-5%20292.84271247%20292.84271247%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%3E%3Ccircle%20cx%3D%22141.421%22%20cy%3D%22141.421%22%20r%3D%22141.421%22%20stroke-width%3D%225%22%2F%3E%3Ccircle%20fill%3D%22%23fff%22%20cx%3D%22141.421%22%20cy%3D%22141.421%22%20r%3D%2230%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M191.421%20141.421a50%2050%200%201%201-100%200h-50a113.333%20113.333%200%200%200%20200%200h-50zM91.421%20141.421a50%2050%200%201%201%20100%200h50a113.333%20113.333%200%200%200-200%200h50z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);
 }
 .largeButton .icon#edit {
@@ -280,3 +325,4 @@ canvas {
 .largeButton .icon#twitter {
 	background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221076.279%22%20height%3D%221076.279%22%20viewBox%3D%22-5%20-5%20294.76547851%20294.76547851%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%3E%3Ccircle%20cx%3D%22142.383%22%20cy%3D%22142.383%22%20r%3D%22142.383%22%20stroke-width%3D%225%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M207.306%2076.817a39.114%2039.114%200%200%200-66.209%2035.997%20112.262%20112.262%200%200%201-80.993-40.496%2039.066%2039.066%200%200%200%2012.214%2052.066%2036.001%2036.001%200%200%201-17.999-5.142%2039.899%2039.899%200%200%200%2031.497%2039.21%2061.53%2061.53%200%200%201-17.355%201.286%2038.714%2038.714%200%200%200%2036.64%2026.355%2075.257%2075.257%200%200%201-57.21%2016.713%20111.414%20111.414%200%200%200%20170.985-99.634%2070.843%2070.843%200%200%200%2018.641-19.927%2058.748%2058.748%200%200%201-21.855%205.785%2037.583%2037.583%200%200%200%2016.713-21.212%2068.545%2068.545%200%200%201-25.07%209z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);
 }
+*/

@@ -13,7 +13,7 @@
    version="1.1"
    id="svg16"
    sodipodi:docname="rotate.svg"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+   inkscape:version="0.92.2 (unknown)">
   <metadata
      id="metadata22">
     <rdf:RDF>
@@ -22,6 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -36,15 +37,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-width="1366"
+     inkscape:window-height="711"
      id="namedview18"
      showgrid="false"
      inkscape:zoom="0.44152926"
-     inkscape:cx="543.7575"
-     inkscape:cy="542.07373"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:cx="430.51473"
+     inkscape:cy="530.74945"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg16" />
   <circle
@@ -54,19 +55,19 @@
      cy="141.42136"
      cx="141.42136" />
   <circle
-     style="fill:#008000;stroke:#008000;stroke-width:1;fill-opacity:1;stroke-opacity:1"
+     style="fill:#fffffa;stroke:#ffffff;stroke-width:0.99987284;fill-opacity:1;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      id="circle4"
      r="28.284271"
      cy="141.42136"
      cx="141.42136" />
   <circle
-     style="fill:#a02c2c;stroke:#a02c2c;stroke-width:1;fill-opacity:1;stroke-opacity:1"
+     style="fill:#ffdb38;stroke:#ffdb38;stroke-width:1;fill-opacity:1;stroke-opacity:1"
      id="circle6"
      r="20"
      cy="141.42136"
      cx="231.42136" />
   <circle
-     style="fill:#0044aa;stroke:#0044aa;stroke-width:1;stroke-opacity:1;fill-opacity:1"
+     style="fill:#ffdb38;stroke:#ffdb38;stroke-width:1;stroke-opacity:1;fill-opacity:1"
      id="circle8"
      r="20"
      cy="96.421356"
@@ -77,7 +78,7 @@
      id="path10"
      d="M 55.465491,114.74573 A 90,90 0 1 0 229.19913,161.29752" />
   <path
-     style="fill:#808080;stroke:#808080;stroke-width:5;stroke-opacity:1;fill-opacity:1"
+     style="fill:#ffffff;stroke:#ffffff;stroke-width:5;stroke-opacity:1;fill-opacity:1"
      inkscape:connector-curvature="0"
      id="path12"
      d="m 227.5206,101.27262 -4.53154,2.11309 -4.53154,2.11309 A 85,85 0 0 0 126.66126,57.712697 l 0.86824,4.924039 -40.954368,1.215995 A 95,95 0 0 1 227.5206,101.27262 Z" />
