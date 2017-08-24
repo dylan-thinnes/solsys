@@ -10,6 +10,26 @@ var init = function(){
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     camera.position.z = 15;
 
+    var starsColours = [0x774444, 0x447744, 0x444477, 0x777744, 0x774477, 0x447777];
+    var starsGeometries = [];
+    var starsMaterials = [];
+    for (var ii = 0; ii < starsColours.length; ii++) {
+        starsGeometries[ii] = new THREE.Geometry();
+        starsMaterials[ii] = new THREE.PointsMaterial({color: starsColours[ii], size: 2, sizeAttenuation: false});
+    }
+    for (var ii = 0; ii < 10000; ii++) {
+        var star = new THREE.Vector3();
+        star.x = THREE.Math.randFloatSpread(4000);
+        star.y = THREE.Math.randFloatSpread(4000);
+        star.z = THREE.Math.randFloatSpread(4000);
+        starsGeometries[ii % starsColours.length].vertices.push(star);
+    }
+    var starsFields = [];
+    for (var ii = 0; ii < starsColours.length; ii++) {
+        starsFields[ii] = new THREE.Points(starsGeometries[ii], starsMaterials[ii]);
+        scene.add(starsFields[ii]);
+    }
+
     var textureLoader = new THREE.TextureLoader();
     var planetJSVGs = [planet1, planet2, planet3, planet4];
     var planetMap;
