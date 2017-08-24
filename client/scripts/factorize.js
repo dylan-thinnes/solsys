@@ -1,5 +1,11 @@
 'use strict';
 // The SieveOfEratosthenes is a class used to produce sieves filled with primes by using a TypedArray. This implementation of the class can produce the first million primes in 300-400ms.
+var SoEBenchmark = function (count) {
+	for (var ii = 0; ii < count; ii++) {
+		var test = new SoE(2000000, true);
+	}
+}
+
 var SieveOfEratosthenes = function (initSize, benchmark) {
 	if (!isNaN(initSize) && typeof initSize === "number") this.gen(initSize, benchmark);
 };
@@ -13,20 +19,24 @@ SieveOfEratosthenes.prototype.genSieve = function (size, benchmark) {
 	this.bitSize = size * 8;
 	this.sieve = new ArrayBuffer(size);
 	this.sieveReader = new Uint32Array(this.sieve);
+	var upperLimit = this.bitSize / 32;
+	//this.list = new Uint32Array(Math.ceil(1.25506 * this.bitSize / Math.log(this.bitSize)));
+	//this.list[0] = 2;
 	this.sieveReader[0] = 2863311529;
 	var upperLimit = Math.ceil(Math.sqrt(this.bitSize) / 32);
 	var jj = 1;
+	//var kk = 1;
 	var prime = 1;
 	var primeMultiple = 0;
 	for (var ii = 0; ii < upperLimit; ii++) {
 		while (jj > 0) {
 			if ((this.sieveReader[ii] & jj) === 0) {
+				//this.list[kk++] = prime;
 				primeMultiple = (prime * prime) - 1;
 				while (primeMultiple < this.bitSize) {
-					var largeCursor = Math.floor(primeMultiple / 32);
-					var smallCursor = 1 << (primeMultiple % 32);
-					var invertedSmallCursor = 4294967295 ^ smallCursor;
-					this.sieveReader[largeCursor] = (this.sieveReader[largeCursor] & invertedSmallCursor) + smallCursor;
+					/*var invertedSmallCursor = 4294967295 ^ smallCursor;
+					this.sieveReader[largeCursor] = (this.sieveReader[largeCursor] & invertedSmallCursor) + smallCursor;*/
+					this.sieveReader[Math.floor(primeMultiple / 32)] |= 1 << (primeMultiple % 32);
 					primeMultiple += prime;
 				}
 			}
@@ -72,6 +82,7 @@ SieveOfEratosthenes.prototype.pi = function (number) {
 		var threshold = Math.floor((number - 1) / 32);
 		var small = (number - 1) % 32;
 	} else var threshold = this.elements;
+	if (number < 2) return 0;
 	this.count = 1;
 	var jj = 1;
 	for (var ii = 0; ii < threshold; ii++) {
@@ -122,8 +133,19 @@ var Factorizer = function (sieveSize) {
 
 		}
 	}
-	this.remoteGetFactorization = function (number, callback) {
-		
+	this.getRemoteFactorization = function (number, piXDepth, callback) {
+		piXDepth = (!isNaN(piXDepth) && piXDepth !== null) ? piXDepth.toString() : piXDepth;
+		number = (!isNaN(number) && number !== null) ? number.toString() : "1";
+		if (isNaN(number)) throw "Can't get remote factorization, " + Array.from(arguments).toString();
+		var req = new XMLHttpRequest();
+		req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=" + number.toString() + "&piXDepth=" + piXDepth);
+		req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
+		req.onreadystatechange = function (event) {
+			if (this.readyState === 4) {
+				callback(JSON.parse(this.response)["body"]);
+			}
+		}
+		req.send();
 	}
 	this.getFactors = function (numerator, callback) {
 		//Input sanitation begins here
@@ -143,7 +165,7 @@ var Factorizer = function (sieveSize) {
 		while (divisor <= maxFactor && remainder > 1) {
 			if (numerator % divisor === 0) {
 				//factors[index] = (factors[index] === undefined) ? 0 : factors[index];
-				console.log(divisor);
+				//console.log(divisor);
 				var power = 0;
 				while (remainder % divisor === 0 && remainder > 1) {
 					remainder /= divisor;
@@ -190,7 +212,7 @@ var Factorizer = function (sieveSize) {
 			//console.log("Using pre-processed callback for x: " + x + "with piX value: " + this.piXHistory[x]);
 			callback(this.piXHistory[x.toString()]);
 		} else {
-			if (x > this.limit) callback(null);
+			if (x > this.lowerLimit) callback(null);
 			var res = this.sieve.pi(x);
 			this.piXHistory[x.toString()] = res;
 			callback(res);
@@ -201,16 +223,20 @@ var Factorizer = function (sieveSize) {
 var Prime = new Factorizer(2000000);
 
 const Factor = function (value, power, isPrime, onCompletelyDone, piXChainID) {
-	if (value > Prime.limit) {
-		this.isFilledRemote = true;
-		Prime.remoteGetFactorization(value.toString(), this.fillRemoteFactorization.bind(this));
-	}
 	this.onCompletelyDone = onCompletelyDone;
 	this.isPrime = isPrime;
 	this.factors = new Array();
 	this.piXChainID = piXChainID;
-	this.setValue(value);
-	this.setPower(power);
+	if (value > Prime.limit) {
+		console.log("setting filled remote...")
+		this.isFilledRemote = true;
+		this.tempValue = value;
+		this.tempPower = power;
+		Prime.getRemoteFactorization(this.tempValue.toString(), null, this.fillRemoteFactorization.bind(this));
+	} else {
+		this.setValue(value);
+		this.setPower(power);
+	}
 }
 Factor.prototype.getValue = function () {
 	return this.value;
@@ -228,30 +254,34 @@ Factor.prototype.setValue = function (newValue) {
 	//console.log("Exiting setValue");
 }
 Factor.prototype.setFactors = function (newFactors) {
-
-	var newFactorsLength = newFactors.length;
-	if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === "1")) {
-		//console.log("Setting empty factors");
-		this.factorsLength = null;
-		this.factors = [];
-		this.isPrime = true;
-		//console.log("Calling getPiX for Factor with the following value: " + this.value, typeof this.value);
-		Prime.getPiX(this.value, this.setPiX.bind(this));
+	if (newFactors["remainder"] !== undefined) {
+		this.isFilledRemote = true;
+		Prime.getRemoteFactorization(this.value.toString(), null, this.fillRemoteFactorization.bind(this));
 	} else {
-		this.factorsLength = newFactorsLength;
-		//console.log(newFactors);
-		this.isPrime = false;
-		this.childDone("piX");
-		var factorList = [];
-		for (var ii = 0; ii < newFactorsLength; ii++) {
-			factorList[ii] = newFactors[ii].value;
+		var newFactorsLength = newFactors.length;
+		if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === "1")) {
+			//console.log("Setting empty factors");
+			this.factorsLength = null;
+			this.factors = [];
+			this.isPrime = true;
+			//console.log("Calling getPiX for Factor with the following value: " + this.value, typeof this.value);
+			Prime.getPiX(this.value, this.setPiX.bind(this));
+		} else {
+			this.factorsLength = newFactorsLength;
+			//console.log(newFactors);
+			this.isPrime = false;
+			this.childDone("piX");
+			var factorList = [];
+			for (var ii = 0; ii < newFactorsLength; ii++) {
+				factorList[ii] = newFactors[ii].value;
+			}
+			var piXChainID = Prime.newPiXChain(factorList);
+			for (var ii = 0; ii < newFactorsLength; ii++) {
+				this.factors.push(new Factor(newFactors[ii].value, newFactors[ii].power, true, this.childDone.bind(this), piXChainID));
+			}
 		}
-		var piXChainID = Prime.newPiXChain(factorList);
-		for (var ii = 0; ii < newFactorsLength; ii++) {
-			this.factors.push(new Factor(newFactors[ii].value, newFactors[ii].power, true, this.childDone.bind(this), piXChainID));
-		}
+		this.childDone("factorsInit");
 	}
-	this.childDone("factorsInit");
 }
 Factor.prototype.getPower = function () {
 	return this.power;
@@ -267,10 +297,15 @@ Factor.prototype.setPower = function (newPower) {
 Factor.prototype.setPiX = function (newPiX) {
 	//console.log("Setting piX " + newPiX);
 	//console.log(newPiX, typeof newPiX, newPiX === null);
+	//console.log("subtracting pix", newPiX);
+	if (newPiX === null) console.log("null output from getPiX");
 	var postponePiX = false;
-	if (parseInt(newPiX) <= 1 || newPiX === null) {
+	if (parseInt(newPiX) <= 1) {
 		//console.log("caught terminating piX...", this.value, newPiX);
-		this.piX = newPiX;
+		this.piX = (parseInt(newPiX) - 1).toString();
+		this.childDone("piX");
+	} else if (newPiX === null) {
+		this.piX = null;
 		this.childDone("piX");
 	} else {
 		if (this.piXChainID !== undefined) {
@@ -279,12 +314,15 @@ Factor.prototype.setPiX = function (newPiX) {
 			if (pos > 0) {
 				var previousPiX = Prime.piXChains[this.piXChainID][pos - 1];
 				if (Prime.piXHistory[previousPiX] !== undefined) {
+					newPiX--;
 					newPiX -= Prime.piXHistory[previousPiX];
 				} else {
 					this.tempPiX = newPiX;
 					postponePiX = true;
 					Prime.getPiX(previousPiX, this.subtractPiX.bind(this), true);
 				}
+			} else {
+				newPiX--;
 			}
 		}
 		//console.log("postponePiX: " + postponePiX);
@@ -299,29 +337,54 @@ Factor.prototype.setPiX = function (newPiX) {
 	//console.log("Exiting piX");
 }
 Factor.prototype.subtractPiX = function (subtraction) {
-	var newPiX = this.tempPiX - subtraction;
+	console.log("subtracting pix");
+	var newPiX = this.tempPiX - subtraction - 1;
 	if (parseInt(newPiX) <= 1 || newPiX === null) {
 		this.piX = newPiX;
 		this.childDone("piX");
 	} else this.piX = new Factor(newPiX, "1", false, this.childDone.bind(this, "piX"));
 }
 Factor.prototype.deepClone = function () {
-	if (this.value === 1) {
-		return "1";
+	if (this.isFilledRemote) {
+		console.log("filled remote being printed.");
+		return this.filledRemoteFactorization;
 	} else {
-		var child = "";
-		var ii = this.factors.length;
-		console.log(this.piX);
-		var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === "1" ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
-		while (ii--) {
-			currClone += this.factors[ii].deepClone();
-			if (ii !== 0) currClone += ", ";
+		if (this.value === 1) {
+			return "1";
+		} else if (this.factors.length === 1) {
+			return this.factors[0].deepClone();
+		} else {
+			var child = "";
+			var ii = this.factors.length;
+			var currClone = "{";
+			if (this.isPrime === true) {
+				currClone += "\"value\": \"" + this.value.toString() + "\", ";
+				currClone += "\"isPrime\": true, ";
+				currClone += "\"power\": " + (isNaN(this.power) && this.power !== null ? this.power.deepClone() : "\"" + (this.power !== null ? this.power.toString() : "null") + "\"") + ", ";
+				currClone += "\"piX\": " + (isNaN(this.piX) && this.piX !== null ? this.piX.deepClone() : "\"" + (this.piX !== null ? this.piX.toString() : "null") + "\"");
+			} else {
+				currClone += "\"value\": \"" + this.value.toString() + "\", ";
+				currClone += "\"isPrime\": false, ";
+				currClone += "\"factors\": [";
+				var ii = this.factors.length;
+				while (ii--) {
+					currClone += this.factors[ii].deepClone();
+					if (ii !== 0) currClone += ", ";
+				}
+				currClone += "]";
+			}
+			/*var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === "1" ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
+			while (ii--) {
+				currClone += this.factors[ii].deepClone();
+				if (ii !== 0) currClone += ", ";
+			}
+			if (!(this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined)) currClone += "]";*/
+			return currClone + "}";
 		}
-		if (!(this.isPrime === true && this.piX !== 1 && this.piX !== null && this.piX !== undefined)) currClone += "]";
-		return currClone + "}";
 	}
 }
 Factor.prototype.childDone = function (type) {
+	//console.log("childDone of type: " + type);
 	if (type === "power") this.powerDone = true;
 	else if (type === "piX") this.piXDone = true;
 	else if (type === "factorsInit") this.factorsInitDone = true;
@@ -332,6 +395,18 @@ Factor.prototype.childDone = function (type) {
 }
 Factor.prototype.setChildrenLength = function (newChildrenLength) {
 	this.factorsLength = newChildrenLength;
+}
+Factor.prototype.fillRemoteFactorization = function (remoteOutput) {
+	console.log("starting factorProfile...");
+	this.factorProfile = new FactorProfile(remoteOutput, this.remoteFactorizationFilled.bind(this));
+}
+Factor.prototype.remoteFactorizationFilled = function (finalOutput) {
+	console.log("filling remote factorization with: ", finalOutput);
+	this.filledRemoteFactorization = finalOutput;
+	this.childDone("piX");
+	this.childDone("power");
+	this.childDone("factorsInit");
+	while (this.factorsCounter !== this.factorsLength) this.childDone();
 }
 Factor.prototype.powerDone = false;
 Factor.prototype.piXDone = false;
@@ -350,7 +425,89 @@ const RootFactor = function (value, callback) {
 	}
 	this.isPrime = false;
 	this.factors = new Array();
-	this.setValue(value);
-	this.setPower("1");
+	if (value > Prime.limit) {
+		console.log("getting remote...");
+		this.isFilledRemote = true;
+		this.tempValue = value;
+		this.tempPower = "1";
+		Prime.getRemoteFactorization(this.tempValue.toString(), null, this.fillRemoteFactorization.bind(this));
+	} else {
+		this.setValue(value);
+		this.setPower("1");
+	}
 }
 RootFactor.prototype = Factor.prototype;
+
+var FactorProfile = function (profileString, onCompletelyDone) {
+	this.parsedValue = JSON.parse(profileString);
+	//console.log(this.parsedValue);
+	this.nodeCount = 0;
+	this.piXsChecked = 0;
+	this.powersChecked = 0;
+	this.factorListsChecked = 0;
+	this.callbacksSet = 0;
+	this.callbacksDone = 0;
+	this.onCompletelyDone = onCompletelyDone;
+	this.deepCloneSearchNull(this.parsedValue);
+}
+FactorProfile.prototype.deepCloneSearchNull = function (input, prevValue) {
+	this.nodeCount++;
+	if (isNaN(prevValue) || prevValue === null) prevValue = 0;
+	console.log("input is: ", input);
+	if (input.piX === null) {
+		//console.log("input.piX is convertable null");
+		Prime.getPiX(parseInt(input.value), this.parsePiX.bind(this, input, prevValue));
+	} else if (typeof input.piX === "object") {
+		this.deepCloneSearchNull(input.piX);
+	}
+	this.piXsChecked++;
+	if (input.power !== null && typeof input.power === "object") {
+		this.deepCloneSearchNull(input.power);
+	}
+	this.powersChecked++;
+	if (input.factors !== undefined) {
+		var factorsLength = input.factors.length;
+		/*var factorsList = [];
+		for (var ii = 0; ii < factorslength; ii++) {
+			factorsList[factorsLength - 1 - ii] = this.factors[ii].value;
+		}*/
+		var prevValue = 0;
+		for (var ii = 0; ii < factorsLength; ii++) {
+			//console.log("current factors is: ", input.factors[ii])
+			this.deepCloneSearchNull(input.factors[factorsLength - ii - 1], prevValue);
+			prevValue = parseInt(input.factors[factorsLength - ii - 1].value);
+		}
+	}
+	this.factorListsChecked++;
+	console.log("state of this 1: ", this.nodeCount, this.piXsChecked, this.powersChecked, this.factorListsChecked, this.callbacksSet, this.callbacksDone);
+	this.checkDone();
+}
+FactorProfile.prototype.parsePiX = function (input, prevValue, piX) {
+	this.callbacksSet++;
+	//value, power, isPrime, onCompletelyDone, piXChainID
+	var dpx = piX - Prime.sieve.pi(prevValue) - 1;
+	if (dpx <= 1) this.replaceNullWithPiX(input, dpx);
+	else new RootFactor(dpx, this.replaceNullWithPiX.bind(this, input));
+}
+FactorProfile.prototype.replaceNullWithPiX = function (input, res) {
+	//console.log("replacing null with piX, searching for factors...", piX.factors);
+	/*if (piX.factors !== undefined) {
+		for (var ii = 0; ii < piX.factors.length; ii++) {
+			console.log("current factors is: ", piX.factors[ii]);
+			this.deepCloneSearchNull(piX.factors[ii]);
+		}
+	}*/
+	this.callbacksDone++;
+	console.log("res", res);
+	if (res <= 1) input.piX = res.toString();
+	else input.piX = JSON.parse(res);
+	this.checkDone();
+}
+FactorProfile.prototype.checkDone = function () {
+	console.log("checking done...");
+	if (this.callbacksSet === this.callbacksDone && this.nodeCount === this.factorListsChecked && this.nodeCount === this.powersChecked && this.nodeCount === this.piXsChecked) {
+		console.log("state of this 2: ", this.nodeCount, this.piXsChecked, this.powersChecked, this.factorListsChecked);
+		console.log("checkDone has passed");
+		this.onCompletelyDone(/*JSON.stringify(*/this.parsedValue/*)*/);
+	}
+}

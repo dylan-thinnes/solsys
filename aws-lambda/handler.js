@@ -17,6 +17,7 @@ Object.defineProperties(ArbInt.prototype, {
 				if (this.reader[ii] !== 0 && inPadding === true) inPadding = false;
 				res += this.reader[ii].toString();
 			}
+			if (res.length === 0) res = "0";
 			return res;
 		},
 		set: function (newValue) {
@@ -494,9 +495,12 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		//console.log("Setting piX " + newPiX);
 		//console.log(newPiX, typeof newPiX, newPiX === null);
 		var postponePiX = false;
-		if (parseInt(newPiX) <= 1 || newPiX === null) {
+		if (parseInt(newPiX) <= 1) {
 			//console.log("caught terminating piX...", this.value, newPiX);
-			this.piX = newPiX;
+			this.piX = (parseInt(newPiX) - 1).toString();
+			this.childDone("piX");
+		} else if (newPiX === null) {
+			this.piX = null;
 			this.childDone("piX");
 		} else {
 			if (this.piXChainID !== undefined) {
@@ -510,6 +514,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 						var deltaNewPiX = (new ArbInt(newPiX));
 						//console.log(deltaNewPiX.value, Prime.piXHistory[previousPiX].value);
 						deltaNewPiX.subtract(Prime.piXHistory[previousPiX]);
+						deltaNewPiX.subtract(ArbInt.POW2[0]);
 						//console.log(deltaNewPiX.value);
 						newPiX = deltaNewPiX.value;
 					} else {
@@ -517,6 +522,10 @@ module.exports.factorize = (event, context, AWSCallback) => {
 						postponePiX = true;
 						Prime.getPiX(previousPiX, this.subtractPiX.bind(this), true);
 					}
+				} else {
+					var deltaNewPiX = new ArbInt(newPiX);
+					deltaNewPiX.subtract(ArbInt.POW2[0]);
+					newPiX = deltaNewPiX.value;
 				}
 			}
 			//console.log("postponePiX: " + postponePiX);
@@ -533,6 +542,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.subtractPiX = function (subtraction) {
 		var deltaNewPiX = new ArbInt(this.tempPiX);
 		deltaNewPiX.subtract(new ArbInt(subtraction));
+		deltaNewPiX.subtract(ArbInt.POW2[0]);
 		var newPiX = deltaNewPiX.value;
 		if (parseInt(newPiX) <= 1 || newPiX === null) {
 			this.piX = newPiX;
@@ -547,12 +557,29 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		} else {
 			var child = "";
 			var ii = this.factors.length;
-			var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === "1" ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
+			var currClone = "{";
+			if (this.isPrime === true) {
+				currClone += "\"value\": \"" + this.value.toString() + "\", ";
+				currClone += "\"isPrime\": true, ";
+				currClone += "\"power\": " + (isNaN(this.power) && this.power !== null ? this.power.deepClone() : (this.power !== null ? "\"" + this.power.toString() + "\"" : "null")) + ", ";
+				currClone += "\"piX\": " + (isNaN(this.piX) && this.piX !== null ? this.piX.deepClone() : (this.piX !== null ? "\"" + this.piX.toString() + "\"" : "null"));
+			} else {
+				currClone += "\"value\": \"" + this.value.toString() + "\", ";
+				currClone += "\"isPrime\": false, ";
+				currClone += "\"factors\": [";
+				var ii = this.factors.length;
+				while (ii--) {
+					currClone += this.factors[ii].deepClone();
+					if (ii !== 0) currClone += ", ";
+				}
+				currClone += "]";
+			}
+			/*var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === "1" ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
 			while (ii--) {
 				currClone += this.factors[ii].deepClone();
 				if (ii !== 0) currClone += ", ";
 			}
-			if (!(this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined)) currClone += "]";
+			if (!(this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined)) currClone += "]";*/
 			return currClone + "}";
 		}
 	}
@@ -596,6 +623,5 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	var currfactor = new RootFactor(number, AWSCallback);
 };
 /*module.exports.factorize({
-	"number": "a5978456497258694945674235954674267846395654398554",
-	"piXDepth": "1"
+	"number": "37710923995430809842390802430983402432"
 }, null, console.log);*/
