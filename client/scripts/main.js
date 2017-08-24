@@ -1,7 +1,7 @@
 var init = function(){
     clock = new THREE.Clock();
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 10000);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById("middlelay").appendChild(renderer.domElement);
@@ -17,11 +17,11 @@ var init = function(){
         starsGeometries[ii] = new THREE.Geometry();
         starsMaterials[ii] = new THREE.PointsMaterial({color: starsColours[ii], size: 2, sizeAttenuation: false});
     }
-    for (var ii = 0; ii < 10000; ii++) {
+    for (var ii = 0; ii < 2000; ii++) {
         var star = new THREE.Vector3();
-        star.x = THREE.Math.randFloatSpread(4000);
-        star.y = THREE.Math.randFloatSpread(4000);
-        star.z = THREE.Math.randFloatSpread(4000);
+        star.x = THREE.Math.randFloatSpread(10000);
+        star.y = THREE.Math.randFloatSpread(10000);
+        star.z = THREE.Math.randFloatSpread(10000);
         starsGeometries[ii % starsColours.length].vertices.push(star);
     }
     var starsFields = [];
