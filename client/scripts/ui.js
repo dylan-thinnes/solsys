@@ -413,9 +413,9 @@ var loadUI = function () {
 	stage2.newButton("seed", "edit", document.getElementById("seed"), true);
 	stage2.newButton("link", "share", document.getElementById("link"));
 	stage2.newButton("download", "share", document.getElementById("download"));
-	stage2.newButton("reddit", "share", document.getElementById("reddit"));
+	/*stage2.newButton("reddit", "share", document.getElementById("reddit"));
 	stage2.newButton("facebook", "share", document.getElementById("facebook"));
-	stage2.newButton("twitter", "share", document.getElementById("twitter"));
+	stage2.newButton("twitter", "share", document.getElementById("twitter"));*/
 
 	stage1.showGroup("root");
 
