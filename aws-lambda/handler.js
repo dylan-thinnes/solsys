@@ -17,10 +17,7 @@ Object.defineProperties(ArbInt.prototype, {
 				if (this.reader[ii] !== 0 && inPadding === true) inPadding = false;
 				res += this.reader[ii].toString();
 			}
-<<<<<<< HEAD
-=======
 			if (res.length === 0) res = "0";
->>>>>>> feature-client-side-factorize
 			return res;
 		},
 		set: function (newValue) {
