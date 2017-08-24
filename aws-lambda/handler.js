@@ -17,6 +17,10 @@ Object.defineProperties(ArbInt.prototype, {
 				if (this.reader[ii] !== 0 && inPadding === true) inPadding = false;
 				res += this.reader[ii].toString();
 			}
+<<<<<<< HEAD
+=======
+			if (res.length === 0) res = "0";
+>>>>>>> feature-client-side-factorize
 			return res;
 		},
 		set: function (newValue) {
@@ -251,6 +255,8 @@ ArbInt.POW2 = [
 
 module.exports.factorize = (event, context, AWSCallback) => {
 	var number = event.number;
+	//var baseDeltaPiX = (!isNaN(event.baseDeltaPiX)) ? event.baseDeltaPiX : null;
+	//var isPrime = (event.isPrime.toLowerCase() === "true") ? true : false;
 	if (isNaN(number) || number === "") {
 		number = "1";
 		//console.log("Factorization being done with 1");
@@ -265,14 +271,15 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	if (process.cp === undefined) {
 		process.cp = require("child_process");
 	}
-	var PIXDEPTH = 999999;
+	var PIXDEPTH = (!isNaN(event.piXDepth)) ? parseInt(event.piXDepth) : 999999;
 	var msievePath = "/var/task/factorization-dependencies/aws-msieve -s /tmp/msieve.dat -q -m";
 	var primecountPath = "/var/task/factorization-dependencies/aws-primecount -c 1";
 	var logintPath = "/var/task/factorization-dependencies/aws-logint";
 	const factorsRegex = new RegExp(/p\d+: (\d+)/gm);
 	const numberRegex = new RegExp(/\d+/gm);
 	const piXRegex = new RegExp(/\d+/gm);
-	var output = {};
+
+	// The Prime singleton, once initialized, serves as a utility object which provides a number of useful factorization related functions. Once of its main roles in this regard is taking user input, communicating it to the C++ libraries logint, msieve, and primecount, and parsing their output.
 	const Prime = new (function Prime () {
 		this.launchAsyncProcesses = function () {
 			this.msieveProcess = process.cp.exec(msievePath);
@@ -328,8 +335,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		}
 		this.parsePrimecountOutput = function (stdout) {
 			var output = stdout.match(piXRegex);
-			if (this.piXHistory[output[0]] === undefined) this.piXHistory[output[0]] = new ArbInt(output[1]);
-			else AWSCallback("overwrite error!");
+			this.piXHistory[output[0]] = new ArbInt(output[1]);
 			//console.log("output from primecount: " + output[0] + " " + output[1]);
 			if (typeof this.primecountQueueCallbacks[this.primecountQueueCurrentIndex] === "function") {
 				this.primecountQueueCallbacks[this.primecountQueueCurrentIndex](output[1]);
@@ -342,8 +348,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		}
 		this.parseLogintOutput = function (stdout) {
 			var output = stdout.match(piXRegex);
-			if (this.piXHistory[output[0]] === undefined) this.piXHistory[output[0]] = new ArbInt(output[1]);
-			else AWSCallback("overwrite error!");
+			this.piXHistory[output[0]] = new ArbInt(output[1]);
 			//console.log("output from logint: " + output[0] + " " + output[1]);
 			if (typeof this.logintQueueCallbacks[this.logintQueueCurrentIndex] === "function") {
 				this.logintQueueCallbacks[this.logintQueueCurrentIndex](output[1]);
@@ -384,17 +389,17 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		this.msieveQueueCurrentIndex = 0;
 		this.msieveCallbacks = {};
 		this.factorHistory = {};
-		this.piXHistory = {
+		this.piXHistory = {/*
 			"2":  new ArbInt("1"),
 			"3":  new ArbInt("2"),
 			"5":  new ArbInt("3"),
 			"7":  new ArbInt("4"),
 			"11": new ArbInt("5")
-		};
+		*/};
 		this.getPiX = function (number, callback, ignoreDepth) {
 			//console.log("Getting piX for " + number, typeof number);
 			if (number <= 1) callback(1);
-			else if (number >= PIXDEPTH && this.piXHistory[number] !== undefined) {
+			else if (this.piXHistory[number] !== undefined) {
 				//console.log("Using pre-processed callback for number: " + number + "with piX value: " + this.piXHistory[number]);
 				callback(this.piXHistory[number].value);
 			} else if (number > 9999999999999) {
@@ -429,6 +434,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		}
 	})();
 
+	// The Factor class is used to organize and guide the factorization process and, as a result, the calls to msieve, logint, and primecount.
 	const Factor = function (value, power, isPrime, onCompletelyDone, piXChainID) {
 		this.onCompletelyDone = onCompletelyDone;
 		this.isPrime = isPrime;
@@ -492,9 +498,12 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		//console.log("Setting piX " + newPiX);
 		//console.log(newPiX, typeof newPiX, newPiX === null);
 		var postponePiX = false;
-		if (parseInt(newPiX) <= 1 || newPiX === null) {
+		if (parseInt(newPiX) <= 1) {
 			//console.log("caught terminating piX...", this.value, newPiX);
-			this.piX = newPiX;
+			this.piX = (parseInt(newPiX) - 1).toString();
+			this.childDone("piX");
+		} else if (newPiX === null) {
+			this.piX = null;
 			this.childDone("piX");
 		} else {
 			if (this.piXChainID !== undefined) {
@@ -508,6 +517,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 						var deltaNewPiX = (new ArbInt(newPiX));
 						//console.log(deltaNewPiX.value, Prime.piXHistory[previousPiX].value);
 						deltaNewPiX.subtract(Prime.piXHistory[previousPiX]);
+						deltaNewPiX.subtract(ArbInt.POW2[0]);
 						//console.log(deltaNewPiX.value);
 						newPiX = deltaNewPiX.value;
 					} else {
@@ -515,6 +525,10 @@ module.exports.factorize = (event, context, AWSCallback) => {
 						postponePiX = true;
 						Prime.getPiX(previousPiX, this.subtractPiX.bind(this), true);
 					}
+				} else {
+					var deltaNewPiX = new ArbInt(newPiX);
+					deltaNewPiX.subtract(ArbInt.POW2[0]);
+					newPiX = deltaNewPiX.value;
 				}
 			}
 			//console.log("postponePiX: " + postponePiX);
@@ -531,6 +545,16 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.subtractPiX = function (subtraction) {
 		var deltaNewPiX = new ArbInt(this.tempPiX);
 		deltaNewPiX.subtract(new ArbInt(subtraction));
+		deltaNewPiX.subtract(ArbInt.POW2[0]);
+		var newPiX = deltaNewPiX.value;
+		if (parseInt(newPiX) <= 1 || newPiX === null) {
+			this.piX = newPiX;
+			this.childDone("piX");
+		} else this.piX = new Factor(newPiX, "1", false, this.childDone.bind(this, "piX"));
+	}
+	Factor.prototype.subtractPiX = function (subtraction) {
+		var deltaNewPiX = new ArbInt(this.tempPiX);
+		deltaNewPiX.subtract(new ArbInt(subtraction));
 		var newPiX = deltaNewPiX.value;
 		if (parseInt(newPiX) <= 1 || newPiX === null) {
 			this.piX = newPiX;
@@ -540,15 +564,34 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.deepClone = function () {
 		if (this.value === 1) {
 			return "1";
+		} else if (this.factors.length === 1) {
+			return this.factors[0].deepClone();
 		} else {
 			var child = "";
 			var ii = this.factors.length;
-			var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === "1" ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
+			var currClone = "{";
+			if (this.isPrime === true) {
+				currClone += "\"value\": \"" + this.value.toString() + "\", ";
+				currClone += "\"isPrime\": true, ";
+				currClone += "\"power\": " + (isNaN(this.power) && this.power !== null ? this.power.deepClone() : (this.power !== null ? "\"" + this.power.toString() + "\"" : "null")) + ", ";
+				currClone += "\"piX\": " + (isNaN(this.piX) && this.piX !== null ? this.piX.deepClone() : (this.piX !== null ? "\"" + this.piX.toString() + "\"" : "null"));
+			} else {
+				currClone += "\"value\": \"" + this.value.toString() + "\", ";
+				currClone += "\"isPrime\": false, ";
+				currClone += "\"factors\": [";
+				var ii = this.factors.length;
+				while (ii--) {
+					currClone += this.factors[ii].deepClone();
+					if (ii !== 0) currClone += ", ";
+				}
+				currClone += "]";
+			}
+			/*var currClone = "{\"value\": \"" + this.value + "\", \"isPrime\": " + this.isPrime + ", \"power\": " + (this.power === "1" ? "1" : this.power.deepClone()) + (this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined ? ", \"piX\": " + this.piX.deepClone() : ", \"piX\": " + (this.piX !== undefined ? this.piX : "\"undefined\"") + ", \"factors\": [");
 			while (ii--) {
 				currClone += this.factors[ii].deepClone();
 				if (ii !== 0) currClone += ", ";
 			}
-			if (!(this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined)) currClone += "]";
+			if (!(this.isPrime === true && this.piX !== "1" && this.piX !== null && this.piX !== undefined)) currClone += "]";*/
 			return currClone + "}";
 		}
 	}
@@ -570,7 +613,8 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.factorsLength = undefined;
 	Factor.prototype.factorsInitDone = false;
 
-	const RootFactor = function (value, AWSCallback) {
+	// The RootFactor is a unique extension to Factor that adds functionality necessary to administrate all other Factor nodes. In effect, it gets the ball rolling.
+	const RootFactor = function (value, AWSCallback, piX, isPrime) {
 		//console.log("Root factorization beginning...");
 		this.callback = AWSCallback;
 		this.onCompletelyDone = function () {
@@ -590,3 +634,6 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Prime.launchAsyncProcesses();
 	var currfactor = new RootFactor(number, AWSCallback);
 };
+/*module.exports.factorize({
+	"number": "37710923995430809842390802430983402432"
+}, null, console.log);*/

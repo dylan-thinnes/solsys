@@ -15,6 +15,7 @@ Object.defineProperties(ArbInt.prototype, {
 				if (this.reader[ii] !== 0 && inPadding === true) inPadding = false;
 				res += this.reader[ii].toString();
 			}
+			if (res.length === 0) res = "0";
 			return res;
 		},
 		set: function (newValue) {
