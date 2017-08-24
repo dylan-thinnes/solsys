@@ -51,7 +51,7 @@ var init = function(){
     planet = new THREE.Sprite(planetMaterial);
     solSys = {
         sprite: planet,
-        distance: 0,
+        orbitRadius: 0,
         speed: 0,
         children: []
     };
@@ -64,7 +64,7 @@ var init = function(){
     planet.applyMatrix(planetScaling);
     solSys.children.push({
         sprite: planet,
-        distance: 3,
+        orbitRadius: 3,
         speed: 0.1,
         children: []
     });
@@ -77,7 +77,7 @@ var init = function(){
     planet.applyMatrix(planetScaling);
     solSys.children[0].children.push({
         sprite: planet,
-        distance: 1.5,
+        orbitRadius: 1.5,
         speed: 0.5
     });
 
@@ -87,7 +87,7 @@ var init = function(){
 var addPlanets = function(planet, parentPosition){
     var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
     var orbitPathScale = new THREE.Matrix4();
-    orbitPathScale.makeScale(planet.distance, planet.distance, planet.distance);
+    orbitPathScale.makeScale(planet.orbitRadius, planet.orbitRadius, 1);
     orbitPath.applyMatrix(orbitPathScale);
     planet.orbitPath = orbitPath;
     scene.add(orbitPath);
@@ -100,7 +100,7 @@ var addPlanets = function(planet, parentPosition){
 }
 
 var updatePlanets = function(planet, parentPosition){
-    planet.sprite.position.set(parentPosition.x + Math.cos(clock.getElapsedTime() * planet.speed) * planet.distance, parentPosition.y + Math.sin(clock.getElapsedTime() * planet.speed) * planet.distance, parentPosition.z);
+    planet.sprite.position.set(parentPosition.x + Math.cos(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, parentPosition.y + Math.sin(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, parentPosition.z);
     planet.orbitPath.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
