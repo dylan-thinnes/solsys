@@ -1,0 +1,25 @@
+Eye icon
+	the view, viewing things, view functions
+Rotation
+	rotation of the perspective
+Panning
+	panning of the perspective
+Zoom in
+	zooms in
+Zoom out
+	zooms out
+Pencil
+	editing the actual system
+Rotate operation
+	changes where the planet is located on the orbit
+Pallette
+	changes how the planet looks: color, tilt, and type
+Share
+	social network related actions
+Link
+	copies the link to clipboard
+Save
+	downloads and saves the solar system as an image
+Reddit
+Facebook
+Twitter
