@@ -8,6 +8,7 @@ var init = function(){
     document.getElementById("middlelay").appendChild(renderer.domElement);
     window.addEventListener("resize", resizeCanvas);
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+    random = xor4096("meow");
     textureLoader = new THREE.TextureLoader();
     planetJSVGs = [planet1, planet2, planet3, planet4];
     rootGroup = new THREE.Group();
@@ -77,7 +78,7 @@ var genPlanets = function(){
 //The addPlanets function is used to add the planets of the solSys object to the threejs scene
 var addPlanets = function(planet, parentGroup){
     //Create planet sprite
-    var planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
+    var planetMap = textureLoader.load(planetJSVGs[Math.floor(random() * planetJSVGs.length)]());
     var planetMaterial = new THREE.SpriteMaterial({map: planetMap});
     var planetSprite = new THREE.Sprite(planetMaterial);
     var planetScale = new THREE.Matrix4();
@@ -91,7 +92,7 @@ var addPlanets = function(planet, parentGroup){
     orbitPath.applyMatrix(orbitPathScale);
     //Add planet sprite and orbit path to the scene
     var planetGroup = new THREE.Group();
-    planetGroup.rotation.set(Math.floor(Math.random() * 2 * Math.PI), Math.floor(Math.random() * 2 * Math.PI), Math.floor(Math.random() * 2 * Math.PI));
+    planetGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
     planetGroup.add(planetSprite, orbitPath);
     planet.group = planetGroup;
     parentGroup.add(planetGroup);
