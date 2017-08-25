@@ -5,11 +5,30 @@ var init = function(){
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById("middlelay").appendChild(renderer.domElement);
-    
     window.addEventListener("resize", resizeCanvas);
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+    textureLoader = new THREE.TextureLoader();
+    planetJSVGs = [planet1, planet2, planet3, planet4];
+    solSys = {};
+
+    orbitPathGeometry = new THREE.Geometry();
+    var orbitSegments = 256;
+    for(var i = 0; i < orbitSegments; i++){
+        orbitPathGeometry.vertices.push(new THREE.Vector3(Math.cos(i * (2 * Math.PI / orbitSegments)), Math.sin(i * (2 * Math.PI / orbitSegments)), 0));
+    }
+    orbitPathMaterial = new THREE.LineBasicMaterial();
+    orbitPathMaterial.transparent = true;
+    orbitPathMaterial.opacity = 0.4;
+    
     camera.position.z = 15;
 
+    genStars();
+    genPlanets();
+    addPlanets(solSys, solSys.sprite.position);
+}
+
+//The genStars function is used to randomly generate stars
+var genStars = function(){
     var starsColours = [0x774444, 0x447744, 0x444477, 0x777744, 0x774477, 0x447777];
     var starsGeometries = [];
     var starsMaterials = [];
@@ -29,26 +48,14 @@ var init = function(){
         starsFields[ii] = new THREE.Points(starsGeometries[ii], starsMaterials[ii]);
         scene.add(starsFields[ii]);
     }
+}
 
-    var textureLoader = new THREE.TextureLoader();
-    var planetJSVGs = [planet1, planet2, planet3, planet4];
-    var planetMap;
-    var planetMaterial;
+//The genPlanets function is used to generate the planets of the solar system
+var genPlanets = function(){
+    var planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
+    var planetMaterial = new THREE.SpriteMaterial({map: planetMap});
+    var planet = new THREE.Sprite(planetMaterial);
     var planetScaling;
-    var planet;
-
-    orbitPathGeometry = new THREE.Geometry();
-    var orbitSegments = 256;
-    for(var i = 0; i < orbitSegments; i++){
-        orbitPathGeometry.vertices.push(new THREE.Vector3(Math.cos(i * (2 * Math.PI / orbitSegments)), Math.sin(i * (2 * Math.PI / orbitSegments)), 0));
-    }
-    orbitPathMaterial = new THREE.LineBasicMaterial();
-    orbitPathMaterial.transparent = true;
-    orbitPathMaterial.opacity = 0.4;
-
-    planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
-    planetMaterial = new THREE.SpriteMaterial({map: planetMap});
-    planet = new THREE.Sprite(planetMaterial);
     solSys = {
         sprite: planet,
         orbitRadius: 0,
@@ -80,10 +87,9 @@ var init = function(){
         orbitRadius: 1.5,
         speed: 0.5
     });
-
-    addPlanets(solSys, solSys.sprite.position);
 }
 
+//The addPlanets function is used to add the planets of the solSys object to the threejs scene
 var addPlanets = function(planet, parentPosition){
     var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
     var orbitPathScale = new THREE.Matrix4();
@@ -99,6 +105,7 @@ var addPlanets = function(planet, parentPosition){
     }
 }
 
+//The updatePlanets function updates the positions of the planets of the solSys object
 var updatePlanets = function(planet, parentPosition){
     planet.sprite.position.set(parentPosition.x + Math.cos(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, parentPosition.y + Math.sin(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, parentPosition.z);
     planet.orbitPath.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
@@ -109,6 +116,7 @@ var updatePlanets = function(planet, parentPosition){
     }
 }
 
+//The render function is the main render loop
 var render = function(){
     requestAnimationFrame(render);
     var delta = clock.getDelta();
@@ -118,6 +126,7 @@ var render = function(){
     renderer.render(scene, camera);
 }
 
+//The resizeCanvas function is used to resize the renderer and camera with the window
 var resizeCanvas = function(){
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -232,6 +241,7 @@ var planet4 = function(){
     return document.getElementById("planetCanvas").toDataURL();    
 }
 
+//WebGL detection
 try {
 	var canvas = document.createElement('canvas');
 	supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
