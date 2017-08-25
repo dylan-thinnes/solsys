@@ -14,6 +14,7 @@ var init = function(){
     rootGroup = new THREE.Group();
     scene.add(rootGroup);
     solSys = {};
+    phi = 0.618033988749894;
 
     orbitPathGeometry = new THREE.Geometry();
     var orbitSegments = 256;
@@ -113,6 +114,18 @@ var updatePlanets = function(planet, parentPosition){
             updatePlanets(planet.children[i], planet.sprite.position);
         }
     }
+}
+
+//The getSystemWidth function is used to calculate the width of a given planet system
+var calcSystemWidth = function(system){
+    var width = 1;
+    if(system.children){
+        width += 2 * system.children.length * Math.pow(phi, 2);
+        for(var i = 0; i < system.children.length; i++){
+            width += 2 * phi * calcSystemWidth(system.children[i]);
+        }
+    }
+    return width;
 }
 
 //The render function is the main render loop
