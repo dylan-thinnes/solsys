@@ -10,6 +10,8 @@ var init = function(){
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     textureLoader = new THREE.TextureLoader();
     planetJSVGs = [planet1, planet2, planet3, planet4];
+    rootGroup = new THREE.Group();
+    scene.add(rootGroup);
     solSys = {};
 
     orbitPathGeometry = new THREE.Geometry();
@@ -25,7 +27,7 @@ var init = function(){
 
     genStars();
     genPlanets();
-    addPlanets(solSys, solSys.sprite.position);
+    addPlanets(solSys, rootGroup);
 }
 
 //The genStars function is used to randomly generate stars
@@ -53,63 +55,58 @@ var genStars = function(){
 
 //The genPlanets function is used to generate the planets of the solar system
 var genPlanets = function(){
-    var planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
-    var planetMaterial = new THREE.SpriteMaterial({map: planetMap});
-    var planet = new THREE.Sprite(planetMaterial);
-    var planetScaling;
     solSys = {
-        sprite: planet,
         orbitRadius: 0,
+        scale: 1,
         speed: 0,
         children: []
     };
-
-    planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
-    planetMaterial = new THREE.SpriteMaterial({map: planetMap});
-    planet = new THREE.Sprite(planetMaterial);
-    planetScaling = new THREE.Matrix4();
-    planetScaling.makeScale(0.66, 0.66, 0.66);
-    planet.applyMatrix(planetScaling);
     solSys.children.push({
-        sprite: planet,
         orbitRadius: 3,
+        scale: 0.66,
         speed: 0.1,
         children: []
     });
-
-    planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
-    planetMaterial = new THREE.SpriteMaterial({map: planetMap});
-    planet = new THREE.Sprite(planetMaterial);
-    planetScaling = new THREE.Matrix4();
-    planetScaling.makeScale(0.44, 0.44, 0.44);
-    planet.applyMatrix(planetScaling);
     solSys.children[0].children.push({
-        sprite: planet,
         orbitRadius: 1.5,
+        scale: 0.44,
         speed: 0.5
     });
 }
 
 //The addPlanets function is used to add the planets of the solSys object to the threejs scene
-var addPlanets = function(planet, parentPosition){
+var addPlanets = function(planet, parentGroup){
+    //Create planet sprite
+    var planetMap = textureLoader.load(planetJSVGs[Math.floor(Math.random() * planetJSVGs.length)]());
+    var planetMaterial = new THREE.SpriteMaterial({map: planetMap});
+    var planetSprite = new THREE.Sprite(planetMaterial);
+    var planetScale = new THREE.Matrix4();
+    planetScale.makeScale(planet.scale, planet.scale, 1)
+    planetSprite.applyMatrix(planetScale);
+    planet.sprite = planetSprite;
+    //Create planet orbit path
     var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
     var orbitPathScale = new THREE.Matrix4();
     orbitPathScale.makeScale(planet.orbitRadius, planet.orbitRadius, 1);
     orbitPath.applyMatrix(orbitPathScale);
-    planet.orbitPath = orbitPath;
-    scene.add(orbitPath);
-    scene.add(planet.sprite);
+    //Add planet sprite and orbit path to the scene
+    var planetGroup = new THREE.Group();
+    planetGroup.rotation.set(Math.floor(Math.random() * 2 * Math.PI), Math.floor(Math.random() * 2 * Math.PI), Math.floor(Math.random() * 2 * Math.PI));
+    planetGroup.add(planetSprite, orbitPath);
+    planet.group = planetGroup;
+    parentGroup.add(planetGroup);
+    //Add planet children
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
-            addPlanets(planet.children[i], planet.sprite.position);
+            addPlanets(planet.children[i], planet.group);
         }
     }
 }
 
 //The updatePlanets function updates the positions of the planets of the solSys object
 var updatePlanets = function(planet, parentPosition){
-    planet.sprite.position.set(parentPosition.x + Math.cos(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, parentPosition.y + Math.sin(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, parentPosition.z);
-    planet.orbitPath.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
+    planet.sprite.position.set(Math.cos(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, Math.sin(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, 0);
+    planet.group.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
             updatePlanets(planet.children[i], planet.sprite.position);
