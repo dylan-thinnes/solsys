@@ -1,3 +1,4 @@
+//The init function is used for initialization
 var init = function(){
     clock = new THREE.Clock();
     scene = new THREE.Scene();
