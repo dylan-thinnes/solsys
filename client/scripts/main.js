@@ -184,7 +184,7 @@ var addPlanets = function(planet, parentGroup){
     orbitPath.applyMatrix(orbitPathScale);
     //Add planet sprite and orbit path to the scene
     var planetGroup = new THREE.Group();
-    planetGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
+    //planetGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
     planetGroup.add(planetSprite, orbitPath);
     planet.group = planetGroup;
     parentGroup.add(planetGroup);
