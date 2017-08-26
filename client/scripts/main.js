@@ -153,9 +153,9 @@ Blueprint.prototype.genChildren = function (node) {
 Blueprint.prototype.calcSystemWidth = function(system){
     var width = 1;
     if(system.children){
-        width += 2 * system.children.length * Math.pow(phi, 2);
+        width += 2 * system.children.length * Math.pow(Blueprint.SPACING, 2);
         for(var i = 0; i < system.children.length; i++){
-            width += 2 * phi * calcSystemWidth(system.children[i]);
+            width += 2 * Blueprint.SPACING * calcSystemWidth(system.children[i]);
         }
     }
     return width;
@@ -184,7 +184,7 @@ var addPlanets = function(planet, parentGroup){
     orbitPath.applyMatrix(orbitPathScale);
     //Add planet sprite and orbit path to the scene
     var planetGroup = new THREE.Group();
-    planetGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
+    //planetGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
     planetGroup.add(planetSprite, orbitPath);
     planet.group = planetGroup;
     parentGroup.add(planetGroup);
@@ -336,10 +336,10 @@ var testProfiles = ['{"value": "37710923995430809842390802430983402432", "isPrim
 
 //WebGL detection
 try {
-	var canvas = document.createElement('canvas');
-	supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+    var canvas = document.createElement('canvas');
+    supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
 } catch ( e ) {
-	supportsWebGL = false;
+    supportsWebGL = false;
 }
 if (supportsWebGL) {
     init();
