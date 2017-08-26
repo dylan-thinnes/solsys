@@ -1,6 +1,7 @@
 //The init function is used for initialization
 var init = function(){
-    clock = new THREE.Clock();
+    timer = new Timer();
+    timer.start();
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 10000);
     renderer = new THREE.WebGLRenderer();
@@ -30,6 +31,7 @@ var init = function(){
     genStars();
     genPlanets();
     addPlanets(solSys, rootGroup);
+    updatePlanets(solSys, solSys.sprite.position);
 }
 
 //The genStars function is used to randomly generate stars
@@ -198,7 +200,7 @@ var addPlanets = function(planet, parentGroup){
 
 //The updatePlanets function updates the positions of the planets of the solSys object
 var updatePlanets = function(planet, parentPosition){
-    planet.sprite.position.set(Math.cos(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, Math.sin(clock.getElapsedTime() * planet.speed) * planet.orbitRadius, 0);
+    planet.sprite.position.set(Math.cos(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
     planet.group.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
@@ -210,7 +212,7 @@ var updatePlanets = function(planet, parentPosition){
 //The render function is the main render loop
 var render = function(){
     requestAnimationFrame(render);
-    var delta = clock.getDelta();
+    var delta = timer.getDeltaTime();
 
     updatePlanets(solSys, solSys.sprite.position);
 
