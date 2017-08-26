@@ -338,10 +338,10 @@ var testProfiles = ['{"value": "37710923995430809842390802430983402432", "isPrim
 
 //WebGL detection
 try {
-	var canvas = document.createElement('canvas');
-	supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+    var canvas = document.createElement('canvas');
+    supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
 } catch ( e ) {
-	supportsWebGL = false;
+    supportsWebGL = false;
 }
 if (supportsWebGL) {
     init();
