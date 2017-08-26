@@ -153,9 +153,9 @@ Blueprint.prototype.genChildren = function (node) {
 Blueprint.prototype.calcSystemWidth = function(system){
     var width = 1;
     if(system.children){
-        width += 2 * system.children.length * Math.pow(phi, 2);
+        width += 2 * system.children.length * Math.pow(Blueprint.SPACING, 2);
         for(var i = 0; i < system.children.length; i++){
-            width += 2 * phi * calcSystemWidth(system.children[i]);
+            width += 2 * Blueprint.SPACING * calcSystemWidth(system.children[i]);
         }
     }
     return width;
