@@ -178,6 +178,7 @@ var addPlanets = function(planet, parentGroup){
     //Create planet sprite
     var planetMap = textureLoader.load((parentGroup === rootGroup) ? sunJSVGs[Math.floor(random() * sunJSVGs.length)]() : planetJSVGs[Math.floor(random() * planetJSVGs.length)]());
     var planetMaterial = new THREE.SpriteMaterial({map: planetMap});
+    planetMaterial.depthTest = false;
     var planetSprite = new THREE.Sprite(planetMaterial);
     var planetScale = new THREE.Matrix4();
     planetScale.makeScale(planet.scale, planet.scale, 1)
