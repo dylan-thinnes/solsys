@@ -145,8 +145,10 @@ Blueprint.prototype.genChildren = function (node) {
             throw "power type error: " + node.power;
         }        
     } else {
-        for (var ii = 0; ii < node.factors.length; ii++) {
-            this.genChildren(node.factors[ii]);
+        if(node.factors){
+            for (var ii = 0; ii < node.factors.length; ii++) {
+                this.genChildren(node.factors[ii]);
+            }
         }
     }
 }
