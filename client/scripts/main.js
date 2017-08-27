@@ -66,23 +66,12 @@ var genPlanets = function(profile){
     var blueprint = new Blueprint(profile);
     console.log(blueprint.system);
     solSys = JSON.parse(JSON.stringify(blueprint.system));
-    /*solSys = {
-        orbitRadius: 0,
-        scale: 1,
-        speed: 0,
-        children: []
-    };
-    solSys.children.push({
-        orbitRadius: 3,
-        scale: 0.66,
-        speed: 0.1,
-        children: []
-    });
-    solSys.children[0].children.push({
-        orbitRadius: 1.5,
-        scale: 0.44,
-        speed: 0.5
-    });*/
+    //Clear the previous system from the scene
+    for(var i = 0; i < rootGroup.children.length; i++){
+        rootGroup.remove(rootGroup.children[i]);
+    }
+    camera.position.set(0, 0, 15); //Need to change this based on the total system width
+    controls.update();
     addPlanets(solSys, rootGroup);
     updatePlanets(solSys, solSys.sprite.position);
     systemExists = true;
