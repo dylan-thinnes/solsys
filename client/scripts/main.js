@@ -66,7 +66,9 @@ var genPlanets = function(profile){
     }
     camera.position.set(0, 0, 15); //Need to change this based on the total system width
     controls.update();
+    var start = Date.now();
     addPlanets(solSys, rootGroup);
+    console.log(`Planet adding finished and took ${(Date.now() - start) / 1000} seconds`);
     updatePlanets(solSys, solSys.sprite.position);
     systemExists = true;
 }
