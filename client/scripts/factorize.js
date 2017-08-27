@@ -421,6 +421,7 @@ const RootFactor = function (value, callback) {
 	this.isRootFactor = true;
 	this.callback = callback;
 	this.onCompletelyDone = function () {
+		//console.log(this.deepClone());
 		this.callback(this.deepClone());
 	}
 	this.isPrime = false;

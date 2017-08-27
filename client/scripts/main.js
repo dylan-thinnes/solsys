@@ -1,5 +1,6 @@
 //The init function is used for initialization
 var init = function(){
+    systemExists = false;
     timer = new Timer();
     timer.start();
     scene = new THREE.Scene();
@@ -28,10 +29,11 @@ var init = function(){
     
     camera.position.z = 15;
 
-    genStars();
+    /*genStars();
     genPlanets();
     addPlanets(solSys, rootGroup);
-    updatePlanets(solSys, solSys.sprite.position);
+    updatePlanets(solSys, solSys.sprite.position);*/
+    genStars();
 }
 
 //The genStars function is used to randomly generate stars
@@ -58,8 +60,13 @@ var genStars = function(){
 }
 
 //The genPlanets function is used to generate the planets of the solar system
-var genPlanets = function(){
-    solSys = {
+var genPlanets = function(profile){
+    //console.log(testProfiles[0]);
+    systemExists = false;
+    var blueprint = new Blueprint(profile);
+    console.log(blueprint.system);
+    solSys = JSON.parse(JSON.stringify(blueprint.system));
+    /*solSys = {
         orbitRadius: 0,
         scale: 1,
         speed: 0,
@@ -75,7 +82,10 @@ var genPlanets = function(){
         orbitRadius: 1.5,
         scale: 0.44,
         speed: 0.5
-    });
+    });*/
+    addPlanets(solSys, rootGroup);
+    updatePlanets(solSys, solSys.sprite.position);
+    systemExists = true;
 }
 
 // The Blueprint class turns factorization profiles into recursive collections of planets that can be easily parsed by the graphical functions like addPlanets
@@ -90,6 +100,7 @@ var Blueprint = function (profile) {
     }
     this.orbitHistory = [this.system];
     this.genChildren(this.profile);
+    this.setSystemWidths(this.system, 0);
 }
 
 //The genChildren function takes in a FactorProfile node and decides what to do
@@ -99,8 +110,8 @@ Blueprint.prototype.genChildren = function (node) {
             var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.SKIP,
                 orbitRadius: undefined,
-                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length - 1),
-                speed: 1,
+                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
+                speed: 0,
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -110,8 +121,8 @@ Blueprint.prototype.genChildren = function (node) {
             this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.SKIP,
                 orbitRadius: undefined,
-                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length - 1),
-                speed: 1,
+                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
+                speed: 0,
                 children: []
             });
         } else if (parseInt(node.piX) === 0) {
@@ -124,8 +135,8 @@ Blueprint.prototype.genChildren = function (node) {
             var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.POSITIVE,
                 orbitRadius: undefined,
-                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length - 1),
-                speed: 1,
+                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
+                speed: 0,
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -135,8 +146,8 @@ Blueprint.prototype.genChildren = function (node) {
             this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.POSITIVE,
                 orbitRadius: undefined,
-                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length - 1),
-                speed: 1,
+                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
+                speed: 0,
                 children: []
             });
         } else if (parseInt(node.power) === 0) {
@@ -151,15 +162,21 @@ Blueprint.prototype.genChildren = function (node) {
     }
 }
 
-//The getSystemWidth function is used to calculate the width of a given planet system
-Blueprint.prototype.calcSystemWidth = function(system){
+//The setSystemWidths function is used to calculate and set the widths of given planet systems, and in the process set radii.
+Blueprint.prototype.setSystemWidths = function(system, depth){
     var width = 1;
+    var radius = 0.5;
     if(system.children){
-        width += 2 * system.children.length * Math.pow(Blueprint.SPACING, 2);
+        width += 2 * system.children.length * Blueprint.SPACING;
         for(var i = 0; i < system.children.length; i++){
-            width += 2 * Blueprint.SPACING * calcSystemWidth(system.children[i]);
+            radius += Blueprint.SPACING;
+            width += 2 * Blueprint.CHILD * this.setSystemWidths(system.children[i], depth + 1);
+            radius += Blueprint.CHILD * system.children[i].width / 2;
+            system.children[i].orbitRadius = Math.pow(Blueprint.CHILD, depth) * radius;
+            radius += Blueprint.CHILD * system.children[i].width / 2;
         }
     }
+    system.width = width;
     return width;
 }
 
@@ -167,7 +184,7 @@ Blueprint.SKIP = 0;
 Blueprint.POSITIVE = 1;
 Blueprint.NEGATIVE = -1;
 Blueprint.CHILD = 0.618033988749894;
-Blueprint.SPACING = 0.618033988749894;
+Blueprint.SPACING = Math.pow(0.618033988749894, 2);
 
 //The addPlanets function is used to add the planets of the solSys object to the threejs scene
 var addPlanets = function(planet, parentGroup){
@@ -214,7 +231,7 @@ var render = function(){
     requestAnimationFrame(render);
     var delta = timer.getDeltaTime();
 
-    updatePlanets(solSys, solSys.sprite.position);
+    if (systemExists) updatePlanets(solSys, solSys.sprite.position);
 
     renderer.render(scene, camera);
 }
@@ -227,7 +244,7 @@ var resizeCanvas = function(){
 }
 
 // The remoteFactorize function is used to make requests for factorization to the AWS Lambda function that has been loaded onto the endpoint in the code below.
-var remoteFactorize = function (number, callback) {
+/*var remoteFactorize = function (number, callback) {
     var req = new XMLHttpRequest();
     req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=" + number.toString());
     req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
@@ -237,7 +254,7 @@ var remoteFactorize = function (number, callback) {
         }
     }).bind(req, callback);
     req.send();
-}
+}*/
 
 var planet1 = function(){
     var ctx=document.getElementById("planetCanvas").getContext("2d");var funcNames=["clearRect","save","translate","scale","beginPath","moveTo","bezierCurveTo","closePath","fill","stroke","restore","rotate","arc","lineTo"];for(var ii=0;ii<funcNames.length;ii++)window["f"+ii.toString()]=ctx[funcNames[ii]].bind(ctx);ctx.save();ctx.strokeStyle="transparent";f0(0,0,1E3,1E3);f1();f2(0,0);f3(37.795,37.795);f1();f2(0,-270.542);f1();ctx.fillStyle="#0cf";f4();f5(13.229,270.542);
@@ -334,7 +351,11 @@ var planet4 = function(){
     return document.getElementById("planetCanvas").toDataURL();    
 }
 
-var testProfiles = ['{"value": "37710923995430809842390802430983402432", "isPrime": false, "factors": [{"value": "48803929", "isPrime": true, "power": "1", "piX": {"value": "2882217", "isPrime": false, "factors": [{"value": "281", "isPrime": true, "power": "1", "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}, {"value": "263", "isPrime": true, "power": "1", "piX": {"value": "7", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}}, {"value": "13", "isPrime": true, "power": "1", "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}, {"value": "3", "isPrime": true, "power": "1", "piX": "1"}]}}, {"value": "628189", "isPrime": true, "power": "1", "piX": {"value": "35748", "isPrime": false, "factors": [{"value": "331", "isPrime": true, "power": "1", "piX": {"value": "2", "isPrime": true, "power": {"value": "6", "isPrime": false, "factors": [{"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}, "piX": "0"}}, {"value": "3", "isPrime": true, "power": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}, "piX": "0"}, {"value": "2", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "0"}]}}, {"value": "169591", "isPrime": true, "power": "1", "piX": {"value": "5065", "isPrime": false, "factors": [{"value": "1013", "isPrime": true, "power": "1", "piX": {"value": "166", "isPrime": false, "factors": [{"value": "83", "isPrime": true, "power": "1", "piX": {"value": "21", "isPrime": false, "factors": [{"value": "7", "isPrime": true, "power": "1", "piX": "1"}, {"value": "3", "isPrime": true, "power": "1", "piX": "1"}]}}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}, {"value": "5", "isPrime": true, "power": "1", "piX": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}}]}}, {"value": "109331", "isPrime": true, "power": "1", "piX": {"value": "8969", "isPrime": true, "power": "1", "piX": {"value": "1114", "isPrime": false, "factors": [{"value": "557", "isPrime": true, "power": "1", "piX": {"value": "100", "isPrime": false, "factors": [{"value": "5", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "1"}, {"value": "2", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "0"}]}}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}}, {"value": "11887", "isPrime": true, "power": "1", "piX": {"value": "30", "isPrime": false, "factors": [{"value": "5", "isPrime": true, "power": "1", "piX": "0"}, {"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}, {"value": "11579", "isPrime": true, "power": "1", "piX": {"value": "1306", "isPrime": false, "factors": [{"value": "653", "isPrime": true, "power": "1", "piX": {"value": "117", "isPrime": false, "factors": [{"value": "13", "isPrime": true, "power": "1", "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}, {"value": "3", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "1"}]}}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}, {"value": "443", "isPrime": true, "power": "1", "piX": {"value": "78", "isPrime": false, "factors": [{"value": "13", "isPrime": true, "power": "1", "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}, {"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}, {"value": "17", "isPrime": true, "power": "1", "piX": {"value": "5", "isPrime": true, "power": "1", "piX": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}}}, {"value": "2", "isPrime": true, "power": {"value": "6", "isPrime": false, "factors": [{"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}, "piX": "0"}]}','{"value": "30", "isPrime": false, "factors": [{"value": "5", "isPrime": true, "power": "1", "piX": "0"}, {"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}'];
+var testProfiles = [
+    '{"value": "37710923995430809842390802430983402432", "isPrime": false, "factors": [{"value": "48803929", "isPrime": true, "power": "1", "piX": {"value": "2882217", "isPrime": false, "factors": [{"value": "281", "isPrime": true, "power": "1", "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}, {"value": "263", "isPrime": true, "power": "1", "piX": {"value": "7", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}}, {"value": "13", "isPrime": true, "power": "1", "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}, {"value": "3", "isPrime": true, "power": "1", "piX": "1"}]}}, {"value": "628189", "isPrime": true, "power": "1", "piX": {"value": "35748", "isPrime": false, "factors": [{"value": "331", "isPrime": true, "power": "1", "piX": {"value": "2", "isPrime": true, "power": {"value": "6", "isPrime": false, "factors": [{"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}, "piX": "0"}}, {"value": "3", "isPrime": true, "power": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}, "piX": "0"}, {"value": "2", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "0"}]}}, {"value": "169591", "isPrime": true, "power": "1", "piX": {"value": "5065", "isPrime": false, "factors": [{"value": "1013", "isPrime": true, "power": "1", "piX": {"value": "166", "isPrime": false, "factors": [{"value": "83", "isPrime": true, "power": "1", "piX": {"value": "21", "isPrime": false, "factors": [{"value": "7", "isPrime": true, "power": "1", "piX": "1"}, {"value": "3", "isPrime": true, "power": "1", "piX": "1"}]}}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}, {"value": "5", "isPrime": true, "power": "1", "piX": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}}]}}, {"value": "109331", "isPrime": true, "power": "1", "piX": {"value": "8969", "isPrime": true, "power": "1", "piX": {"value": "1114", "isPrime": false, "factors": [{"value": "557", "isPrime": true, "power": "1", "piX": {"value": "100", "isPrime": false, "factors": [{"value": "5", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "1"}, {"value": "2", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "0"}]}}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}}, {"value": "11887", "isPrime": true, "power": "1", "piX": {"value": "30", "isPrime": false, "factors": [{"value": "5", "isPrime": true, "power": "1", "piX": "0"}, {"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}, {"value": "11579", "isPrime": true, "power": "1", "piX": {"value": "1306", "isPrime": false, "factors": [{"value": "653", "isPrime": true, "power": "1", "piX": {"value": "117", "isPrime": false, "factors": [{"value": "13", "isPrime": true, "power": "1", "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}, {"value": "3", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "1"}]}}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}, {"value": "443", "isPrime": true, "power": "1", "piX": {"value": "78", "isPrime": false, "factors": [{"value": "13", "isPrime": true, "power": "1", "piX": {"value": "3", "isPrime": true, "power": "1", "piX": "1"}}, {"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}}, {"value": "17", "isPrime": true, "power": "1", "piX": {"value": "5", "isPrime": true, "power": "1", "piX": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}}}, {"value": "2", "isPrime": true, "power": {"value": "6", "isPrime": false, "factors": [{"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}, "piX": "0"}]}',
+    '{"value": "30", "isPrime": false, "factors": [{"value": "5", "isPrime": true, "power": "1", "piX": "0"}, {"value": "3", "isPrime": true, "power": "1", "piX": "0"}, {"value": "2", "isPrime": true, "power": "1", "piX": "0"}]}',
+    '{"value": "2", "isPrime": true, "power": {"value": "2", "isPrime": true, "power": "1", "piX": "0"}, "piX": "0"}'
+];
 
 //WebGL detection
 try {
