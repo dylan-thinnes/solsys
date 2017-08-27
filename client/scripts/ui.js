@@ -455,6 +455,7 @@ var loadUI = function () {
 		if (event.keyCode === 13 || event.charCode === 13) {
 			event.preventDefault();
 			console.log(currSeed = new Seed(event.target.innerHTML));
+			random = xor4096(currSeed.result.value);
 			var profile = new RootFactor(currSeed.result.value, genPlanets);
 		}
 	});
