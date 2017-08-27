@@ -26,13 +26,7 @@ var init = function(){
     orbitPathMaterial = new THREE.LineBasicMaterial();
     orbitPathMaterial.transparent = true;
     orbitPathMaterial.opacity = 0.4;
-    
-    camera.position.z = 15;
 
-    /*genStars();
-    genPlanets();
-    addPlanets(solSys, rootGroup);
-    updatePlanets(solSys, solSys.sprite.position);*/
     genStars();
 }
 
