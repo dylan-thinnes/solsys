@@ -30,30 +30,46 @@ var init = function(){
     genStars();
 
     var start = Date.now();
-    genMaterials();
-    console.log(`Material generation finished and took ${(Date.now() - start) / 1000} seconds`);
+    genMaterials(function(progress){
+        console.log(`${progress.loaded}/${progress.total}: ${progress.percent}%`);
+    }, function(time){
+        console.log(`Material generation finished: ${time} seconds`);
+    });
 }
 
-var genMaterials = function(){
+//The genMaterials function is used to generate the materials and textures for planets and objects in the scene
+var genMaterials = function(onProgress, onFinished){
+    var start = Date.now();
     var sunJSVGs = [planet1, planet2, planet3, planet4]; //Add sun JSVGs
     var planetJSVGs = [planet1, planet2, planet3, planet4];
     var ringJSVGs = [ring1a, ring1b];
+    var progress = {loaded: 0, total: sunJSVGs.length + planetJSVGs.length + ringJSVGs.length, percent: 0};
     var textureLoader = new THREE.TextureLoader();
     for(var i = 0; i < sunJSVGs.length; i++){
         let material = new THREE.SpriteMaterial({map: textureLoader.load(sunJSVGs[i]())});
         material.depthTest = false;
         sunMaterials.push(material);
+        progress.loaded++;
+        progress.percent = progress.loaded / progress.total * 100;
+        onProgress(progress);
     }
     for(var i = 0; i < planetJSVGs.length; i++){
         let material = new THREE.SpriteMaterial({map: textureLoader.load(planetJSVGs[i]())});
         material.depthTest = false;
         planetMaterials.push(material);
+        progress.loaded++;
+        progress.percent = progress.loaded / progress.total * 100;
+        onProgress(progress);
     }
     for(var i = 0; i < ringJSVGs.length; i++){
         let material = new THREE.SpriteMaterial({map: textureLoader.load(ringJSVGs[i]())});
         material.depthTest = false;
         ringMaterials.push(material);
+        progress.loaded++;
+        progress.percent = progress.loaded / progress.total * 100;
+        onProgress(progress);
     }
+    onFinished((Date.now() - start) / 1000);
 }
 
 //The genStars function is used to randomly generate stars
