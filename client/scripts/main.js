@@ -13,6 +13,7 @@ var init = function(){
     random = xor4096("meow");
     sunMaterials = [];
     planetMaterials = [];
+    ringMaterials = [];
     rootGroup = new THREE.Group();
     scene.add(rootGroup);
     solSys = {};
@@ -36,6 +37,7 @@ var init = function(){
 var genMaterials = function(){
     var sunJSVGs = [planet1, planet2, planet3, planet4]; //Add sun JSVGs
     var planetJSVGs = [planet1, planet2, planet3, planet4];
+    var ringJSVGs = [ring1a, ring1b];
     var textureLoader = new THREE.TextureLoader();
     for(var i = 0; i < sunJSVGs.length; i++){
         let material = new THREE.SpriteMaterial({map: textureLoader.load(sunJSVGs[i]())});
@@ -46,6 +48,11 @@ var genMaterials = function(){
         let material = new THREE.SpriteMaterial({map: textureLoader.load(planetJSVGs[i]())});
         material.depthTest = false;
         planetMaterials.push(material);
+    }
+    for(var i = 0; i < ringJSVGs.length; i++){
+        let material = new THREE.SpriteMaterial({map: textureLoader.load(ringJSVGs[i]())});
+        material.depthTest = false;
+        ringMaterials.push(material);
     }
 }
 
@@ -88,7 +95,7 @@ var genPlanets = function(profile){
     var start = Date.now();
     addPlanets(solSys, rootGroup);
     console.log(`Planet adding finished and took ${(Date.now() - start) / 1000} seconds`);
-    updatePlanets(solSys, solSys.sprite.position);
+    updatePlanets(solSys, solSys.spriteGroup.position);
     systemExists = true;
 }
 
@@ -97,6 +104,7 @@ var Blueprint = function (profile) {
     this.profile = JSON.parse(profile);
     this.system = {
         type: Blueprint.POSITIVE,
+        ring: false,
         orbitRadius: 0,
         scale: 1,
         speed: 0,
@@ -113,6 +121,7 @@ Blueprint.prototype.genChildren = function (node) {
         if (isNaN(node.piX) === true) {
             var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.SKIP,
+                ring: (Math.floor(random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
                 speed: 0,
@@ -124,6 +133,7 @@ Blueprint.prototype.genChildren = function (node) {
         } else if (parseInt(node.piX) === 1) {
             this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.SKIP,
+                ring: (Math.floor(random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
                 speed: 0,
@@ -138,6 +148,7 @@ Blueprint.prototype.genChildren = function (node) {
         if (isNaN(node.power) === true) {
             var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.POSITIVE,
+                ring: (Math.floor(random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
                 speed: 0,
@@ -149,6 +160,7 @@ Blueprint.prototype.genChildren = function (node) {
         } else if (parseInt(node.power) === 1) {
             this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.POSITIVE,
+                ring: (Math.floor(random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
                 speed: 0,
@@ -194,38 +206,53 @@ Blueprint.SPACING = Math.pow(0.618033988749894, 2);
 
 //The addPlanets function is used to add the planets of the solSys object to the threejs scene
 var addPlanets = function(planet, parentGroup){
+    //Create orbit group
+    var orbitGroup = new THREE.Group();
+    //orbitGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
+    planet.orbitGroup = orbitGroup;
+    //Create sprite group
+    var spriteGroup = new THREE.Group();
+    planet.spriteGroup = spriteGroup;
     //Create planet sprite
     var planetSprite = new THREE.Sprite((parentGroup === rootGroup) ? sunMaterials[Math.floor(random() * sunMaterials.length)] : planetMaterials[Math.floor(random() * planetMaterials.length)]);
     var planetScale = new THREE.Matrix4();
     planetScale.makeScale(planet.scale, planet.scale, 1);
     planetSprite.applyMatrix(planetScale);
-    planet.sprite = planetSprite;
+    spriteGroup.add(planetSprite);
+    //Create rings if ring planet
+    if(planet.ring){
+        var ringIndex = Math.floor(random() * ringMaterials.length / 2);
+        //var ringSpriteA = new THREE.Sprite(ringMaterials[ringIndex]);
+        //var ringSpriteB = new THREE.Sprite(ringMaterials[ringIndex + 1]);
+        var ringSpriteA = new THREE.Sprite();
+        var ringSpriteB = new THREE.Sprite();
+        ringSpriteA.applyMatrix(planetScale);
+        ringSpriteB.applyMatrix(planetScale);
+        spriteGroup.add(ringSpriteA, ringSpriteB);
+    }
     //Create planet orbit path
     var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
     var orbitPathScale = new THREE.Matrix4();
     orbitPathScale.makeScale(planet.orbitRadius, planet.orbitRadius, 1);
     orbitPath.applyMatrix(orbitPathScale);
-    //Add planet sprite and orbit path to the scene
-    var planetGroup = new THREE.Group();
-    //planetGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
-    planetGroup.add(planetSprite, orbitPath);
-    planet.group = planetGroup;
-    parentGroup.add(planetGroup);
+    orbitGroup.add(orbitPath, spriteGroup);
+    //Add to parent planet
+    parentGroup.add(orbitGroup);
     //Add planet children
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
-            addPlanets(planet.children[i], planet.group);
+            addPlanets(planet.children[i], orbitGroup);
         }
     }
 }
 
 //The updatePlanets function updates the positions of the planets of the solSys object
 var updatePlanets = function(planet, parentPosition){
-    planet.sprite.position.set(Math.cos(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
-    planet.group.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
+    planet.spriteGroup.position.set(Math.cos(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
+    planet.orbitGroup.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
-            updatePlanets(planet.children[i], planet.sprite.position);
+            updatePlanets(planet.children[i], planet.spriteGroup.position);
         }
     }
 }
@@ -235,7 +262,7 @@ var render = function(){
     requestAnimationFrame(render);
     var delta = timer.getDeltaTime();
 
-    if (systemExists) updatePlanets(solSys, solSys.sprite.position);
+    if (systemExists) updatePlanets(solSys, solSys.spriteGroup.position);
 
     renderer.render(scene, camera);
 }
@@ -353,6 +380,14 @@ var planet4 = function(){
     f11(19.552,282.962,19.012,282.661,18.767,282.237);f11(18.69,282.104,19.011,281.947,18.993,281.8);f11(18.971,281.628,18.606,281.48,18.418,281.537);f11(18.262,281.583,18.133,281.957,17.935,282.174);f11(17.787,282.338,17.555,282.338,17.498,282.469);f11(17.284,282.961,17.771,283.551,17.928,284.092);f11(17.981,284.275,17.675,284.392,17.724,284.579);f11(17.943,285.433,18.67,286.163,19.45,286.821);f11(19.666,287.003,19.713,287.763,19.964,287.812);f11(21.124,288.037,22.476,286.374,23.338,286.456);f6();
     f10(4.237,291.947);f11(4.019,291.96,3.751,292.016,3.667,292.017);f11(3.421,292.022,3.408,292.307,3.245,292.45);f2(13.246,283.745);f5(0,0,13.259,2.425,2.217,1);f2(-13.246,-283.745);f11(5.491,294.039,5.231,293.615,5.042,293.167);f11(4.891,292.811,4.987,292.686,4.681,292.361);f11(4.608,292.281,4.637,291.984,4.43,291.95);f2(4.314,292.869);f5(0,0,.926,-1.445,-1.654,1);f2(-4.314,-292.869);f6();f7();f8();f9();f9();f9();ctx.restore();
     return document.getElementById("planetCanvas").toDataURL();
+}
+
+var ring1a = function(){
+    //Add jsvg
+}
+
+var ring1b = function(){
+    //Add jsvg
 }
 
 var testProfiles = [
