@@ -279,19 +279,6 @@ Blueprint.NEGATIVE = -1;
 Blueprint.CHILD = 0.618033988749894;
 Blueprint.SPACING = Math.pow(0.618033988749894, 2);
 
-// The remoteFactorize function is used to make requests for factorization to the AWS Lambda function that has been loaded onto the endpoint in the code below.
-/*var remoteFactorize = function (number, callback) {
-    var req = new XMLHttpRequest();
-    req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=" + number.toString());
-    req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
-    req.onreadystatechange = (function (callback) {
-        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-            callback(JSON.parse(JSON.parse(this.response).body));
-        }
-    }).bind(req, callback);
-    req.send();
-}*/
-
 var planet1 = function(){
     var ctx=document.getElementById("planetCanvas").getContext("2d");var funcNames=["clearRect","save","translate","scale","beginPath","moveTo","bezierCurveTo","closePath","fill","stroke","restore","rotate","arc","lineTo"];for(var ii=0;ii<funcNames.length;ii++)window["f"+ii.toString()]=ctx[funcNames[ii]].bind(ctx);ctx.save();ctx.strokeStyle="transparent";f0(0,0,1E3,1E3);f1();f2(0,0);f3(37.795,37.795);f1();f2(0,-270.542);f1();ctx.fillStyle="#0cf";f4();f5(13.229,270.542);
     f6(20.535,270.542,26.458,276.464,26.458,283.771);f6(26.458,291.077,20.535,297,13.229,297);f6(5.922,297,0,291.077,0,283.771);f6(0,276.464,5.922,270.542,13.229,270.542);f7();f8();f9();f10();f1();ctx.fillStyle="#c87137";f4();f5(4.86,286.31);f6(4.618,286.308,4.365,286.342,4.104,286.417);f6(3.543,286.577,2.104,287.046,1.519,287.673);f6(1.089,288.133,1.472,288.711,1.163,289.195);f2(13.231,283.77);f12(0,0,13.232,2.719,2.371,1);f2(-13.231,-283.77);f13(3.743,292.991);f6(4.049,293.306,4.37,293.604,4.705,293.887);
