@@ -109,7 +109,7 @@ var genPlanets = function(profile){
     controls.update();
     var start = Date.now();
     addPlanets(solSys, rootGroup);
-    console.log(`Planet adding finished and took ${(Date.now() - start) / 1000} seconds`);
+    console.log(`Planet adding finished: ${(Date.now() - start) / 1000} seconds`);
     updatePlanets(solSys, solSys.spriteGroup.position);
     systemExists = true;
 }
