@@ -13,7 +13,7 @@ body {
 	font-family: monospace;
 }
 
-#webgl-error {
+#webgl-unsupported {
 	color: red;
 }
 
