@@ -99,6 +99,82 @@ var genPlanets = function(profile){
     systemExists = true;
 }
 
+//The addPlanets function is used to add the planets of the solSys object to the threejs scene
+var addPlanets = function(planet, parentGroup){
+    //Create orbit group
+    var orbitGroup = new THREE.Group();
+    //orbitGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
+    planet.orbitGroup = orbitGroup;
+    //Create sprite group
+    var spriteGroup = new THREE.Group();
+    planet.spriteGroup = spriteGroup;
+    //Create back ring
+    if(planet.ring){
+        var ringScale = new THREE.Matrix4();
+        ringScale.makeScale(planet.scale, planet.scale, 1); //Maybe change this
+        var ringIndex = Math.floor(random() * ringMaterials.length / 2);
+        //var ringSpriteA = new THREE.Sprite(ringMaterials[ringIndex]);
+        var ringSpriteA = new THREE.Sprite();
+        ringSpriteA.applyMatrix(ringScale);
+        spriteGroup.add(ringSpriteA);
+    }
+    //Create planet sprite
+    var planetScale = new THREE.Matrix4();
+    planetScale.makeScale(planet.scale, planet.scale, 1);
+    var planetSprite = new THREE.Sprite((parentGroup === rootGroup) ? sunMaterials[Math.floor(random() * sunMaterials.length)] : planetMaterials[Math.floor(random() * planetMaterials.length)]);
+    planetSprite.applyMatrix(planetScale);
+    spriteGroup.add(planetSprite);
+    //Create front ring
+    if(planet.ring){
+        //var ringSpriteB = new THREE.Sprite(ringMaterials[ringIndex + 1]);
+        var ringSpriteB = new THREE.Sprite();
+        ringSpriteB.applyMatrix(ringScale);
+        spriteGroup.add(ringSpriteB);
+    }
+    //Create planet orbit path
+    var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
+    var orbitPathScale = new THREE.Matrix4();
+    orbitPathScale.makeScale(planet.orbitRadius, planet.orbitRadius, 1);
+    orbitPath.applyMatrix(orbitPathScale);
+    orbitGroup.add(orbitPath, spriteGroup);
+    //Add to parent planet
+    parentGroup.add(orbitGroup);
+    //Add planet children
+    if(planet.children){
+        for(var i = 0; i < planet.children.length; i++){
+            addPlanets(planet.children[i], orbitGroup);
+        }
+    }
+}
+
+//The updatePlanets function updates the positions of the planets of the solSys object
+var updatePlanets = function(planet, parentPosition){
+    planet.spriteGroup.position.set(Math.cos(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
+    planet.orbitGroup.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
+    if(planet.children){
+        for(var i = 0; i < planet.children.length; i++){
+            updatePlanets(planet.children[i], planet.spriteGroup.position);
+        }
+    }
+}
+
+//The render function is the main render loop
+var render = function(){
+    requestAnimationFrame(render);
+    var delta = timer.getDeltaTime();
+
+    if (systemExists) updatePlanets(solSys, solSys.spriteGroup.position);
+
+    renderer.render(scene, camera);
+}
+
+//The resizeCanvas function is used to resize the renderer and camera with the window
+var resizeCanvas = function(){
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+}
+
 // The Blueprint class turns factorization profiles into recursive collections of planets that can be easily parsed by the graphical functions like addPlanets
 var Blueprint = function (profile) {
     this.profile = JSON.parse(profile);
@@ -203,82 +279,6 @@ Blueprint.POSITIVE = 1;
 Blueprint.NEGATIVE = -1;
 Blueprint.CHILD = 0.618033988749894;
 Blueprint.SPACING = Math.pow(0.618033988749894, 2);
-
-//The addPlanets function is used to add the planets of the solSys object to the threejs scene
-var addPlanets = function(planet, parentGroup){
-    //Create orbit group
-    var orbitGroup = new THREE.Group();
-    //orbitGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
-    planet.orbitGroup = orbitGroup;
-    //Create sprite group
-    var spriteGroup = new THREE.Group();
-    planet.spriteGroup = spriteGroup;
-    //Create back ring
-    if(planet.ring){
-        var ringScale = new THREE.Matrix4();
-        ringScale.makeScale(planet.scale, planet.scale, 1); //Maybe change this
-        var ringIndex = Math.floor(random() * ringMaterials.length / 2);
-        //var ringSpriteA = new THREE.Sprite(ringMaterials[ringIndex]);
-        var ringSpriteA = new THREE.Sprite();
-        ringSpriteA.applyMatrix(ringScale);
-        spriteGroup.add(ringSpriteA);
-    }
-    //Create planet sprite
-    var planetScale = new THREE.Matrix4();
-    planetScale.makeScale(planet.scale, planet.scale, 1);
-    var planetSprite = new THREE.Sprite((parentGroup === rootGroup) ? sunMaterials[Math.floor(random() * sunMaterials.length)] : planetMaterials[Math.floor(random() * planetMaterials.length)]);
-    planetSprite.applyMatrix(planetScale);
-    spriteGroup.add(planetSprite);
-    //Create front ring
-    if(planet.ring){
-        //var ringSpriteB = new THREE.Sprite(ringMaterials[ringIndex + 1]);
-        var ringSpriteB = new THREE.Sprite();
-        ringSpriteB.applyMatrix(ringScale);
-        spriteGroup.add(ringSpriteB);
-    }
-    //Create planet orbit path
-    var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
-    var orbitPathScale = new THREE.Matrix4();
-    orbitPathScale.makeScale(planet.orbitRadius, planet.orbitRadius, 1);
-    orbitPath.applyMatrix(orbitPathScale);
-    orbitGroup.add(orbitPath, spriteGroup);
-    //Add to parent planet
-    parentGroup.add(orbitGroup);
-    //Add planet children
-    if(planet.children){
-        for(var i = 0; i < planet.children.length; i++){
-            addPlanets(planet.children[i], orbitGroup);
-        }
-    }
-}
-
-//The updatePlanets function updates the positions of the planets of the solSys object
-var updatePlanets = function(planet, parentPosition){
-    planet.spriteGroup.position.set(Math.cos(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
-    planet.orbitGroup.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
-    if(planet.children){
-        for(var i = 0; i < planet.children.length; i++){
-            updatePlanets(planet.children[i], planet.spriteGroup.position);
-        }
-    }
-}
-
-//The render function is the main render loop
-var render = function(){
-    requestAnimationFrame(render);
-    var delta = timer.getDeltaTime();
-
-    if (systemExists) updatePlanets(solSys, solSys.spriteGroup.position);
-
-    renderer.render(scene, camera);
-}
-
-//The resizeCanvas function is used to resize the renderer and camera with the window
-var resizeCanvas = function(){
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-}
 
 // The remoteFactorize function is used to make requests for factorization to the AWS Lambda function that has been loaded onto the endpoint in the code below.
 /*var remoteFactorize = function (number, callback) {
