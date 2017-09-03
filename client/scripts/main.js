@@ -213,22 +213,28 @@ var addPlanets = function(planet, parentGroup){
     //Create sprite group
     var spriteGroup = new THREE.Group();
     planet.spriteGroup = spriteGroup;
-    //Create planet sprite
-    var planetSprite = new THREE.Sprite((parentGroup === rootGroup) ? sunMaterials[Math.floor(random() * sunMaterials.length)] : planetMaterials[Math.floor(random() * planetMaterials.length)]);
-    var planetScale = new THREE.Matrix4();
-    planetScale.makeScale(planet.scale, planet.scale, 1);
-    planetSprite.applyMatrix(planetScale);
-    spriteGroup.add(planetSprite);
-    //Create rings if ring planet
+    //Create back ring
     if(planet.ring){
+        var ringScale = new THREE.Matrix4();
+        ringScale.makeScale(planet.scale, planet.scale, 1); //Maybe change this
         var ringIndex = Math.floor(random() * ringMaterials.length / 2);
         //var ringSpriteA = new THREE.Sprite(ringMaterials[ringIndex]);
-        //var ringSpriteB = new THREE.Sprite(ringMaterials[ringIndex + 1]);
         var ringSpriteA = new THREE.Sprite();
+        ringSpriteA.applyMatrix(ringScale);
+        spriteGroup.add(ringSpriteA);
+    }
+    //Create planet sprite
+    var planetScale = new THREE.Matrix4();
+    planetScale.makeScale(planet.scale, planet.scale, 1);
+    var planetSprite = new THREE.Sprite((parentGroup === rootGroup) ? sunMaterials[Math.floor(random() * sunMaterials.length)] : planetMaterials[Math.floor(random() * planetMaterials.length)]);
+    planetSprite.applyMatrix(planetScale);
+    spriteGroup.add(planetSprite);
+    //Create front ring
+    if(planet.ring){
+        //var ringSpriteB = new THREE.Sprite(ringMaterials[ringIndex + 1]);
         var ringSpriteB = new THREE.Sprite();
-        ringSpriteA.applyMatrix(planetScale);
-        ringSpriteB.applyMatrix(planetScale);
-        spriteGroup.add(ringSpriteA, ringSpriteB);
+        ringSpriteB.applyMatrix(ringScale);
+        spriteGroup.add(ringSpriteB);
     }
     //Create planet orbit path
     var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
