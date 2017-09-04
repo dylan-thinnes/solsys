@@ -105,8 +105,9 @@ var genPlanets = function(profile){
     for(var i = 0; i < rootGroup.children.length; i++){
         rootGroup.remove(rootGroup.children[i]);
     }
-    camera.position.set(0, 0, 15); //Need to change this based on the total system width
-    controls.update();
+    controls.position0.set(0, 0, 15);
+    controls.target0.set(0, 0, 0);
+    controls.reset();
     var start = Date.now();
     addPlanets(solSys, rootGroup);
     console.log(`Planet adding finished: ${(Date.now() - start) / 1000} seconds`);
