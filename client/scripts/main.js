@@ -10,6 +10,12 @@ var init = function(){
     document.getElementById("middlelay").appendChild(renderer.domElement);
     window.addEventListener("resize", resizeCanvas);
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enabled = false;
+    controls.position0.set(0, 0, 14000);
+    controls.target0.set(0, 0, 0);
+    controls.reset();
+    zoomIn = true;
+    zoomPos = new THREE.Vector3();
     random = xor4096("meow");
     sunMaterials = [];
     planetMaterials = [];
@@ -105,9 +111,10 @@ var genPlanets = function(profile){
     for(var i = 0; i < rootGroup.children.length; i++){
         rootGroup.remove(rootGroup.children[i]);
     }
-    controls.position0.set(0, 0, 15);
-    controls.target0.set(0, 0, 0);
+    controls.enabled = false;
     controls.reset();
+    zoomIn = true;
+    zoomPos.set(0, 0, 15); //Change based on system width
     var start = Date.now();
     addPlanets(solSys, rootGroup);
     console.log(`Planet adding finished: ${(Date.now() - start) / 1000} seconds`);
@@ -179,7 +186,17 @@ var render = function(){
     requestAnimationFrame(render);
     var delta = timer.getDeltaTime();
 
-    if (systemExists) updatePlanets(solSys, solSys.spriteGroup.position);
+    if (systemExists){
+        updatePlanets(solSys, solSys.spriteGroup.position);
+    }
+
+    if(zoomIn){
+        camera.position.lerp(zoomPos, 0.2);
+        if(camera.position.z < zoomPos.z + 1){
+            zoomIn = false;
+            if(systemExists) controls.enabled = true;
+        }
+    }
 
     renderer.render(scene, camera);
 }
