@@ -263,7 +263,7 @@ var Seed = function (input) {
 		this.result = new ArbInt(this.input);
 	} else {
 		this.result = new ArbInt();
-		var bigLength = 0;
+		/*var bigLength = 0;
 		var smallLength = 0;
 		if (maxCodePoint < 256) {
 			this.type = Seed.ASCII;
@@ -277,13 +277,20 @@ var Seed = function (input) {
 			this.type = Seed.UTF32;
 			smallLength = 32;
 			bigLength = 4294967296;
-		}
+		}*/
+		var currBitIndex = 0;
 		for (var ii = 0; ii < inputLength; ii++) {
 			var cursor = 0;
 			var cursorMask = 1;	
+			var smallLength = 0;
+			if (codePoints[inputLength - ii - 1] < 256) smallLength = 8;
+			else if (codePoints[inputLength - ii - 1] < 65536) smallLength = 16;
+			else if (codePoints[inputLength - ii - 1] < 4294967296) smallLength = 32;
+			else throw "codePoint out of bounds error!";
 			while (cursor < smallLength) {
-				if (codePoints[inputLength - ii - 1] & cursorMask) this.result.add(ArbInt.POW2[ii * smallLength + cursor]);
+				if (codePoints[inputLength - ii - 1] & cursorMask) this.result.add(ArbInt.POW2[currBitIndex]);
 				cursor++;
+				currBitIndex++;
 				cursorMask *= 2;
 			}
 		}
