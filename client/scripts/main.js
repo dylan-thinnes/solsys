@@ -11,16 +11,17 @@ var init = function(){
     window.addEventListener("resize", resizeCanvas);
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enabled = false;
-    controls.position0.set(0, 0, 14000);
-    controls.target0.set(0, 0, 0);
-    controls.reset();
+    camera.position.set(0, 0, 14000);
     zoomIn = true;
-    zoomPos = new THREE.Vector3();
+    zoomOut = false;
+    zoomInPos = new THREE.Vector3(0, 0, 15);
+    zoomOutPos = new THREE.Vector3(0, 0, 14000);
     random = xor4096("meow");
     sunMaterials = [];
     planetMaterials = [];
     ringMaterials = [];
     rootGroup = new THREE.Group();
+    rootGroup.rotation.set(Math.PI / 2, 0, 0);
     scene.add(rootGroup);
     solSys = {};
 
@@ -101,6 +102,13 @@ var genStars = function(){
     }
 }
 
+//The genSystem function is used to begin zooming out for a new system to be generated, intermediate to the genPlanets function
+var genSystem = function(profile){
+    zoomOut = true;
+    currentProfile = profile;
+    controls.enabled = false;
+}
+
 //The genPlanets function is used to generate the planets of the solar system
 var genPlanets = function(profile){
     systemExists = false;
@@ -111,10 +119,8 @@ var genPlanets = function(profile){
     for(var i = 0; i < rootGroup.children.length; i++){
         rootGroup.remove(rootGroup.children[i]);
     }
-    controls.enabled = false;
-    controls.reset();
     zoomIn = true;
-    zoomPos.set(0, 0, 15); //Change based on system width
+    zoomInPos.set(0, 0, 15); //Change based on system width
     var start = Date.now();
     addPlanets(solSys, rootGroup);
     console.log(`Planet adding finished: ${(Date.now() - start) / 1000} seconds`);
@@ -191,10 +197,16 @@ var render = function(){
     }
 
     if(zoomIn){
-        camera.position.lerp(zoomPos, 0.2);
-        if(camera.position.z < zoomPos.z + 1){
+        camera.position.lerp(zoomInPos, 0.2);
+        if(camera.position.z < zoomInPos.z + 1){
             zoomIn = false;
             if(systemExists) controls.enabled = true;
+        }
+    } else if(zoomOut){
+        camera.position.lerp(zoomOutPos, 0.2);
+        if(camera.position.z > zoomOutPos.z - 1){
+            zoomOut = false;
+            genPlanets(currentProfile);
         }
     }
 
