@@ -27,7 +27,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	// How far you can dolly in and out ( PerspectiveCamera only )
 	this.minDistance = 0;
-	this.maxDistance = Infinity;
+	this.maxDistance = 4000;
 
 	// How far you can zoom in and out ( OrthographicCamera only )
 	this.minZoom = 0;
@@ -235,6 +235,13 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	};
 
+	this.setOrientation = function (phi, theta) {
+
+		rotateUp(phi);
+		rotateLeft(theta);
+
+	}
+
 	//
 	// internals
 	//
@@ -289,10 +296,20 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
+	this.rotateLeft = function (angle) {
+		rotateLeft(angle);
+		this.update();
+	}
+
 	function rotateUp( angle ) {
 
 		sphericalDelta.phi -= angle;
 
+	}
+
+	this.rotateUp = function (angle) {
+		rotateUp(angle);
+		this.update();
 	}
 
 	var panLeft = function () {
