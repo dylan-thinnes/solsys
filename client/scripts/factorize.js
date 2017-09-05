@@ -227,12 +227,12 @@ const Factor = function (value, power, isPrime, onCompletelyDone, piXChainID) {
 	this.isPrime = isPrime;
 	this.factors = new Array();
 	this.piXChainID = piXChainID;
-	if (value > Prime.limit) {
+	if (value > Math.MAX_SAFE_INTEGER) {
 		console.log("setting filled remote...")
 		this.isFilledRemote = true;
 		this.tempValue = value;
 		this.tempPower = power;
-		Prime.getRemoteFactorization(this.tempValue.toString(), null, this.fillRemoteFactorization.bind(this));
+		Prime.getRemoteFactorization(this.tempValue.toString(), "1", this.fillRemoteFactorization.bind(this));
 	} else {
 		this.setValue(value);
 		this.setPower(power);
@@ -256,7 +256,7 @@ Factor.prototype.setValue = function (newValue) {
 Factor.prototype.setFactors = function (newFactors) {
 	if (newFactors["remainder"] !== undefined) {
 		this.isFilledRemote = true;
-		Prime.getRemoteFactorization(this.value.toString(), null, this.fillRemoteFactorization.bind(this));
+		Prime.getRemoteFactorization(this.value.toString(), "1", this.fillRemoteFactorization.bind(this));
 	} else {
 		var newFactorsLength = newFactors.length;
 		if (newFactorsLength === 0 || (newFactorsLength === 1 && newFactors[0].power === "1")) {
@@ -397,8 +397,10 @@ Factor.prototype.setChildrenLength = function (newChildrenLength) {
 	this.factorsLength = newChildrenLength;
 }
 Factor.prototype.fillRemoteFactorization = function (remoteOutput) {
-	console.log("starting factorProfile...");
-	this.factorProfile = new FactorProfile(remoteOutput, this.remoteFactorizationFilled.bind(this));
+	this.deepClone = function () { return remoteOutput };
+	this.onCompletelyDone();
+	//console.log("starting factorProfile...");
+	//this.factorProfile = new FactorProfile(remoteOutput, this.remoteFactorizationFilled.bind(this));
 }
 Factor.prototype.remoteFactorizationFilled = function (finalOutput) {
 	console.log("filling remote factorization with: ", finalOutput);
@@ -426,12 +428,12 @@ const RootFactor = function (value, callback) {
 	}
 	this.isPrime = false;
 	this.factors = new Array();
-	if (value > Prime.limit) {
+	if (value > Math.MAX_SAFE_INTEGER) {
 		console.log("getting remote...");
 		this.isFilledRemote = true;
 		this.tempValue = value;
 		this.tempPower = "1";
-		Prime.getRemoteFactorization(this.tempValue.toString(), null, this.fillRemoteFactorization.bind(this));
+		Prime.getRemoteFactorization(this.tempValue.toString(), "1", this.fillRemoteFactorization.bind(this));
 	} else {
 		this.setValue(value);
 		this.setPower("1");
