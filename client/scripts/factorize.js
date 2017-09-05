@@ -237,6 +237,7 @@ const Factor = function (value, power, isPrime, onCompletelyDone, piXChainID) {
 		this.setValue(value);
 		this.setPower(power);
 	}
+	window.setTimeout(this.childDone.bind(this, "init"), 1);
 }
 Factor.prototype.getValue = function () {
 	return this.value;
@@ -386,10 +387,11 @@ Factor.prototype.deepClone = function () {
 Factor.prototype.childDone = function (type) {
 	//console.log("childDone of type: " + type);
 	if (type === "power") this.powerDone = true;
+	else if (type === "init") this.initDone = true;
 	else if (type === "piX") this.piXDone = true;
 	else if (type === "factorsInit") this.factorsInitDone = true;
 	else this.factorsCounter = this.factorsCounter + 1;
-	if ((this.factorsCounter === this.factorsLength || this.isPrime === true) && this.powerDone && this.piXDone && this.factorsInitDone) {
+	if ((this.factorsCounter === this.factorsLength || this.isPrime === true) && this.powerDone && this.piXDone && this.factorsInitDone && this.initDone) {
 		this.onCompletelyDone();
 	}
 }
@@ -417,6 +419,7 @@ Factor.prototype.factorsLength = undefined;
 Factor.prototype.factorsInitDone = false;
 Factor.prototype.isRootFactor = false;
 Factor.prototype.isFilledRemote = false;
+Factor.prototype.initDone = true;
 
 const RootFactor = function (value, callback) {
 	//console.log("Root factorization beginning...");
@@ -438,6 +441,7 @@ const RootFactor = function (value, callback) {
 		this.setValue(value);
 		this.setPower("1");
 	}
+	window.setTimeout(this.childDone.bind(this, "init"), 1);
 }
 RootFactor.prototype = Factor.prototype;
 
