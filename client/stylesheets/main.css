@@ -195,7 +195,7 @@ body {
 	outline: 0 !important;
 	box-shadow: none !important;
 	font-size: 2rem;
-	display: none;
+	/*display: none;*/
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;

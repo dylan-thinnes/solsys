@@ -412,7 +412,7 @@ var loadUI = function () {
 	stage2.newButton("zoom-out", "view", document.getElementById("zoom-out"));
 	stage2.newButton("rotate", "edit", document.getElementById("rotate"));
 	stage2.newButton("paint", "edit", document.getElementById("paint"));
-	stage2.newButton("seed", "edit", document.getElementById("seed"), true);
+	//stage2.newButton("seed", "edit", document.getElementById("seed"), true);
 	stage2.newButton("link", "share", document.getElementById("link"));
 	stage2.newButton("download", "share", document.getElementById("download"));
 	/*stage2.newButton("reddit", "share", document.getElementById("reddit"));
