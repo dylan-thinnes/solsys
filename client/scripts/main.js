@@ -322,8 +322,8 @@ Blueprint.prototype.setSystemWidths = function(system, depth){
 Blueprint.SKIP = 0;
 Blueprint.POSITIVE = 1;
 Blueprint.NEGATIVE = -1;
-Blueprint.CHILD = 0.618033988749894;
-Blueprint.SPACING = Math.pow(0.618033988749894, 2);
+Blueprint.CHILD = 0.9;
+Blueprint.SPACING = /*Math.pow(0.618033988749894, 2)*/0.1;
 
 var planet1 = function(){
     var ctx=document.getElementById("planetCanvas").getContext("2d");var funcNames=["clearRect","save","translate","scale","beginPath","moveTo","bezierCurveTo","closePath","fill","stroke","restore","rotate","arc","lineTo"];for(var ii=0;ii<funcNames.length;ii++)window["f"+ii.toString()]=ctx[funcNames[ii]].bind(ctx);ctx.save();ctx.strokeStyle="transparent";f0(0,0,1E3,1E3);f1();f2(0,0);f3(37.795,37.795);f1();f2(0,-270.542);f1();ctx.fillStyle="#0cf";f4();f5(13.229,270.542);

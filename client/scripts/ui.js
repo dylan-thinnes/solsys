@@ -248,10 +248,9 @@ ArbInt.POW2 = [
 	new ArbInt("93536104789177786765035829293842113257979682750464")
 ];
 
-// The Seed class is a class for creating ArbNums from strings that may or may not contain single-byte, double-byte, or quad-byte unicode characters. It analyzes the given input string and determines whether it is a number (type: Seed.NUMBER), an ASCII/single-byte string (type: Seed.ASCII), double-byte string (type: Seed.UTF16), or quad-byte string (type: Seed.UTF32). Using this information, it knows how many bits to allocate to each letter and produces a corresponding ArbInt from the stringed together bits.
+// The Seed class is a class for creating ArbNums from strings that may or may not contain single-byte, double-byte, or quad-byte unicode characters. It analyzes the given input string and determines whether it is a number (type: Seed.NUMBER) or a string. If it is a string, the Seed class reads string as UTF-8 formatted, and turns each successive byte into a new set of 8 bits which are appended to the beginning of the previous set of bits. Once it is done with concatenating the bits of each byte in the string's representation, it reads those bits as a number and uses the ArbInt class to represent the final number as a string.
 var Seed = function (input) {
 	this.input = input;
-	this.type = Seed.NUMBER;
 	var inputLength = input.length;
 	var codePoints = [];
 	var maxCodePoint = 57;
@@ -296,10 +295,6 @@ var Seed = function (input) {
 		}
 	}
 }
-Seed.NUMBER = 0;
-Seed.ASCII = 1;
-Seed.UTF16 = 2;
-Seed.UTF32 = 3;
 
 // The Buttons class serves to create "groups" of buttons, with each Buttons object representing a singular group, with associated functions for hiding and showing the group entirely and choosing which button in the group should be focused and visually on (others will turn off automatically).
 var Buttons = function () {
