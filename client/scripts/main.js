@@ -30,7 +30,7 @@ var init = function(){
     for(var i = 0; i < orbitSegments; i++){
         orbitPathGeometry.vertices.push(new THREE.Vector3(Math.cos(i * (2 * Math.PI / orbitSegments)), Math.sin(i * (2 * Math.PI / orbitSegments)), 0));
     }
-    orbitPathMaterial = new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 3}); //linewidth only works on mac/linux
+    orbitPathMaterial = new THREE.LineBasicMaterial({color: 0xffffff});
     orbitPathMaterial.transparent = true;
     orbitPathMaterial.opacity = 0.4;
 
