@@ -104,6 +104,7 @@ var genStars = function(){
 
 //The genSystem function is used to begin zooming out for a new system to be generated, intermediate to the genPlanets function
 var genSystem = function(profile){
+    console.log(profile);
     zoomOut = true;
     currentProfile = profile;
     controls.enabled = false;
@@ -113,7 +114,7 @@ var genSystem = function(profile){
 var genPlanets = function(profile){
     systemExists = false;
     var blueprint = new Blueprint(profile);
-    console.log(blueprint.system);
+    console.log(blueprint);
     solSys = JSON.parse(JSON.stringify(blueprint.system));
     //Clear the previous system from the scene
     for(var i = 0; i < rootGroup.children.length; i++){
@@ -294,7 +295,7 @@ Blueprint.prototype.genChildren = function (node) {
         }        
     } else {
         if(node.factors){
-            for (var ii = 0; ii < node.factors.length; ii++) {
+            for (var ii = node.factors.length - 1; ii >= 0; ii--) {
                 this.genChildren(node.factors[ii]);
             }
         }
