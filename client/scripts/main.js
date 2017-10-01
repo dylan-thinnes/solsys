@@ -47,13 +47,16 @@ var init = function(){
 //The genMaterials function is used to generate the materials and textures for planets and objects in the scene
 var genMaterials = function(onProgress, onFinished){
     var start = Date.now();
-    var sunJSVGs = [planet1, planet2, planet3, planet4]; //Add sun JSVGs
-    var planetJSVGs = [planet1, planet2, planet3, planet4];
+    var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4]; //Add sun JSVGs
+    var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4];
     var ringJSVGs = [ring1a, ring1b];
     var progress = {loaded: 0, total: sunJSVGs.length + planetJSVGs.length + ringJSVGs.length, percent: 0};
     var textureLoader = new THREE.TextureLoader();
+	var canvas = document.getElementById("planetCanvas");
+	var ctx = canvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(sunJSVGs[i]())});
+		sunJSVGs[i](ctx, 10.24, 10.24);
+        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
         sunMaterials.push(material);
         progress.loaded++;
@@ -61,7 +64,8 @@ var genMaterials = function(onProgress, onFinished){
         onProgress(progress);
     }
     for(var i = 0; i < planetJSVGs.length; i++){
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(planetJSVGs[i]())});
+		planetJSVGs[i](ctx, 10.24, 10.24);
+        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
         planetMaterials.push(material);
         progress.loaded++;
@@ -69,7 +73,8 @@ var genMaterials = function(onProgress, onFinished){
         onProgress(progress);
     }
     for(var i = 0; i < ringJSVGs.length; i++){
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(ringJSVGs[i]())});
+		ringJSVGs[i](ctx, 10.24, 10.24);
+        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
         ringMaterials.push(material);
         progress.loaded++;
@@ -326,7 +331,7 @@ Blueprint.NEGATIVE = -1;
 Blueprint.CHILD = 0.9;
 Blueprint.SPACING = /*Math.pow(0.618033988749894, 2)*/0.1;
 
-var planet1 = function(){
+/*SVGTOJS.planet1 = function(){
     var ctx=document.getElementById("planetCanvas").getContext("2d");var funcNames=["clearRect","save","translate","scale","beginPath","moveTo","bezierCurveTo","closePath","fill","stroke","restore","rotate","arc","lineTo"];for(var ii=0;ii<funcNames.length;ii++)window["f"+ii.toString()]=ctx[funcNames[ii]].bind(ctx);ctx.save();ctx.strokeStyle="transparent";f0(0,0,1E3,1E3);f1();f2(0,0);f3(37.795,37.795);f1();f2(0,-270.542);f1();ctx.fillStyle="#0cf";f4();f5(13.229,270.542);
     f6(20.535,270.542,26.458,276.464,26.458,283.771);f6(26.458,291.077,20.535,297,13.229,297);f6(5.922,297,0,291.077,0,283.771);f6(0,276.464,5.922,270.542,13.229,270.542);f7();f8();f9();f10();f1();ctx.fillStyle="#c87137";f4();f5(4.86,286.31);f6(4.618,286.308,4.365,286.342,4.104,286.417);f6(3.543,286.577,2.104,287.046,1.519,287.673);f6(1.089,288.133,1.472,288.711,1.163,289.195);f2(13.231,283.77);f12(0,0,13.232,2.719,2.371,1);f2(-13.231,-283.77);f13(3.743,292.991);f6(4.049,293.306,4.37,293.604,4.705,293.887);
     f13(4.709,293.89);f6(5.492,294.544,6.346,295.12,7.258,295.575);f6(7.342,295.326,7.1,294.751,7.229,294.373);f6(7.398,293.883,7.943,293.544,8.02,292.948);f6(8.048,292.724,8.673,292.524,8.741,292.308);f6(8.93,291.728,8.436,292.266,8.386,291.642);f6(8.371,291.453,7.738,291.437,7.702,291.234);f6(7.57,290.498,8.008,289.539,7.957,289.26);f6(7.873,288.79,8.159,288.022,7.767,287.59);f6(7.297,287.071,6.096,286.913,5.411,286.679);f6(5.157,286.592,5.144,286.308,4.859,286.308);f7();f5(13.23,270.542);
@@ -343,7 +348,7 @@ var planet1 = function(){
     return document.getElementById("planetCanvas").toDataURL();
 }
 
-var planet2 = function(){
+SVGTOJS.planet2 = function(){
     for(var ctx=document.getElementById("planetCanvas").getContext("2d"),funcNames="clearRect save translate scale beginPath arc closePath fill stroke restore moveTo bezierCurveTo rotate".split(" "),ii=0;ii<funcNames.length;ii++)window["f"+ii.toString()]=ctx[funcNames[ii]].bind(ctx);ctx.save();ctx.strokeStyle="transparent";f0(0,0,1E3,1E3);f1();f2(0,0);f2(1.889763728968319E-5,0);f3(37.7952746382293,37.7952746382293);f2(0,0);f1();f2(0,-270.542);f1();ctx.fillStyle="#08a";f4();
     f5(13.229,283.771,13.229,0,6.283185307179586,!0);f6();f7();f8();f9();f1();ctx.fillStyle="green";f4();f10(20.917,277.081);f11(20.372,277.021,19.072000000000003,278.091,18.307000000000002,278.21700000000004);f11(17.231,278.27500000000003,16.05,278.66,14.930000000000003,278.33700000000005);f11(13.327000000000004,277.87700000000007,9.098000000000003,278.76000000000005,7.546000000000003,279.189);f11(7.1060000000000025,279.31,9.286000000000003,278.454,8.852000000000004,278.511);
     f11(5.816000000000004,278.90500000000003,3.1890000000000036,280.119,3.552713678800501E-15,283.771);f11(3.552713678800501E-15,284.10400000000004,.013000000000003552,284.434,.03700000000000355,284.761);f11(.04700000000000355,284.906,2.8410000000000033,282.824,2.9580000000000033,282.738);f11(5.426,280.909,.1,285.412,.115,285.52);f11(.139,285.704,.167,285.888,.199,286.07);f11(.21400000000000002,286.155,1.869,284.965,3.4899999999999998,284.493);f11(6.268,283.686,9.554,283.564,9.693,283.517);
@@ -391,7 +396,7 @@ var planet2 = function(){
     return document.getElementById("planetCanvas").toDataURL();
 }
 
-var planet3 = function(){
+SVGTOJS.planet3 = function(){
     var ctx=document.getElementById("planetCanvas").getContext("2d");var funcNames=["clearRect","save","translate","scale","beginPath","arc","closePath","fill","stroke","restore","moveTo","bezierCurveTo","rotate"];for(var ii=0;ii<funcNames.length;ii++)window["f"+ii.toString()]=ctx[funcNames[ii]].bind(ctx);ctx.save();ctx.strokeStyle="transparent";f0(0,0,1E3,1E3);f1();f3(37.795,37.795);f1();f2(0,-270.542);f1();ctx.fillStyle="navy";f4();f5(13.229,283.771,13.229,0,6.283185307179586,true);f6();f7();f8();f9();
     f1();ctx.fillStyle="#c87137";f4();f10(14.155,289.724);f11(14.738,290.39,16.247,289.964,17.433,290.498);f11(17.741,290.636,17.866,291.306,18.044,291.421);f11(18.552,291.744,17.394,291.619,17.22,291.927);f11(15.76,294.537,15.047,294.232,15.189,294.538);f11(15.432,295.067,15.972,294.748,15.867,295.245);f11(15.651,296.259,14.907,296.999,13.228,296.999);f11(10.136,296.999,7.291,295.939,5.039,294.16);f11(4.658,293.78,4.389,293.496,4.304,293.161);f11(4.252,292.956,4.382,292.6,4.424,292.482);
     f11(4.489,292.298,4.6,292.507,4.816,292.349);f11(5.112,292.135,5.39,291.777,5.731,291.405);f11(6.236,290.854,5.895,290.058,6.083,289.749);f11(6.355,289.303,6.558,288.464,6.855,288.47);f11(8.522,288.504,7.721,289.068,8.661,288.817);f11(9.747,288.527,9.233,288.387,10.014,288.192);f11(12.747,287.506,13.573,289.057,14.155,289.722);f6();f7();f8();f9();f1();ctx.fillStyle="#c87137";f4();f10(16.803,294.18);f11(16.748,294.11,16.46,294.386,16.415,294.544);f11(16.369,294.7,16.275,295.433,16.439,295.544);
@@ -405,7 +410,7 @@ var planet3 = function(){
     return document.getElementById("planetCanvas").toDataURL();
 }
 
-var planet4 = function(){
+SVGTOJS.planet4 = function(){
     var ctx=document.getElementById("planetCanvas").getContext("2d");var funcNames=["clearRect","save","translate","scale","beginPath","arc","closePath","fill","stroke","restore","moveTo","bezierCurveTo","rotate"];for(var ii=0;ii<funcNames.length;ii++)window["f"+ii.toString()]=ctx[funcNames[ii]].bind(ctx);ctx.save();ctx.strokeStyle="transparent";f0(0,0,1E3,1E3);f1();f2(0,0);f3(37.795,37.795);f1();f2(0,-270.542);f1();ctx.fillStyle="#00aad4";f4();f5(13.229,283.771,13.229,0,6.283185307179586,true);f6();
     f7();f8();f9();f1();ctx.fillStyle="#008033";f4();f10(12.408,285.099);f11(12.184,285.086,12.027,285.743,11.972,287.933);f11(11.85,292.866,11.382,291.89,11.206,293.262);f11(10.831,296.168,11.931,293.637,13.229,297);f2(13.229,283.769);f5(0,0,13.231,1.57,1.187,1);f2(-13.229,-283.769);f11(18.883,294.728,16.714,294.438,16.765,293.119);f11(16.792,292.448,17.229,291.717,17.37,291.015);f11(17.434,290.697,17.318,290.214,17.282,290.045);f11(17.179,289.555,16.41,290.568,16.265,290.099);
     f11(16.09,289.536,16.354,288.327,16.129,287.789);f11(15.521,286.33,13.948,287.341,13.246,286.282);f11(12.923,285.794,12.632,285.111,12.408,285.099);f6();f10(11.075,285.018);f11(11.36,285.275,11.241,284.263,11.388,283.597);f11(11.478,283.193,11.956,282.84,11.884,282.409);f11(11.846,282.183,12.171,281.503,12.051,281.272);f11(11.811,280.808,10.465,280.361,9.951,280.108);f11(9.436,279.856,9.753,279.8,9.377,279.698);f11(8.437,279.443,7.595,280.549,7.28,280.352);f11(6.964,280.155,7.34,279.777,6.596,279.229);
@@ -419,7 +424,7 @@ var planet4 = function(){
     f11(19.552,282.962,19.012,282.661,18.767,282.237);f11(18.69,282.104,19.011,281.947,18.993,281.8);f11(18.971,281.628,18.606,281.48,18.418,281.537);f11(18.262,281.583,18.133,281.957,17.935,282.174);f11(17.787,282.338,17.555,282.338,17.498,282.469);f11(17.284,282.961,17.771,283.551,17.928,284.092);f11(17.981,284.275,17.675,284.392,17.724,284.579);f11(17.943,285.433,18.67,286.163,19.45,286.821);f11(19.666,287.003,19.713,287.763,19.964,287.812);f11(21.124,288.037,22.476,286.374,23.338,286.456);f6();
     f10(4.237,291.947);f11(4.019,291.96,3.751,292.016,3.667,292.017);f11(3.421,292.022,3.408,292.307,3.245,292.45);f2(13.246,283.745);f5(0,0,13.259,2.425,2.217,1);f2(-13.246,-283.745);f11(5.491,294.039,5.231,293.615,5.042,293.167);f11(4.891,292.811,4.987,292.686,4.681,292.361);f11(4.608,292.281,4.637,291.984,4.43,291.95);f2(4.314,292.869);f5(0,0,.926,-1.445,-1.654,1);f2(-4.314,-292.869);f6();f7();f8();f9();f9();f9();ctx.restore();
     return document.getElementById("planetCanvas").toDataURL();
-}
+}*/
 
 var ring1a = function(){
     //Add jsvg
