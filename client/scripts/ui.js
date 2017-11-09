@@ -252,6 +252,12 @@ ArbInt.POW2 = [
 // The Seed class is a class for creating ArbNums from strings that may or may not contain single-byte, double-byte, or quad-byte unicode characters. It analyzes the given input string and determines whether it is a number (type: Seed.NUMBER) or a string. If it is a string, the Seed class reads string as UTF-8 formatted, and turns each successive byte into a new set of 8 bits which are appended to the beginning of the previous set of bits. Once it is done with concatenating the bits of each byte in the string's representation, it reads those bits as a number and uses the ArbInt class to represent the final number as a string.
 var Seed = function (input) {
 	this.input = input;
+	console.log(input, typeof input);
+	if (input === "") {
+		console.log("input was empty string");
+		this.value = 1;
+		return;
+	}
 	var inputLength = input.length;
 	var codePoints = [];
 	var maxCodePoint = 57;
@@ -261,6 +267,7 @@ var Seed = function (input) {
 	}
 	if (maxCodePoint === 57) {
 		this.result = new ArbInt(this.input);
+		this.value = this.result.value;
 	} else {
 		this.result = new ArbInt();
 		/*var bigLength = 0;
@@ -294,6 +301,7 @@ var Seed = function (input) {
 				cursorMask *= 2;
 			}
 		}
+		this.value = this.result.value;
 	}
 }
 
@@ -397,13 +405,14 @@ var loadUI = function () {
 		new Button(document.getElementById("twitter")),
 		new Button(document.getElementById("facebook"))
 	]);
-	/*document.getElementById("seed").addEventListener("keypress", function (event) {
+	document.getElementById("input").addEventListener("keypress", function (event) {
 		if (event.keyCode === 13 || event.charCode === 13) {
 			event.preventDefault();
-			console.log(currSeed = new Seed(event.target.innerHTML));
-			random = xor4096(currSeed.result.value);
-			var profile = new RootFactor(currSeed.result.value, genSystem);
+			console.log(currSeed = new Seed(event.target.value));
+			document.getElementById("number").innerHTML = currSeed.value;
+			//random = xor4096(currSeed.result.value);
+			//var profile = new RootFactor(currSeed.result.value, genSystem);
 		}
-	});*/
+	});
 }
 document.body.onload = loadUI;
