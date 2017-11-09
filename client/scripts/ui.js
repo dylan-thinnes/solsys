@@ -251,6 +251,10 @@ ArbInt.POW2 = [
 // The Seed class is a class for creating ArbNums from strings that may or may not contain single-byte, double-byte, or quad-byte unicode characters. It analyzes the given input string and determines whether it is a number (type: Seed.NUMBER) or a string. If it is a string, the Seed class reads string as UTF-8 formatted, and turns each successive byte into a new set of 8 bits which are appended to the beginning of the previous set of bits. Once it is done with concatenating the bits of each byte in the string's representation, it reads those bits as a number and uses the ArbInt class to represent the final number as a string.
 var Seed = function (input) {
 	this.input = input;
+	if (input === "") {
+		this.value = 1;
+		return;
+	}
 	var inputLength = input.length;
 	var codePoints = [];
 	var maxCodePoint = 57;
@@ -260,6 +264,7 @@ var Seed = function (input) {
 	}
 	if (maxCodePoint === 57) {
 		this.result = new ArbInt(this.input);
+		this.value = this.result.value;
 	} else {
 		this.result = new ArbInt();
 		/*var bigLength = 0;
@@ -293,172 +298,116 @@ var Seed = function (input) {
 				cursorMask *= 2;
 			}
 		}
+		this.value = this.result.value;
 	}
 }
 
-// The Buttons class serves to create "groups" of buttons, with each Buttons object representing a singular group, with associated functions for hiding and showing the group entirely and choosing which button in the group should be focused and visually on (others will turn off automatically).
-var Buttons = function () {
-	this.buttons = {}
-	this.groups = {}
+// Emitter is a class for making simple event emitters and listeners. Also works for PubSub implementation.
+var Emitter = function () {
+	this.listeners = {};
 }
-Buttons.prototype.newButton = function (name, group, element, disableDefaultHandling, onCallback, offCallback) {
-	this.buttons[name] = {
-		name: name,
-		group: group,
-		element: element,
-		onCallback: onCallback,
-		offCallback: offCallback,
-		icon: element.getElementsByClassName("icon")[0],
-		on: false
-	}
-	if (disableDefaultHandling !== true) element.addEventListener("mousedown", this.buttonToggle.bind(this, name));
-	if (group !== undefined) {
-		if (this.groups[group] === undefined) this.newGroup(group, onCallback, offCallback);
-		this.groups[group].buttons.push(name);
+Emitter.prototype.on = function (name, listener, count) {
+	if (this.listeners[name] === undefined) this.listeners[name] = [];
+	var id = (Math.random() * Math.pow(2, 32)).toString(36);
+	this.listeners[name][id] = {l: listener, c: count};
+	return this.off.bind(this, name, id); //Prevents chaining, but I prefer added functionality over sugar.
+}
+// Only listens once.
+Emitter.prototype.once = function (name, listener) {
+	this.on(name, listener, 1);
+}
+// Removes a function of a specific id from the named event's callback list
+Emitter.prototype.off = function (name, id) {
+	if (this.listeners[name] === undefined || this.listeners[name][id] === undefined) return;
+	delete this.listeners[name][id];
+}
+// Emits the event by calling all its associated listeners
+Emitter.prototype.emit = function (name, event) {
+	if (this.listeners[name] === undefined) return;
+	for (var id in this.listeners[name]) { this.callListener(name, id, event); }
+}
+// Passes the event to the 
+Emitter.prototype.callListener = function (name, id, event) {
+	this.listeners[name][id].l(event);
+	if (this.listeners[name][id].c) this.listeners[name][id].c--;
+	if (this.listeners[name][id].c === 0) delete this.listeners[name][id];
+}
+
+// The Button classes Button and Radio serve to create "groups" of buttons, with each Radio object representing a singular group of buttons that are kept such that only one is focused at any given time.
+var Radio = function (allOff, buttons) {
+	this.allOff = allOff ? true : false; // Sets if all buttons being out of focus is an acceptable state.
+	this.buttons = {};
+	buttons = buttons ? Array.from(buttons) : [];
+	for (var ii in buttons) {
+		this.add(buttons[ii]);
 	}
 }
-Buttons.prototype.newGroup = function (name, onCallback, offCallback, displayType, preserveState) {
-	this.groups[name] = {
-		name: name,
-		onCallback: onCallback,
-		offCallback: offCallback,
-		on: false,
-		buttons: [],
-		displayType: (displayType === undefined ? "flex" : displayType),
-		preserveState: (preserveState ? true : false)
-	}
+Radio.prototype.add = function (button) {
+	var id = (Math.random() * Math.pow(2, 32)).toString(36);
+	button.on("click", this.click.bind(this, id));
+	this.buttons[id] = button;
 }
-Buttons.prototype.showGroup = function (name) {
-	for (var ii = 0; ii < this.groups[name].buttons.length; ii++) {
-		this.buttons[this.groups[name].buttons[ii]].element.style.display = this.groups[name].displayType;
-	}
+Radio.prototype.click = function (id) {
+	var emitterIsFocused = this.buttons[id].focused;
+	for (var index in this.buttons) this.buttons[index].focused = false;
+	if (!(emitterIsFocused && this.allOff)) this.buttons[id].focused = true; // As long as the emitter wasn't focused previously and allOff isn't permitted, focus the current button.
 }
-Buttons.prototype.hideGroup = function (name) {
-	for (var ii = 0; ii < this.groups[name].buttons.length; ii++) {
-		this.buttons[this.groups[name].buttons[ii]].element.style.display = "";
-		if (this.buttons[this.groups[name].buttons[ii]].on) {
-			if (this.groups[name].preserveState) {
-				if (typeof this.buttons[this.groups[name].buttons[ii]].offCallback === "function") this.buttons[this.groups[name].buttons[ii]].offCallback(this.groups[name].buttons[ii], event);
-			} else {
-				this.buttonOff(this.groups[name].buttons[ii]);
-			}
+
+
+var Button = function (node) {
+	this.node = node;
+	this.listeners = {};
+	this.node.addEventListener("mousedown", this.emit.bind(this, "click"));
+}
+Button.prototype = Object.create(Emitter.prototype); // Makes it into an event emitter
+Object.defineProperty(Button.prototype, "focused", {
+	set: function (newFocused) {
+		newFocused = newFocused ? true : false;
+		if (newFocused === this.focused) return;
+		else if (newFocused === true) {
+			this.node.classList.add("focused");
+			this.emit("focus");
+			this.emit("toggle");
+		} else {
+			this.node.classList.remove("focused");
+			this.emit("unfocus");
+			this.emit("toggle");
 		}
+	},
+	get: function () {
+		return this.node.classList.contains("focused");
 	}
-}
-Buttons.prototype.unfocusGroup = function (name) {
-	for (var ii = 0; ii < this.groups[name].buttons.length; ii++) {
-		this.buttonOff(this.groups[name].buttons[ii]);
-	}
-}
-Buttons.prototype.unfocusButton = function (name) {
-	if (name === undefined) var name = this.lastFocusedButtonName;
-	this.buttons[name].icon.style.opacity = "";
-}
-Buttons.prototype.focusButton = function (name) {
-	this.lastFocusedButtonName = name;
-	this.buttons[name].icon.style.opacity = "1";
-}
-Buttons.prototype.buttonOn = function (name, event) {
-	if (this.buttons[name].on === false) {
-		if (this.groups[this.buttons[name].group] !== undefined) this.unfocusGroup(this.buttons[name].group);
-		this.buttons[name].on = true;
-		console.log(name, this.buttons[name].group, "button on");
-		this.focusButton(name);
-		if (typeof this.buttons[name].onCallback === "function") this.buttons[name].onCallback(name, event);
-	}
-}
-Buttons.prototype.buttonOff = function (name, event) {
-	if (this.buttons[name].on === true) {
-		this.buttons[name].on = false;
-		console.log(name, this.buttons[name].group, "button off");
-		this.unfocusButton(name);
-		if (typeof this.buttons[name].offCallback === "function") this.buttons[name].offCallback(name, event);
-	}
-}
-Buttons.prototype.buttonToggle = function (name, event) {
-	if (this.buttons[name].on === true) this.buttonOff(name, event);
-	else this.buttonOn(name, event);
-}
-Buttons.prototype.groupOn = function (name, event) {
-	this.groups[name].on = true;
-	console.log(name, "group on");
-	this.showGroup(name);
-	if (typeof this.groups[name].onCallback === "function") this.groups[name].onCallback(name, event);
-}
-Buttons.prototype.groupOff = function (name, event) {
-	this.groups[name].on = false;
-	console.log(name, "group off");
-	this.hideGroup(name);
-	if (typeof this.groups[name].offCallback === "function") this.groups[name].offCallback(name, event);
-}
-Buttons.prototype.groupToggle = function (name, event) {
-	if (this.groups[name].on === true) this.groupOff(name, event);
-	else this.groupOn(name, event);
+});
+Button.prototype.toggle = function () {
+	this.focused = !this.focused;
 }
 
-// This function runs once the body loads and sets up the stages and modes and their associated buttons. Will be replaced with a better, compatible implementation.
+
 var loadUI = function () {
-	var stage1 = new Buttons();
-	var stage2 = new Buttons();
-
-	stage1.newGroup("root");
-	stage1.newButton("view", "root", document.getElementById("view"), false, stage2.groupToggle.bind(stage2, "view"), stage2.groupToggle.bind(stage2, "view"));
-	stage1.newButton("edit", "root", document.getElementById("edit"), false, stage2.groupToggle.bind(stage2, "edit"), stage2.groupToggle.bind(stage2, "edit"));
-	stage1.newButton("share", "root", document.getElementById("share"), false, stage2.groupToggle.bind(stage2, "share"), stage2.groupToggle.bind(stage2, "share"));
-
-	stage2.newButton("orbit", "view", document.getElementById("orbit"));
-	stage2.newButton("move", "view", document.getElementById("move"));
-	stage2.newButton("zoom-in", "view", document.getElementById("zoom-in"));
-	stage2.newButton("zoom-out", "view", document.getElementById("zoom-out"));
-	stage2.newButton("rotate", "edit", document.getElementById("rotate"));
-	stage2.newButton("paint", "edit", document.getElementById("paint"));
-	//stage2.newButton("seed", "edit", document.getElementById("seed"), true);
-	stage2.newButton("link", "share", document.getElementById("link"));
-	stage2.newButton("download", "share", document.getElementById("download"));
-	/*stage2.newButton("reddit", "share", document.getElementById("reddit"));
-	stage2.newButton("facebook", "share", document.getElementById("facebook"));
-	stage2.newButton("twitter", "share", document.getElementById("twitter"));*/
-
-	stage1.showGroup("root");
-
-	/*var MQ = MathQuill.getInterface(MathQuill.getInterface.MAX);
-	var seed = MQ.MathField(document.getElementById("seed"), {
-		supSubsRequireOperand: true,
-		substituteTextarea: function () {
-			var sub = document.createElement("textarea");
-			var newAttr = document.createAttribute("autocapitalize");
-			newAttr.value = "off";
-			sub.setAttributeNode(newAttr);
-			newAttr = document.createAttribute("autocomplete");
-			newAttr.value = "off";
-			sub.setAttributeNode(newAttr);
-			newAttr = document.createAttribute("autocorrect");
-			newAttr.value = "off";
-			sub.setAttributeNode(newAttr);
-			newAttr = document.createAttribute("spellcheck");
-			newAttr.value = "false";
-			sub.setAttributeNode(newAttr);
-			newAttr = document.createAttribute("x-palm-disable-ste-all");
-			newAttr.value = "true";
-			sub.setAttributeNode(newAttr);
-			var escapeBackslash = function (event) {
-				console.log(event.key);
-				if (event.key === "\\") {
-					console.log("stopping propagation");
-					console.log(document.activeElement === event.target);
-					event.stopPropagation();
-					event.stopImmediatePropagation();
-				}
-			}
-			return sub;
-		}
-	});*/
-	document.getElementById("seed").addEventListener("keypress", function (event) {
+	view = new Radio(true, [
+		new Button(document.getElementById("orbit")),
+		new Button(document.getElementById("zoom-in")),
+		new Button(document.getElementById("zoom-out")),
+		new Button(document.getElementById("move"))
+	]);
+	social = new Radio(true, [
+		new Button(document.getElementById("download")),
+		new Button(document.getElementById("reddit")),
+		new Button(document.getElementById("twitter")),
+		new Button(document.getElementById("facebook"))
+	]);
+	var setSeed = function () {
+		currSeed = new Seed(document.getElementById("input").value);
+		document.getElementById("number").innerHTML = currSeed.value;
+		return currSeed.value;
+	}
+	setSeed();
+	document.getElementById("input").addEventListener("keypress", function (event) {
 		if (event.keyCode === 13 || event.charCode === 13) {
 			event.preventDefault();
-			console.log(currSeed = new Seed(event.target.innerHTML));
-			random = xor4096(currSeed.result.value);
-			var profile = new RootFactor(currSeed.result.value, genSystem);
+			var value = setSeed();
+			random = xor4096(value);
+			var profile = new RootFactor(value, genSystem);
 		}
 	});
 }

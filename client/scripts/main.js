@@ -7,10 +7,10 @@ var init = function(){
     camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 10000);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById("middlelay").appendChild(renderer.domElement);
+    document.getElementById("graphics").appendChild(renderer.domElement);
     window.addEventListener("resize", resizeCanvas);
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enabled = false;
+    controls = new THREE.OrbitControls(camera, document.getElementById("mouse"));
+    controls.enabled = true;
     camera.position.set(0, 0, 14000);
     zoomIn = true;
     zoomOut = false;
@@ -38,9 +38,9 @@ var init = function(){
 
     var start = Date.now();
     genMaterials(function(progress){
-        console.log(`${progress.loaded}/${progress.total}: ${progress.percent}%`);
+        //console.log(`${progress.loaded}/${progress.total}: ${progress.percent}%`);
     }, function(time){
-        console.log(`Material generation finished: ${time} seconds`);
+        //console.log(`Material generation finished: ${time} seconds`);
     });
 }
 
@@ -52,10 +52,10 @@ var genMaterials = function(onProgress, onFinished){
     var ringJSVGs = [ring1a, ring1b];
     var progress = {loaded: 0, total: sunJSVGs.length + planetJSVGs.length + ringJSVGs.length, percent: 0};
     var textureLoader = new THREE.TextureLoader();
-	var canvas = document.getElementById("planetCanvas");
-	var ctx = canvas.getContext("2d");
+    var canvas = document.getElementById("planetCanvas");
+    var ctx = canvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
-		sunJSVGs[i](ctx, 10.24, 10.24);
+	sunJSVGs[i](ctx, 10.24, 10.24);
         let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
         sunMaterials.push(material);
@@ -64,7 +64,7 @@ var genMaterials = function(onProgress, onFinished){
         onProgress(progress);
     }
     for(var i = 0; i < planetJSVGs.length; i++){
-		planetJSVGs[i](ctx, 10.24, 10.24);
+	planetJSVGs[i](ctx, 10.24, 10.24);
         let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
         planetMaterials.push(material);
@@ -81,6 +81,7 @@ var genMaterials = function(onProgress, onFinished){
         progress.percent = progress.loaded / progress.total * 100;
         onProgress(progress);
     }
+    canvas.parentNode.removeChild(canvas);
     onFinished((Date.now() - start) / 1000);
 }
 
@@ -109,7 +110,7 @@ var genStars = function(){
 
 //The genSystem function is used to begin zooming out for a new system to be generated, intermediate to the genPlanets function
 var genSystem = function(profile){
-    console.log(profile);
+    //console.log(profile);
     zoomOut = true;
     currentProfile = profile;
     controls.enabled = false;
@@ -119,7 +120,7 @@ var genSystem = function(profile){
 var genPlanets = function(profile){
     systemExists = false;
     var blueprint = new Blueprint(profile);
-    console.log(blueprint);
+    //console.log(blueprint);
     solSys = JSON.parse(JSON.stringify(blueprint.system));
     //Clear the previous system from the scene
     for(var i = 0; i < rootGroup.children.length; i++){
@@ -129,7 +130,7 @@ var genPlanets = function(profile){
     zoomInPos.set(0, 0, 15); //Change based on system width
     var start = Date.now();
     addPlanets(solSys, rootGroup);
-    console.log(`Planet adding finished: ${(Date.now() - start) / 1000} seconds`);
+    //console.log(`Planet adding finished: ${(Date.now() - start) / 1000} seconds`);
     updatePlanets(solSys, solSys.spriteGroup.position);
     systemExists = true;
 }

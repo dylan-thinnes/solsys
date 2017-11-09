@@ -1,0 +1,156 @@
+body {
+	height: 100vh;
+	width: 100vw;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+	font-family: monospace;
+}
+body > div {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+}
+
+
+#loading {
+	background-color: #444;
+	transition: background-color 3s;
+	display: none;
+}
+
+#ui {
+	transition: opacity 1s;
+	position: relative;
+}
+#ui > * > * {
+	z-index: 100;
+}
+#mouse {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 100vh;
+	width: 100vw;
+}
+.awake {
+	opacity: 1;
+}
+.asleep {
+	opacity: 0;
+}
+#ui > :not(.uibar) {
+	/*border: #aaa solid;
+	border-width: 0 1px 0 1px;*/
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+.uibar {
+	width: 6em;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.uibar > .icon, #input {
+	opacity: 0.6;
+	background-color: black;
+}
+.uibar > .icon {
+	cursor: pointer;
+	width: 4.5em;
+	height: 4.5em;
+	margin: 0.5em 1em 0.5em 1em;
+	border-radius: 50%;
+	background-size: contain;
+}
+.uibar > .icon:hover, #input:hover { opacity: 0.75; }
+.uibar > .icon:active { opacity: 0.9; background-color: #333; }
+.uibar > .icon.focused, #input:focus { opacity: 0.9; }
+#input, #number {
+	color: #eee;
+	text-align: center;
+}
+#number {
+	font-size: 1em;
+	margin: 0.25em;
+	border-radius: 0.25em;
+}
+#input {
+	height: 1.8em;
+	font-size: 1.8rem;
+	border: 1px solid #eee;
+	padding: 0.125em;
+	border-radius: 0.5em;
+	margin-bottom: 1rem;
+	white-space: pre;
+	overflow: hidden;
+}
+
+
+#graphics {
+	background-color: black;
+	
+	/* temporary placeholder */
+	background-image: url("../system.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
+
+
+
+
+.icon#view {
+	background-image: url(../data/interface-icons/min2/view.svg);
+}
+.icon#edit {
+	background-image: url(../data/interface-icons/min2/edit.svg);
+}
+.icon#share {
+	background-image: url(../data/interface-icons/min2/share.svg);
+}
+.icon#orbit {
+	background-image: url(../data/interface-icons/min2/orbit.svg);
+}
+.icon#move {
+	background-image: url(../data/interface-icons/min2/move.svg);
+}
+.icon#zoom-in {
+	background-image: url(../data/interface-icons/min2/zoom-in.svg);
+
+}
+.icon#zoom-out {
+	background-image: url(../data/interface-icons/min2/zoom-out.svg);
+}
+.icon#rotate {
+	background-image: url(../data/interface-icons/min2/rotate.svg);
+}
+.icon#paint {
+	background-image: url(../data/interface-icons/min2/paint.svg);
+}
+.icon#link {
+	background-image: url(../data/interface-icons/min2/link.svg);
+}
+.icon#download {
+	/*background-image: url(../data/interface-icons/min2/download.svg);*/
+	background-image: url(../data/temp-dl.svg);
+	/*border: 1px solid #eee;
+	background-size: 80% 80%;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;*/
+}
+.icon#reddit {
+	background-image: url(../data/interface-icons/min2/reddit.svg);
+}
+.icon#facebook {
+	background-image: url(../data/interface-icons/min2/facebook.svg);
+}
+.icon#twitter {
+	background-image: url(../data/interface-icons/min2/twitter.svg);
+}
