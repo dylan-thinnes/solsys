@@ -326,9 +326,7 @@ Emitter.prototype.off = function (name, id) {
 }
 // Emits the event by calling all its associated listeners
 Emitter.prototype.emit = function (name, event) {
-	console.log("emit called with ", arguments);
 	if (this.listeners[name] === undefined) return;
-	console.log(name + "exists");
 	for (var id in this.listeners[name]) { this.callListener(name, id, event); }
 }
 // Passes the event to the 
@@ -355,7 +353,6 @@ Radio.prototype.add = function (button) {
 	this.buttons[id] = button;
 }
 Radio.prototype.click = function (id) {
-	console.log("click reached radio");
 	var emitterIsFocused = this.buttons[id].focused;
 	for (var index in this.buttons) this.buttons[index].focused = false;
 	if (!(emitterIsFocused && this.allOff)) this.buttons[id].focused = true; // As long as the emitter wasn't focused previously and allOff isn't permitted, focus the current button.
@@ -406,7 +403,7 @@ var loadUI = function () {
 		new Button(document.getElementById("facebook"))
 	]);
 	var setSeed = function () {
-		console.log(currSeed = new Seed(document.getElementById("input").value));
+		currSeed = new Seed(document.getElementById("input").value);
 		document.getElementById("number").innerHTML = currSeed.value;
 	}
 	setSeed();
