@@ -59,7 +59,8 @@ body > div {
 	background-size: contain;
 }
 .uibar > .icon:hover, #input:hover { opacity: 0.75; }
-.uibar > .icon:active, #input:focus { opacity: 0.9; }
+.uibar > .icon:active { opacity: 0.9; background-color: #333; }
+.uibar > .icon.focused, #input:focus { opacity: 0.9; }
 #input, #number {
 	color: #eee;
 	text-align: center;
@@ -89,7 +90,7 @@ body > div {
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
-	background-size: 100% 100%;
+	background-size: auto 50%;
 }
 
 
