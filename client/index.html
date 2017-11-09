@@ -1,60 +1,86 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
-		<!-- <link rel="stylesheet" type="text/css" href="stylesheets/mathquill.css"> -->
-		<title>Solar System</title>
+		<!-- favicon -->
+
+		<!-- responsive meta tags -->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- stylesheets and standardization -->
+		<link rel="stylesheet" href="stylesheets/bootstrap-reboot.min.css" type="text/css"/>
+		<link rel="stylesheet" href="stylesheets/style.css" type="text/css"/>
 	</head>
 	<body>
-		<div id="overlay">
-			<div class="UIStage" id="stage1">
-				<div class="largeButton" id="view"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="view"></div></div>
-				<div class="largeButton" id="edit"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="edit"></div></div>
-				<div class="largeButton" id="share"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="share"></div></div>
+		<div id="graphics"></div>
+		<div id="ui" class="awake">
+			<div id="view" class="uibar">
+				<div class="icon" id="orbit"></div>
+				<div class="icon" id="move"></div>
+				<div class="icon" id="zoom-in"></div>
+				<div class="icon" id="zoom-out"></div>
 			</div>
-			<div class="UIStage" id="stage2">
-				<div class="largeButton" id="orbit"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="orbit"></div></div>
-				<div class="largeButton" id="move"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="move"></div></div>
-				<div class="largeButton" id="zoom-in"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="zoom-in"></div></div>
-				<div class="largeButton" id="zoom-out"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="zoom-out"></div></div>
-
-				<div class="largeButton" id="rotate"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="rotate"></div></div>
-				<div class="largeButton" id="paint"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="paint"></div></div>
-
-				<div class="largeButton" id="link"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="link"></div></div>
-				<div class="largeButton" id="download"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="download"></div></div>
-				<div class="largeButton" id="reddit"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="reddit"></div></div>
-				<div class="largeButton" id="facebook"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="facebook"></div></div>
-				<div class="largeButton" id="twitter"><a class="detector"></a><div class="background-shading"></div><div class="background-icon icon" id="twitter"></div></div>
+			<div id="data">
+				<div id="number">Hello</div>
+				<textarea id="input" type="text" rows="1"></textarea>
 			</div>
-			<div class="UIStage" id="stage3">
-				<div id="format">
-					<div class="formatButton" id="leftFormat"><a class="detector"></a><div class="background-icon icon" id=""></div></div>
-					<div id="displayFormat"><div class="background-icon icon" id=""></div></div>
-					<div class="formatButton" id="rightFormat"><a class="detector"></a><div class="background-icon icon" id=""></div></div>
-				</div>
-				<div id="seed" contenteditable="true" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"></div>
+			<div id="share" class="uibar">
+				<div class="icon" id="download"></div>
+				<div class="icon" id="reddit"></div>
+				<div class="icon" id="twitter"></div>
+				<div class="icon" id="facebook"></div>
 			</div>
-			<div class="UIStage" id="stage4"></div>
 		</div>
-		<div id="middlelay">
-			<p id="webgl-unsupported"></p>
-		</div>
-		<div id="underlay">
-			<canvas id="planetCanvas" width="1024" height="1024"></canvas>
-		</div>
-		<!-- <script src="scripts/mathquill-0.10.1.min.js"></script> -->
-		<script src="scripts/ui.js"></script>
-		<script src="scripts/sieve.js"></script>
-		<script src="scripts/factorize.js"></script>
-		<script src="scripts/three.min.js"></script>
-		<script src="scripts/xor4096.min.js"></script>
-		<script src="scripts/timer.min.js"></script>
-		<script src="scripts/OrbitControls.js"></script>
-		<script src="scripts/planets.js"></script>
-		<script src="scripts/main.js"></script>
+		<div id="loading"></div>
+		<script>
+Ui = {
+	loading: new (function () {
+		this.queuedActions = 0;
+		this.allActionsQueued = false;
+		this.completedActions = 0;
+		this.descriptors = [];
+		this.queueAction = function (type, descriptor, total, isLast) {
+			this.descriptors[type] = descriptor;
+			this.queuedActions++;
+			if (isLast) {
+				this.allActionsQueued = true;
+				this.show();
+			}
+		}
+		this.completeAction = function () {
+		
+		}
+		this.show = function () {
+			this.node.style.width = this.completedActions / this.queuedActions
+		}
+	})(),
+	viewEdit: {
+	
+	},
+	dataEdit: {
+	
+	},
+	social: {
+	
+	}
+}
+uiNode = document.getElementById("ui");
+lastUserAction = 0;
+wake = function (e) {
+	lastUserAction = Date.now();
+	if (!uiWoke) {
+		uiWoke = true;
+		uiNode.className = "awake";
+	}
+}
+doze = function () {
+	if (Date.now() - lastUserAction > 10000 && uiWoke === true) {
+		uiWoke = false;
+		uiNode.className = "asleep";
+	}
+}
+uiWoke = null;
+window.addEventListener("mousemove", wake);
+document.getElementById("input").addEventListener("keydown", wake);
+window.setInterval(doze, 100);
+		</script>
 	</body>
 </html>
