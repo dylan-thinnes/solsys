@@ -18,6 +18,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.object = object;
 
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
+	this.domElement.addEventListener("mousedown", function () {console.log("blurring input"); document.getElementById("input").blur();});
 
 	// Set to false to disable this control
 	this.enabled = true;
@@ -715,8 +716,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		if ( state !== STATE.NONE ) {
 
-			document.addEventListener( 'mousemove', onMouseMove, false );
-			document.addEventListener( 'mouseup', onMouseUp, false );
+			document.addEventListener( 'mousemove', onMouseMove, true );
+			document.addEventListener( 'mouseup', onMouseUp, true );
 
 			scope.dispatchEvent( startEvent );
 

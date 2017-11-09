@@ -399,14 +399,15 @@ var loadUI = function () {
 	var setSeed = function () {
 		currSeed = new Seed(document.getElementById("input").value);
 		document.getElementById("number").innerHTML = currSeed.value;
+		return currSeed.value;
 	}
 	setSeed();
 	document.getElementById("input").addEventListener("keypress", function (event) {
 		if (event.keyCode === 13 || event.charCode === 13) {
 			event.preventDefault();
-			setSeed();
-			//random = xor4096(currSeed.result.value);
-			//var profile = new RootFactor(currSeed.result.value, genSystem);
+			var value = setSeed();
+			random = xor4096(value);
+			var profile = new RootFactor(value, genSystem);
 		}
 	});
 }

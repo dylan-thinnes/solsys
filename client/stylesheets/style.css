@@ -25,6 +25,17 @@ body > div {
 
 #ui {
 	transition: opacity 1s;
+	position: relative;
+}
+#ui > * > * {
+	z-index: 100;
+}
+#mouse {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 100vh;
+	width: 100vw;
 }
 .awake {
 	opacity: 1;
