@@ -1,4 +1,3 @@
-console.log("fetched ui.js");
 // The ArbInt class, named to represent "Arbitrary Integer", is designed to represent numbers as a collection of digits inside TypedArrays (default length 100), allowing a theoretically unlimited number size. They can be added and subtracted to/from other ArbInts. The ArbInt class also contains a static property, POW2, an array which contains all powers of 2 in ArbInt form, up until 2^166.
 var ArbInt = function (value, length) {
 	this.length = length === undefined ? 100 : length;
@@ -252,9 +251,7 @@ ArbInt.POW2 = [
 // The Seed class is a class for creating ArbNums from strings that may or may not contain single-byte, double-byte, or quad-byte unicode characters. It analyzes the given input string and determines whether it is a number (type: Seed.NUMBER) or a string. If it is a string, the Seed class reads string as UTF-8 formatted, and turns each successive byte into a new set of 8 bits which are appended to the beginning of the previous set of bits. Once it is done with concatenating the bits of each byte in the string's representation, it reads those bits as a number and uses the ArbInt class to represent the final number as a string.
 var Seed = function (input) {
 	this.input = input;
-	console.log(input, typeof input);
 	if (input === "") {
-		console.log("input was empty string");
 		this.value = 1;
 		return;
 	}
@@ -340,10 +337,8 @@ Emitter.prototype.callListener = function (name, id, event) {
 var Radio = function (allOff, buttons) {
 	this.allOff = allOff ? true : false; // Sets if all buttons being out of focus is an acceptable state.
 	this.buttons = {};
-	console.log(buttons, Array.from(buttons));
 	buttons = buttons ? Array.from(buttons) : [];
 	for (var ii in buttons) {
-		console.log(ii);
 		this.add(buttons[ii]);
 	}
 }
@@ -389,7 +384,6 @@ Button.prototype.toggle = function () {
 
 
 var loadUI = function () {
-	console.log("loading ui");
 	view = new Radio(true, [
 		new Button(document.getElementById("orbit")),
 		new Button(document.getElementById("zoom-in")),
