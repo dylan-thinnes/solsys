@@ -5,25 +5,16 @@ By using existing prime factorization libraries such as primecount and msieve, t
 
 Everything in this program and document is set to change at any moment depending on needs.
 
-# Usage
+# Usage (planned final structure)
 ## Solsys Client
-Solsys Client is the program which takes number, factorizes them (sometimes with the help of Lambda) and then produces profiles and graphics for them. It also provides a UI and a number of other graphical items to help the user fully leverage the beauty of solsys.
+Solsys Client is the program which takes number blueprints and then produces graphics for them. It also provides a UI and a number of other graphical items to help the user fully leverage the beauty of solsys.
 
 ## Solsys Lambda
-Solsys Lambda is stripped-down and specially compiled derivative of Solsys Standalone that runs on Amazon Web Services' "Lambda" and "API Gateway" products. It can be accessed through a GET request to the following endpoint:
+Solsys Lambda is stripped-down and specially compiled program that runs on Amazon Web Services' "Lambda" and "API Gateway" products. It produces profiles and blueprints for any given number and does practically all of the heavy lifting for solsys calculations.
+
+It can be accessed through a GET request to the following endpoint:
 `https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=<YOUR NUMBER HERE>`
 A special header, "`x-api-key`", needs to be set to the value "`LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM`" in order to be properly authenticated for this AWS API Gateway endpoint.
 
 An example of obtaining the factorization for the number 234 through curl is as follows:
 `curl -H "x-api-key: LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM" https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=234`
-
-## Solsys Standalone (DEPRECATED, SEVERELY BEHIND CURRENT VERSIONS)
-Solsys Standalone runs locally on the client's computer, and is located in solsys/server. It contains two files of note: `factor.js` and `cmd.js`. `factor.js` is a node module that does all of the heavy lifting and processing by running `primecount` and `msieve` executables in separate child process. The executables can be found in `server/factorization-dependencies/`. `cmd.js` is a node program which allows you to run the module a total of once with command line arguments.
-
-The command line arguments are as follows:  
-`-n <number>` (REQUIRED & ONLY FOR cmd.js) Tells cmd.js the number you want to factorize.  
-`-p <power>` (ONLY FOR cmd.js) Tells cmd.js which power to attribute to the factorized number. Defaults to 1.  
-`-d <minNumber>` The minimum number for which to find π(\<number\>). Defaults to 999999.  
-`-v` Runs the program in VERBOSE mode, akin to debug mode for now.  
-`-l` Runs the program with linux command line arguments, necessary to run on linux.  
-`-r` Runs the program with a random 50 digit number.
