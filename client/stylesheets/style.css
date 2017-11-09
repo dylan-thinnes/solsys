@@ -87,10 +87,9 @@ body > div {
 	
 	/* temporary placeholder */
 	background-image: url("../system.png");
-	background-size: contain;
+	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
-	background-size: auto 50%;
 }
 
 
