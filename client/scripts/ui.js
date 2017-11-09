@@ -405,11 +405,15 @@ var loadUI = function () {
 		new Button(document.getElementById("twitter")),
 		new Button(document.getElementById("facebook"))
 	]);
+	var setSeed = function () {
+		console.log(currSeed = new Seed(document.getElementById("input").value));
+		document.getElementById("number").innerHTML = currSeed.value;
+	}
+	setSeed();
 	document.getElementById("input").addEventListener("keypress", function (event) {
 		if (event.keyCode === 13 || event.charCode === 13) {
 			event.preventDefault();
-			console.log(currSeed = new Seed(event.target.value));
-			document.getElementById("number").innerHTML = currSeed.value;
+			setSeed();
 			//random = xor4096(currSeed.result.value);
 			//var profile = new RootFactor(currSeed.result.value, genSystem);
 		}
