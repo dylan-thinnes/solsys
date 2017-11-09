@@ -64,6 +64,19 @@ Ui = {
 }
 uiNode = document.getElementById("ui");
 lastUserAction = 0;
+stayAwake = false;
+keepAwake = function (e) {
+	lastUserAction = Date.now();
+	uiWoke = true;
+	uiNode.className = "awake";
+	stayAwake = true;
+}
+unkeepAwake = function (e) {
+	lastUserAction = Date.now();
+	uiWoke = true;
+	uiNode.className = "awake";
+	stayAwake = false;
+}
 wake = function (e) {
 	lastUserAction = Date.now();
 	if (!uiWoke) {
@@ -72,7 +85,7 @@ wake = function (e) {
 	}
 }
 doze = function () {
-	if (Date.now() - lastUserAction > 10000 && uiWoke === true) {
+	if (Date.now() - lastUserAction > 10000 && uiWoke === true && stayAwake === false) {
 		uiWoke = false;
 		uiNode.className = "asleep";
 	}
@@ -80,6 +93,8 @@ doze = function () {
 uiWoke = null;
 window.addEventListener("mousemove", wake);
 document.getElementById("input").addEventListener("keydown", wake);
+document.getElementById("input").addEventListener("focus", keepAwake);
+document.getElementById("input").addEventListener("blur", unkeepAwake);
 window.setInterval(doze, 100);
 		</script>
 		<script src="scripts/ui.js"></script>
