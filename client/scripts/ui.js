@@ -347,7 +347,7 @@ Radio.prototype.add = function (button) {
 	button.on("click", this.click.bind(this, id));
 	this.buttons[id] = button;
 }
-Radio.prototype.click = function (id) {
+Radio.prototype.click = function (id, event) {
 	var emitterIsFocused = this.buttons[id].focused;
 	for (var index in this.buttons) this.buttons[index].focused = false;
 	if (!(emitterIsFocused && this.allOff)) this.buttons[id].focused = true; // As long as the emitter wasn't focused previously and allOff isn't permitted, focus the current button.
@@ -357,7 +357,11 @@ Radio.prototype.click = function (id) {
 var Button = function (node) {
 	this.node = node;
 	this.listeners = {};
-	this.node.addEventListener("mousedown", this.emit.bind(this, "click"));
+	this.node.addEventListener("click", this.emit.bind(this, "click"));
+	this.node.addEventListener("click", this.captureEvent.bind(this));
+	this.node.addEventListener("mousedown", this.activate.bind(this));
+	this.node.addEventListener("mouseup", this.deactivate.bind(this));
+	this.node.addEventListener("mouseleave", this.deactivate.bind(this));
 }
 Button.prototype = Object.create(Emitter.prototype); // Makes it into an event emitter
 Object.defineProperty(Button.prototype, "focused", {
@@ -378,6 +382,17 @@ Object.defineProperty(Button.prototype, "focused", {
 		return this.node.classList.contains("focused");
 	}
 });
+Button.prototype.captureEvent = function (e) {
+	e.preventDefault();
+	//e.stopImmediatePropagation();
+	//e.stopPropagation();
+}
+Button.prototype.activate = function () {
+	this.node.classList.add("active");
+}
+Button.prototype.deactivate = function () {
+	this.node.classList.remove("active");
+}
 Button.prototype.toggle = function () {
 	this.focused = !this.focused;
 }
