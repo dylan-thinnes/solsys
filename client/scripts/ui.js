@@ -401,16 +401,17 @@ Button.prototype.toggle = function () {
 var loadUI = function () {
 	view = new Radio(true, [
 		new Button(document.getElementById("orbit")),
-		new Button(document.getElementById("zoom-in")),
-		new Button(document.getElementById("zoom-out")),
+		//new Button(document.getElementById("zoom-in")),
+		//new Button(document.getElementById("zoom-out")),
+		new Button(document.getElementById("zoom")),
 		new Button(document.getElementById("move"))
 	]);
-	social = new Radio(true, [
-		new Button(document.getElementById("download")),
-		new Button(document.getElementById("reddit")),
-		new Button(document.getElementById("twitter")),
-		new Button(document.getElementById("facebook"))
-	]);
+	new Button(document.getElementById("download"));
+	new Button(document.getElementById("link"));
+	//new Button(document.getElementById("reddit"));
+	//new Button(document.getElementById("twitter"));
+	//new Button(document.getElementById("facebook"));
+	new Button(document.getElementById("share"));
 	var setSeed = function () {
 		currSeed = new Seed(document.getElementById("input").value);
 		document.getElementById("number").innerHTML = currSeed.value;
