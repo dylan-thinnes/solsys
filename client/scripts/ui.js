@@ -423,7 +423,7 @@ var loadUI = function () {
 			event.preventDefault();
 			var value = setSeed();
 			random = xor4096(value);
-			var profile = new RootFactor(value, genSystem);
+			var profile = new RootFactor(value, genPlanets);
 		}
 	});
 }
