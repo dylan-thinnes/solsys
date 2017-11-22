@@ -90,6 +90,20 @@ for (var ii = 0; ii < 167; ii++) {
 	ArbInt.POW2.push(newNum);
 }
 
+// getRemoteFactorization gets the profile for any number from AWS factorize API endpoint.
+getRemoteFactorization = function (number, callback) {
+	number = (!isNaN(number) && number !== null) ? number.toString() : "1";
+	var req = new XMLHttpRequest();
+	req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=" + number.toString() + "&piXDepth=1");
+	req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
+	req.onreadystatechange = function (event) {
+		if (this.readyState === 4) {
+			callback(JSON.parse(this.response)["body"]);
+		}
+	}
+	req.send();
+}
+
 // The Seed class is a class for creating ArbNums from strings that may or may not contain single-byte, double-byte, or quad-byte unicode characters. It analyzes the given input string and determines whether it is a number (type: Seed.NUMBER) or a string. If it is a string, the Seed class reads string as UTF-8 formatted, and turns each successive byte into a new set of 8 bits which are appended to the beginning of the previous set of bits. Once it is done with concatenating the bits of each byte in the string's representation, it reads those bits as a number and uses the ArbInt class to represent the final number as a string.
 var Seed = function (input) {
 	this.input = input;
