@@ -223,11 +223,8 @@ Object.defineProperty(Button.prototype, "focused", {
 		return this.node.classList.contains("focused");
 	}
 });
-Button.prototype.captureEvent = function (e) {
-	e.preventDefault();
-	//e.stopImmediatePropagation();
-	//e.stopPropagation();
-}
+Button.prototype.captureEvent = function (e) { e.preventDefault(); }
+Button.prototype.unpropagateEvent = function (e) { e.stopPropagation(); }
 Button.prototype.activate = function () {
 	this.node.classList.add("active");
 }
@@ -239,25 +236,42 @@ Button.prototype.toggle = function () {
 }
 
 
+var Modal = function (node) {
+	this.node = node;
+	this.listeners = {};
+	this.node.getElementsByClassName("close")[0].addEventListener("click", this.emit.bind(this, "click"));
+	this.node.getElementsByClassName("content")[0].addEventListener("click", this.unpropagateEvent.bind(this));
+	this.node.addEventListener("click", this.emit.bind(this, "click"));
+}
+this.Modal.prototype = Object.create(Button.prototype);
+
+
 var loadUI = function () {
 	view = new Radio(true, [
 		new Button(document.getElementById("orbit")),
-		//new Button(document.getElementById("zoom-in")),
-		//new Button(document.getElementById("zoom-out")),
 		new Button(document.getElementById("zoom")),
 		new Button(document.getElementById("move"))
 	]);
 	new Button(document.getElementById("download"));
 	new Button(document.getElementById("link"));
-	//new Button(document.getElementById("reddit"));
-	//new Button(document.getElementById("twitter"));
-	//new Button(document.getElementById("facebook"));
 	new Button(document.getElementById("share"));
 	var setSeed = function () {
 		currSeed = new Seed(document.getElementById("input").value);
 		document.getElementById("number").innerHTML = currSeed.value;
 		return currSeed.value;
 	}
+
+	modalContainerNode = document.getElementById("modalContainer");
+	modalContainer = new Radio(true, [
+		new Modal(document.getElementById("loading"))
+	]);
+	showModalContainer = function () {modalContainerNode.style.display = "flex";}
+	hideModalContainer = function () {modalContainerNode.style.display = "none";}
+	for (var index in modalContainer.buttons) {
+		modalContainer.buttons[index].on("focus", showModalContainer);
+		modalContainer.buttons[index].on("unfocus", hideModalContainer);
+	}
+
 	setSeed();
 	document.getElementById("input").addEventListener("keypress", function (event) {
 		if (event.keyCode === 13 || event.charCode === 13) {

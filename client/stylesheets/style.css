@@ -15,11 +15,6 @@ body > div {
 }
 
 
-#loading {
-	background-color: #444;
-	transition: background-color 3s;
-	display: none;
-}
 
 #ui {
 	transition: opacity 1s;
@@ -59,14 +54,14 @@ body > div {
 	flex-direction: row;
 	justify-content: center;
 }
-.uibar > .icon, #input {
+.icon, #input {
 	opacity: 0.6;
 	background-color: transparent;
 	box-sizing: content-box;
 	border: 0;
 	border-bottom: 1px solid #eee;
 }
-.uibar > .icon {
+.icon {
 	cursor: pointer;
 	width: 3rem;
 	height: 3rem;
@@ -76,10 +71,10 @@ body > div {
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 }
-.uibar > .icon:hover, #input:hover { opacity: 0.75; }
-.uibar > .icon.focused, #input:focus { opacity: 0.9; border-bottom-width: 2px; }
+.icon:hover, #input:hover { opacity: 0.75; }
+.icon.focused, #input:focus { opacity: 0.9; border-bottom-width: 2px; }
 #input:focus { margin-bottom: -1px; }
-.uibar > .icon.active { opacity: 0.9; background-color: #222; }
+.icon.active { opacity: 0.9; background-color: #222; }
 #input, #number {
 	color: #eee;
 	text-align: center;
@@ -108,9 +103,52 @@ body > div {
 	background-color: black;
 }
 
+#modalContainer {
+	display: none;
+}
+.modal {
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	z-index: 1000;
+	display: none;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 3rem;
+}
+.modal .icon#close {
+	width: 2rem;
+	height: 2rem;
+	border-bottom: 0;
+	position: absolute;
+	top: 0px;
+	left: -2.5rem;
+	padding: 0;
+}
+.modal.focused {
+	display: flex;
+}
+.modal > .content {
+	transition: opacity 5s;
+	opacity: 0;
+}
+.modal.focused > .content {
+	min-height: 100px;
+	flex-direction: column;
+	position: relative;
+	color: rgba(249,249,249,0.9);
+	padding: 0.5rem;
+	border-bottom: 1px solid rgba(249,249,249,0.60);
+	background-color: rgba(0,0,0,0.75);
+	cursor: default;
+	opacity: 1;
+}
 
 
-
+.icon#close {
+	background-image: url(../data/mi/close.svg);
+}
 .icon#view {
 	/*background-image: url(../data/interface-icons/min2/view.svg);
 	*/background-image: url(../data/mi/view.svg);
