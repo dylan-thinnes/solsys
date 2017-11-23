@@ -43,6 +43,9 @@ Graphics.prototype.loadMaterials = function(progress) {
     var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4, SVGTOJS.planet5]; //Add sun JSVGs
     var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4, SVGTOJS.planet5];
     var ringJSVGs = [SVGTOJS.ring1, SVGTOJS.ring2, SVGTOJS.ring3, SVGTOJS.ring4];
+    var primaryColors = ["#00ccff", "#0088aa", "#000080", "#00aad4", "#0000ff", "#0088aa", "#aa0044", "#deaa87", "#003380", "#2c2ca0", "#deaa87", "#0088aa"];
+    var secondaryColors = ["#c87137", "#008000", "#c87137", "#008033", "#550000", "#217844", "#d35f8d", "#d45500", "#aa87de", "#aaccff", "#aa4400", "#b7c8c4"];
+    var ringColors = ["#d40000", "#00f", "#c0f", "#00d400"]; // in groups of 4
     progress.init(sunJSVGs.length + planetJSVGs.length + ringJSVGs.length);
     var textureLoader = new THREE.TextureLoader();
     var planetCanvas = document.getElementById("planetCanvas");
@@ -50,30 +53,35 @@ Graphics.prototype.loadMaterials = function(progress) {
     var ringCanvas = document.getElementById("ringCanvas");
     var ringCtx = ringCanvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
-	    sunJSVGs[i](planetCtx, 10.24, 10.24);
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
-        material.depthTest = false;
-        this.sunMaterials.push(material);
-        progress.finishTask();
+        for(var j = 0; j < primaryColors.length; j++){
+            sunJSVGs[i](planetCtx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
+            let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
+            material.depthTest = false;
+            this.sunMaterials.push(material);
+            progress.finishTask();
+        }
     }
     for(var i = 0; i < planetJSVGs.length; i++){
-	    planetJSVGs[i](planetCtx, 10.24, 10.24);
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
-        material.depthTest = false;
-        this.planetMaterials.push(material);
-        progress.finishTask();
+        for(var j = 0; j < primaryColors.length; j++){
+            planetJSVGs[i](planetCtx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
+            let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
+            material.depthTest = false;
+            this.planetMaterials.push(material);
+            progress.finishTask();
+        }
     }
     for(var i = 0; i < ringJSVGs.length; i++){
-        ringJSVGs[i](ringCtx, 20.48 / 3, 20.48 / 3);
-        let texture = textureLoader.load(ringCanvas.toDataURL());
-        console.log(texture.offset);
-        texture.offset.y = -0.0008;
-        let front = new THREE.SpriteMaterial({map: texture});
-        front.depthTest = false;
-        let back = front.clone();
-        back.rotation = Math.PI;
-        this.ringMaterials.push([front, back]);
-        progress.finishTask();
+        for(var j = 0; j < primaryColors.length; j += 4){
+            ringJSVGs[i](ringCtx, 20.48 / 3, 20.48 / 3, ringColors[j], ringColors[j + 1], ringColors[j + 2], ringColors[j + 3]);
+            let texture = textureLoader.load(ringCanvas.toDataURL());
+            texture.offset.y = -0.0008;
+            let front = new THREE.SpriteMaterial({map: texture});
+            front.depthTest = false;
+            let back = front.clone();
+            back.rotation = Math.PI;
+            this.ringMaterials.push([front, back]);
+            progress.finishTask();
+        }
     }
     planetCanvas.parentNode.removeChild(planetCanvas);
     ringCanvas.parentNode.removeChild(ringCanvas);
@@ -145,7 +153,6 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
         var ringSpriteFront = new THREE.Sprite(this.ringMaterials[ringIndex][1]);
         ringSpriteFront.applyMatrix(ringScale);
         spriteGroup.add(ringSpriteFront);
-        console.log("meow");
     }
     // Create planet orbit path
     var orbitPath = new THREE.LineLoop(this.orbitPathGeometry, this.orbitPathMaterial);
@@ -221,8 +228,7 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                //speed: 0.5 * Randomizer.random(),
-                speed: 0,
+                speed: 0.5 * Randomizer.random(),
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -234,8 +240,7 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                //speed: 0.5 * Randomizer.random(),
-                speed: 0,
+                speed: 0.5 * Randomizer.random(),
                 children: []
             });
         } else if (parseInt(node.piX) === 0) {
@@ -250,8 +255,7 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                //speed: 0.5 * Randomizer.random(),
-                speed: 0,
+                speed: 0.5 * Randomizer.random(),
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -263,8 +267,7 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                //speed: 0.5 * Randomizer.random(),
-                speed: 0,
+                speed: 0.5 * Randomizer.random(),
                 children: []
             });
         } else if (parseInt(node.power) === 0) {
