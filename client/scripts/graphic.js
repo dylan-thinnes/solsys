@@ -209,7 +209,7 @@ Graphics.prototype.setSize = function (width, height) {
 
 // The updatePlanets function updates the positions of the planets of the solSys object
 Graphics.prototype.updatePlanets = function(planet, parentPosition){
-    planet.spriteGroup.position.set(Math.cos(RenderClock.getMultipliedElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(RenderClock.getMultipliedElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
+    planet.spriteGroup.position.set(Math.cos(RenderClock.getElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(RenderClock.getElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
     planet.orbitGroup.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
@@ -373,6 +373,7 @@ function init () {
 // The render function is the main render loop
 var render = function(){
     requestAnimationFrame(render);
+    var deltaTime = RenderClock.update();
     if (Graphics.systemExists){
         Graphics.update();
     }

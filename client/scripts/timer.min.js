@@ -1,5 +1,6 @@
 /**
- * timer.js - A simple javascript timer with resuming, pausing, elapsed time, and delta time.
+ * timer.js - A simple javascript timer with resuming, pausing, elapsed time, delta time, and a multiplier.
+ * The time can be reversed, sped up or slowed down using the time multiplier.
  * @author Aaron Shappell
  */
 
@@ -8,21 +9,38 @@
  * @constructor
  */
 var Timer = function(){
-    this.startTime = 0;
+    this.elapsedTime = 0;
     this.pauseTime = 0;
-    this.lastTime = 0;
+    this.lastUpdate = 0;
     this.timePaused = 0;
     this.running = false;
     this.multiplier = 1;
 }
 
 /**
+ * Updates the timer and returns the delta time since the last update
+ * @return {number} the delta time
+ */
+Timer.prototype.update = function(){
+    var delta;
+    if(this.running){
+        delta = (Date.now() - this.lastUpdate - this.timePaused) * this.multiplier;
+        this.lastUpdate = Date.now();
+        this.timePaused = 0;
+        this.elapsedTime += delta;
+    } else{
+        delta = 0;
+    }
+    return delta;
+}
+
+/**
  * Starts the timer
  */
 Timer.prototype.start = function(){
-    this.startTime = Date.now();
+    this.elapsedTime = 0;
     this.pauseTime = Date.now();
-    this.lastTime = Date.now();
+    this.lastUpdate = Date.now();
     this.timePaused = 0;
     this.running = true;
 }
@@ -31,9 +49,9 @@ Timer.prototype.start = function(){
  * Stops the timer
  */
 Timer.prototype.stop = function(){
-    this.startTime = 0;
+    this.elapsedTime = 0;
     this.pauseTime = 0;
-    this.lastTime = 0;
+    this.lastUpdate = 0;
     this.running = false;
 }
 
@@ -70,7 +88,7 @@ Timer.prototype.isRunning = function(){
  * @return {number} the elasped time in milliseconds
  */
 Timer.prototype.getElapsedMillis = function(){
-    return Date.now() - this.startTime - ((this.running) ? 0 : (Date.now() - this.pauseTime)) - this.timePaused;
+    return this.elapsedTime;
 }
 
 /**
@@ -79,40 +97,6 @@ Timer.prototype.getElapsedMillis = function(){
  */
 Timer.prototype.getElapsedSeconds = function(){
     return this.getElapsedMillis() / 1000;
-}
-
-/**
- * Gets the delta time of the timer
- * @return {number} the delta time
- */
-Timer.prototype.getDeltaTime = function(){
-    var delta = Date.now() - this.lastTime;
-    this.lastTime = Date.now();
-    return delta;
-}
-
-/**
- * 
- * @return {number} the multiplied elasped time in milliseconds
- */
-Timer.prototype.getMultipliedElapsedMillis = function(){
-    return this.getElapsedMillis() * this.multiplier;
-}
-
-/**
- * Gets the multiplied elapsed time of the timer in seconds
- * @return {number} the multiplied elasped time in seconds
- */
-Timer.prototype.getMultipliedElapsedSeconds = function(){
-    return this.getElapsedSeconds() * this.multiplier;
-}
-
-/**
- * Gets the multiplied delta time of the timer
- * @return {number} the multiplied delta time
- */
-Timer.prototype.getMultipliedDeltaTime = function(){
-    return this.getDeltaTime() * this.multiplier;
 }
 
 /**
