@@ -44,31 +44,41 @@ Graphics.prototype.loadMaterials = function(progress) {
     var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4]; //Add sun JSVGs
     var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4];
     var ringJSVGs = []; // SVGTOJS.ring1, SVGTOJS.ring2, etc
-    progress.init(sunJSVGs.length + planetJSVGs.length + ringJSVGs.length);
+    progress.init(sunJSVGs.length + planetJSVGs.length + ringJSVGs.length + 1);
     var textureLoader = new THREE.TextureLoader();
     var canvas = document.getElementById("planetCanvas");
     var ctx = canvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
-	    sunJSVGs[i](ctx, 10.24, 10.24);
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
-        material.depthTest = false;
+	sunJSVGs[i](ctx, 10.24, 10.24);
+	let material = 0;
+        setTimeout(function () {
+		material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
+	}, 1);
+	material.depthTest = false;
         this.sunMaterials.push(material);
         progress.finishTask();
     }
     for(var i = 0; i < planetJSVGs.length; i++){
-	    planetJSVGs[i](ctx, 10.24, 10.24);
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
+	planetJSVGs[i](ctx, 10.24, 10.24);
+        let material = 0;
+        setTimeout(function () {
+		material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
+	}, 1);
         material.depthTest = false;
         this.planetMaterials.push(material);
         progress.finishTask();
     }
     for(var i = 0; i < ringJSVGs.length; i++){
-		ringJSVGs[i](ctx, 10.24, 10.24);
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
+	ringJSVGs[i](ctx, 10.24, 10.24);
+        let material = 0;
+        setTimeout(function () {
+		material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
+	}, 1);
         material.depthTest = false;
         this.ringMaterials.push(material);
         progress.finishTask();
     }
+    progress.finishTask();
     canvas.parentNode.removeChild(canvas);
 }
 
@@ -328,7 +338,6 @@ function init () {
     progressBar = new Progress();
     progressBar.on("finishTask", console.log);
     progressBar.on("finishTask", console.log.bind(this, "progressBar done!"));
-    Graphics.loadMaterials(progressBar);
 }
 
 // The render function is the main render loop
@@ -340,16 +349,4 @@ var render = function(){
     Graphics.render();
 }
 
-// WebGL detection
-try {
-    var canvas = document.createElement('canvas');
-    supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-} catch ( e ) {
-    supportsWebGL = false;
-}
-if (supportsWebGL) {
-    init();
-    render();
-} else {
-    document.getElementById("webgl-unsupported").innerHTML = "Your graphics card does not seem to support WebGL. <br/><br/> Find out how to get it here: <a href=\"https://get.webgl.org/\" target=\"_blank\">https://get.webgl.org/</a>";
-}
+
