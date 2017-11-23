@@ -16,7 +16,6 @@ Graphics = function(width, height, graphicsNode){
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 10000);
     this.renderer = new THREE.WebGLRenderer();
-    this.setSize(width, height);
     graphicsNode.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.setSize.bind(this));
     this.camera.position.set(0, 0, 15);
@@ -36,6 +35,7 @@ Graphics = function(width, height, graphicsNode){
     this.scene.add(this.rootGroup);
     this.solSys = {};
     this.systemExists = false;
+    this.setSize();
 }
 
 // The loadMaterials function is used to load the materials and textures for planets and objects in the scene
@@ -164,7 +164,11 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
 }
 
 // The setSize function is used to resize the renderer and camera with the given width and height
-Graphics.prototype.setSize = function(width, height){
+Graphics.prototype.setSize = function (width, height) {
+    if (isNaN(width) || isNaN(height)) {
+        width = window.innerWidth;
+        height = window.innerHeight;
+    }
     this.renderer.setSize(width, height);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
