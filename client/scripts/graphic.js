@@ -122,10 +122,10 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
         var ringScale = new THREE.Matrix4();
         ringScale.makeScale(planet.scale, planet.scale, 1); // Maybe change this
         var ringIndex = Math.floor(Randomizer.random() * this.ringMaterials.length / 2);
-        // var ringSpriteA = new THREE.Sprite(this.ringMaterials[ringIndex]);
-        var ringSpriteA = new THREE.Sprite();
-        ringSpriteA.applyMatrix(ringScale);
-        spriteGroup.add(ringSpriteA);
+        var ringSpriteBack = new THREE.Sprite(this.ringMaterials[ringIndex]);
+        ringSpriteBack.applyMatrix(ringScale);
+        ringSpriteBack.rotation.set(Math.PI);
+        spriteGroup.add(ringSpriteBack);
     }
     // Create planet sprite
     var planetScale = new THREE.Matrix4();
@@ -135,10 +135,9 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     spriteGroup.add(planetSprite);
     // Create front ring
     if(planet.ring){
-        // var ringSpriteB = new THREE.Sprite(this.ringMaterials[ringIndex + 1]);
-        var ringSpriteB = new THREE.Sprite();
-        ringSpriteB.applyMatrix(ringScale);
-        spriteGroup.add(ringSpriteB);
+        var ringSpriteFront = new THREE.Sprite(this.ringMaterials[ringIndex]);
+        ringSpriteFront.applyMatrix(ringScale);
+        spriteGroup.add(ringSpriteFront);
     }
     // Create planet orbit path
     var orbitPath = new THREE.LineLoop(this.orbitPathGeometry, this.orbitPathMaterial);
