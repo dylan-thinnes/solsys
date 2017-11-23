@@ -55,10 +55,7 @@ Graphics.prototype.loadMaterials = function(progress) {
     for(var i = 0; i < sunJSVGs.length; i++){
         for(var j = 0; j < primaryColors.length; j++){
             sunJSVGs[i](planetCtx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
-            let material = 0;
-            setTimeout(function(){
-                material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
-            }, 1);
+            let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
             material.depthTest = false;
             this.sunMaterials.push(material);
             progress.finishTask();
@@ -67,10 +64,7 @@ Graphics.prototype.loadMaterials = function(progress) {
     for(var i = 0; i < planetJSVGs.length; i++){
         for(var j = 0; j < primaryColors.length; j++){
             planetJSVGs[i](planetCtx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
-            let material = 0;
-            setTimeout(function(){
-                material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
-            }, 1);
+            let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
             material.depthTest = false;
             this.planetMaterials.push(material);
             progress.finishTask();
@@ -81,15 +75,9 @@ Graphics.prototype.loadMaterials = function(progress) {
             ringJSVGs[i](ringCtx, 20.48 / 3, 20.48 / 3, ringColors[j], ringColors[j + 1], ringColors[j + 2], ringColors[j + 3]);
             let texture = textureLoader.load(ringCanvas.toDataURL());
             texture.offset.y = -0.0008;
-            let front = 0;
-            setTimeout(function(){
-                front = new THREE.SpriteMaterial({map: texture});
-            }, 1);
+            let front = new THREE.SpriteMaterial({map: texture});
             front.depthTest = false;
-            let back = 0;
-            setTimeout(function(){
-                back = front.clone();
-            }, 1);
+            let back = front.clone();
             back.rotation = Math.PI;
             this.ringMaterials.push([front, back]);
             progress.finishTask();
@@ -329,7 +317,7 @@ Progress = function () {
 Progress.prototype = Object.create(Emitter.prototype);
 Object.defineProperty(Progress.prototype, "percent", {
 	"get": function () {
-		return Math.floor(this.finished / this.total * 10) / 10
+		return Math.floor(this.finished / this.total * 1000) / 10
 	},
 	"set": function () {}
 });
