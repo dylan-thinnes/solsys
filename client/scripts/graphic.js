@@ -166,6 +166,7 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     if(parentGroup === this.rootGroup){ // Sun
         planetSprite = new THREE.Sprite(this.sunMaterials[Math.floor(Randomizer.random() * this.sunMaterials.length)]);
     } else if(planet.type === Blueprint.SKIP){ // Blackhole
+        planetScale.makeScale(planet.scale / 1.5, planet.scale / 1.5, 1);
         planetSprite = new THREE.Sprite(this.blackholeMaterials[Math.floor(Randomizer.random() * this.blackholeMaterials.length)]);
     } else{ // Ordinary planet
         planetSprite = new THREE.Sprite(this.planetMaterials[Math.floor(Randomizer.random() * this.planetMaterials.length)]);
