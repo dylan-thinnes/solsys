@@ -278,7 +278,7 @@ var loadUI = function () {
 			event.preventDefault();
 			var value = setSeed();
 			random = xor4096(value);
-			var profile = getRemoteFactorization(value, genPlanets);
+			var profile = getRemoteFactorization(value, Graphics.genPlanets.bind(Graphics));
 		}
 	});
 }
