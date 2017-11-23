@@ -39,12 +39,12 @@ Graphics = function(width, height, graphicsNode){
 }
 
 // The loadMaterials function is used to load the materials and textures for planets and objects in the scene
-Graphics.prototype.loadMaterials = function(onProgress, onFinished){
+Graphics.prototype.loadMaterials = function(progress) {
     var start = Date.now();
     var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4]; //Add sun JSVGs
     var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4];
     var ringJSVGs = []; // SVGTOJS.ring1, SVGTOJS.ring2, etc
-    var progress = {loaded: 0, total: sunJSVGs.length + planetJSVGs.length + ringJSVGs.length, percent: 0}; //CREATE OUTSIDE PROGRESS OBJ
+    progress.init(sunJSVGs.length + planetJSVGs.length + ringJSVGs.length);
     var textureLoader = new THREE.TextureLoader();
     var canvas = document.getElementById("planetCanvas");
     var ctx = canvas.getContext("2d");
@@ -53,30 +53,23 @@ Graphics.prototype.loadMaterials = function(onProgress, onFinished){
         let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
         this.sunMaterials.push(material);
-        progress.loaded++;
-        progress.percent = progress.loaded / progress.total * 100;
-        onProgress(progress);
+        progress.finishTask();
     }
     for(var i = 0; i < planetJSVGs.length; i++){
 	    planetJSVGs[i](ctx, 10.24, 10.24);
         let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
         this.planetMaterials.push(material);
-        progress.loaded++;
-        progress.percent = progress.loaded / progress.total * 100;
-        onProgress(progress);
+        progress.finishTask();
     }
     for(var i = 0; i < ringJSVGs.length; i++){
 		ringJSVGs[i](ctx, 10.24, 10.24);
         let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
         this.ringMaterials.push(material);
-        progress.loaded++;
-        progress.percent = progress.loaded / progress.total * 100;
-        onProgress(progress);
+        progress.finishTask();
     }
     canvas.parentNode.removeChild(canvas);
-    onFinished((Date.now() - start) / 1000);
 }
 
 // The genStars function is used to randomly generate stars
@@ -301,7 +294,30 @@ Blueprint.NEGATIVE = -1;
 Blueprint.CHILD = 0.9;
 Blueprint.SPACING = /*Math.pow(0.618033988749894, 2)*/0.1;
 
-Progress = {}; // An object that keeps state of the progress in loading the page
+// An object that keeps state of the progress in loading the page
+Progress = function () {
+    this.listeners = {};
+    this.finished = 0;
+};
+Progress.prototype = Object.create(Emitter.prototype);
+Object.defineProperty(Progress.prototype, "percent", {
+	"get": function () {
+		return Math.floor(this.finished / this.total * 10) / 10
+	},
+	"set": function () {}
+});
+Progress.prototype.init = function (total) {
+	this.start = Date.now();
+	this.total = total;
+}
+Progress.prototype.finishTask = function () {
+	this.finished++;
+	this.emit("finishTask", this.percent);
+	if (this.finished === this.total) {
+		this.emit("finishAll");
+		this.end = Date.now();
+	}
+}
 
 // The init function. Try to have as little logic in this as possible
 function init () {
@@ -309,11 +325,8 @@ function init () {
     Graphics = new Graphics(window.innerWidth, window.innerHeight, document.getElementById("graphics"));
     Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
     Graphics.genStars();
-    Graphics.loadMaterials(function(progress){
-        //console.log(`${progress.loaded}/${progress.total}: ${progress.percent}%`);
-    }, function(time){
-        //console.log(`Material generation finished: ${time} seconds`);
-    });
+    progressBar = new Progress();
+    Graphics.loadMaterials(progressBar);
 }
 
 // The render function is the main render loop
