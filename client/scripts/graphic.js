@@ -301,7 +301,7 @@ Progress = function () {
 Progress.prototype = Object.create(Emitter.prototype);
 Object.defineProperty(Progress.prototype, "percent", {
 	"get": function () {
-		return Math.floor(this.finished / this.total * 10) / 10
+		return Math.floor(this.finished / this.total * 1000) / 10
 	},
 	"set": function () {}
 });
@@ -325,6 +325,8 @@ function init () {
     Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
     Graphics.genStars();
     progressBar = new Progress();
+    progressBar.on("finishTask", console.log);
+    progressBar.on("finishTask", console.log.bind(this, "progressBar done!"));
     Graphics.loadMaterials(progressBar);
 }
 
