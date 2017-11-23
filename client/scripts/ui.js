@@ -246,7 +246,48 @@ var Modal = function (node) {
 this.Modal.prototype = Object.create(Button.prototype);
 
 
+var Wakeable = function (node) {
+	this.node = node;
+	this.lastUserAction = 0;
+	this.stayAwake = false;
+	this.keepAwake = function (e) {
+		this.lastUserAction = Date.now();
+		this.woke = true;
+		this.node.classList.remove("asleep");
+		this.node.classList.add("awake");
+		this.stayAwake = true;
+	}
+	this.unkeepAwake = function (e) {
+		this.lastUserAction = Date.now();
+		this.stayAwake = true;
+	}
+	this.wake = function (e) {
+		this.lastUserAction = Date.now();
+		if (!this.woke) {
+			this.woke = true;
+			this.node.classList.remove("asleep");
+			this.node.classList.add("awake");
+		}
+	}
+	this.sleep = function () {
+		if (Date.now() - this.lastUserAction > 10000 && this.woke === true && this.stayAwake === false) {
+			this.woke = false;
+			this.node.classList.remove("awake");
+			this.node.classList.add("asleep");
+		}
+	}
+	this.woke = null;
+}
+
+
 var loadUI = function () {
+	var wakeableUi = new Wakeable(document.getElementById("ui"));
+	window.addEventListener("mousemove", wakeableUi.wake.bind(wakeableUi));
+	document.getElementById("input").addEventListener("keydown", wakeableUi.wake.bind(wakeableUi));
+	document.getElementById("input").addEventListener("focus", wakeableUi.keepAwake.bind(wakeableUi));
+	document.getElementById("input").addEventListener("blur", wakeableUi.unkeepAwake.bind(wakeableUi));
+	window.setInterval(wakeableUi.sleep.bind(wakeableUi), 100);
+
 	view = new Radio(true, [
 		new Button(document.getElementById("orbit")),
 		new Button(document.getElementById("zoom")),
@@ -263,13 +304,17 @@ var loadUI = function () {
 
 	modalContainerNode = document.getElementById("modalContainer");
 	modalContainer = new Radio(true, [
-		new Modal(document.getElementById("loading"))
+		new Modal(document.getElementById("loading")),
+		new Modal(document.getElementById("sharing"))
 	]);
-	showModalContainer = function () {modalContainerNode.style.display = "flex";}
-	hideModalContainer = function () {modalContainerNode.style.display = "none";}
+	showModalContainer = function () {modalContainerNode.style.zIndex = "initial";}
+	hideModalContainer = function () { setTimeout(function () { modalContainerNode.style.zIndex = "";}, 1000); }
 	for (var index in modalContainer.buttons) {
-		modalContainer.buttons[index].on("focus", showModalContainer);
-		modalContainer.buttons[index].on("unfocus", hideModalContainer);
+		var currModal = modalContainer.buttons[index];
+		currModal.on("focus", showModalContainer);
+		currModal.on("focus", wakeableUi.keepAwake.bind(wakeableUi));
+		currModal.on("unfocus", hideModalContainer);
+		currModal.on("unfocus", wakeableUi.unkeepAwake.bind(wakeableUi));
 	}
 
 	setSeed();

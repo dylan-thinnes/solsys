@@ -104,18 +104,20 @@ body > div {
 }
 
 #modalContainer {
-	display: none;
+	z-index: -1000;
 }
 .modal {
 	position: absolute;
 	width: 100vw;
 	height: 100vh;
-	z-index: 1000;
-	display: none;
+	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	padding: 3rem;
+	opacity: 0;
+	transition: opacity 1s;
+	background-color: rgba(0,0,0,0.5);
 }
 .modal .icon#close {
 	width: 2rem;
@@ -127,13 +129,14 @@ body > div {
 	padding: 0;
 }
 .modal.focused {
-	display: flex;
-}
-.modal > .content {
-	transition: opacity 5s;
-	opacity: 0;
+	opacity: 1;
 }
 .modal.focused > .content {
+	margin-top: 0rem;
+}
+.modal > .content {
+	transition: margin-top 1s;
+	margin-top: 2rem;
 	min-height: 100px;
 	flex-direction: column;
 	position: relative;
@@ -142,7 +145,6 @@ body > div {
 	border-bottom: 1px solid rgba(249,249,249,0.60);
 	background-color: rgba(0,0,0,0.75);
 	cursor: default;
-	opacity: 1;
 }
 
 
