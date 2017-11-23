@@ -40,36 +40,43 @@ Graphics = function(width, height, graphicsNode){
 
 // The loadMaterials function is used to load the materials and textures for planets and objects in the scene
 Graphics.prototype.loadMaterials = function(progress) {
-    var start = Date.now();
-    var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4]; //Add sun JSVGs
-    var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4];
-    var ringJSVGs = []; // SVGTOJS.ring1, SVGTOJS.ring2, etc
+    var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4, SVGTOJS.planet5]; //Add sun JSVGs
+    var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4, SVGTOJS.planet5];
+    var ringJSVGs = [SVGTOJS.ring1, SVGTOJS.ring2, SVGTOJS.ring3, SVGTOJS.ring4];
     progress.init(sunJSVGs.length + planetJSVGs.length + ringJSVGs.length);
     var textureLoader = new THREE.TextureLoader();
-    var canvas = document.getElementById("planetCanvas");
-    var ctx = canvas.getContext("2d");
+    var planetCanvas = document.getElementById("planetCanvas");
+    var planetCtx = planetCanvas.getContext("2d");
+    var ringCanvas = document.getElementById("ringCanvas");
+    var ringCtx = ringCanvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
-	    sunJSVGs[i](ctx, 10.24, 10.24);
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
+	    sunJSVGs[i](planetCtx, 10.24, 10.24);
+        let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
         material.depthTest = false;
         this.sunMaterials.push(material);
         progress.finishTask();
     }
     for(var i = 0; i < planetJSVGs.length; i++){
-	    planetJSVGs[i](ctx, 10.24, 10.24);
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
+	    planetJSVGs[i](planetCtx, 10.24, 10.24);
+        let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
         material.depthTest = false;
         this.planetMaterials.push(material);
         progress.finishTask();
     }
     for(var i = 0; i < ringJSVGs.length; i++){
-		ringJSVGs[i](ctx, 10.24, 10.24);
-        let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
-        material.depthTest = false;
-        this.ringMaterials.push(material);
+        ringJSVGs[i](ringCtx, 20.48 / 3, 20.48 / 3);
+        let texture = textureLoader.load(ringCanvas.toDataURL());
+        console.log(texture.offset);
+        texture.offset.y = -0.0008;
+        let front = new THREE.SpriteMaterial({map: texture});
+        front.depthTest = false;
+        let back = front.clone();
+        back.rotation = Math.PI;
+        this.ringMaterials.push([front, back]);
         progress.finishTask();
     }
-    canvas.parentNode.removeChild(canvas);
+    planetCanvas.parentNode.removeChild(planetCanvas);
+    ringCanvas.parentNode.removeChild(ringCanvas);
 }
 
 // The genStars function is used to randomly generate stars
@@ -117,14 +124,13 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     // Create sprite group
     var spriteGroup = new THREE.Group();
     planet.spriteGroup = spriteGroup;
-    // Create back ring
+    // Create front ring
     if(planet.ring){
         var ringScale = new THREE.Matrix4();
-        ringScale.makeScale(planet.scale, planet.scale, 1); // Maybe change this
-        var ringIndex = Math.floor(Randomizer.random() * this.ringMaterials.length / 2);
-        var ringSpriteBack = new THREE.Sprite(this.ringMaterials[ringIndex]);
+        ringScale.makeScale(planet.scale * 3, planet.scale * 3, 1); // Maybe change this
+        var ringIndex = Math.floor(Randomizer.random() * this.ringMaterials.length);
+        var ringSpriteBack = new THREE.Sprite(this.ringMaterials[ringIndex][0]);
         ringSpriteBack.applyMatrix(ringScale);
-        ringSpriteBack.rotation.set(Math.PI);
         spriteGroup.add(ringSpriteBack);
     }
     // Create planet sprite
@@ -133,11 +139,13 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     var planetSprite = new THREE.Sprite((parentGroup === this.rootGroup) ? this.sunMaterials[Math.floor(Randomizer.random() * this.sunMaterials.length)] : this.planetMaterials[Math.floor(Randomizer.random() * this.planetMaterials.length)]);
     planetSprite.applyMatrix(planetScale);
     spriteGroup.add(planetSprite);
-    // Create front ring
+    // Create back ring
     if(planet.ring){
-        var ringSpriteFront = new THREE.Sprite(this.ringMaterials[ringIndex]);
+        ringScale.makeScale(-planet.scale * 3, planet.scale * 3, 1);
+        var ringSpriteFront = new THREE.Sprite(this.ringMaterials[ringIndex][1]);
         ringSpriteFront.applyMatrix(ringScale);
         spriteGroup.add(ringSpriteFront);
+        console.log("meow");
     }
     // Create planet orbit path
     var orbitPath = new THREE.LineLoop(this.orbitPathGeometry, this.orbitPathMaterial);
@@ -213,7 +221,8 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
+                //speed: 0.5 * Randomizer.random(),
+                speed: 0,
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -225,7 +234,8 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
+                //speed: 0.5 * Randomizer.random(),
+                speed: 0,
                 children: []
             });
         } else if (parseInt(node.piX) === 0) {
@@ -240,7 +250,8 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
+                //speed: 0.5 * Randomizer.random(),
+                speed: 0,
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -252,7 +263,8 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
+                //speed: 0.5 * Randomizer.random(),
+                speed: 0,
                 children: []
             });
         } else if (parseInt(node.power) === 0) {
@@ -301,7 +313,7 @@ Progress = function () {
 Progress.prototype = Object.create(Emitter.prototype);
 Object.defineProperty(Progress.prototype, "percent", {
 	"get": function () {
-		return Math.floor(this.finished / this.total * 1000) / 10
+		return Math.floor(this.finished / this.total * 10) / 10
 	},
 	"set": function () {}
 });
@@ -325,8 +337,6 @@ function init () {
     Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
     Graphics.genStars();
     progressBar = new Progress();
-    progressBar.on("finishTask", console.log);
-    progressBar.on("finishTask", console.log.bind(this, "progressBar done!"));
     Graphics.loadMaterials(progressBar);
 }
 
