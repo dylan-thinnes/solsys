@@ -75,8 +75,9 @@ Graphics.prototype.loadMaterials = function(progress) {
             progress.finishTask();
         }
     }
+	console.log("starting ringJSVGs", blackholeJSVGs)
     for(var i = 0; i < ringJSVGs.length; i++){
-        for(var j = 0; j < primaryColors.length; j += 4){
+        for(var j = 0; j < ringColors.length; j += 4){
             ringJSVGs[i](ringCtx, 20.48 / 3, 20.48 / 3, ringColors[j], ringColors[j + 1], ringColors[j + 2], ringColors[j + 3]);
             let texture = textureLoader.load(ringCanvas.toDataURL());
             texture.offset.y = -0.0008;
@@ -88,16 +89,18 @@ Graphics.prototype.loadMaterials = function(progress) {
             progress.finishTask();
         }
     }
+	console.log("starting blackHoles", blackholeJSVGs);
     for(var i = 0; i < blackholeJSVGs.length; i++){
+	    console.log("blackhole " + i, blackholeBrights.length);
 	for (var j = 0; j < blackholeBrights.length; j++) {
+		console.log("blackholde colour " + j);
 		blackholeJSVGs[i](planetCtx, 10.24, 10.24, blackholeDarks[j], blackholeMediums[j], blackholeBrights[j]);
 		material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
 		material.depthTest = false;
 		this.blackholeMaterials.push(material);
-		progress.finishTask;
+		progress.finishTask();
 	}
     }
-    progress.finishTask();
     planetCanvas.parentNode.removeChild(planetCanvas);
     ringCanvas.parentNode.removeChild(ringCanvas);
 }
@@ -362,8 +365,8 @@ function init () {
     Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
     Graphics.genStars();
     progressBar = new Progress();
-    progressBar.on("finishTask", console.log);
-    progressBar.on("finishTask", console.log.bind(this, "progressBar done!"));
+    //progressBar.on("finishTask", console.log);
+    progressBar.on("finishAll", console.log.bind(this, "progressBar done!"));
 }
 
 // The render function is the main render loop

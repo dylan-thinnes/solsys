@@ -1,5 +1,5 @@
 ﻿SVGTOJS = {
-"blackholeGrey": function (ctx, scaleX, scaleY, dark, medium, light) {
+"blackholeGrey": function (ctx, scaleX, scaleY, dark, medium, bright) {
 var funcNames = ("clearRect save translate scale beginPath moveTo bezierCurveTo closePath fill stroke restore lineTo rotate arc").split(" ");
 for (var ii = 0; ii < funcNames.length; ii++) window["f" + ii.toString()] = ctx[funcNames[ii]].bind(ctx);
 ctx.save();
