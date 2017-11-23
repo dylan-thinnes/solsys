@@ -3,92 +3,65 @@ var RenderClock = new Timer();
 RenderClock.start();
 
 Randomizer = new (function () {
-	var randomizer = null;
+	var generator = null;
 	this.seed = "";
 	this.setSeed = function (newSeed) {
-		randomizer = xor4096(newSeed);
+		generator = xor4096(newSeed);
 	}
-	this.random = randomizer();
+	this.random = function () {return generator();}
 })();
 
-Graphics = {}; // Creating actual graphics and sprites for the renderer
+// The Graphics class handles....
+Graphics = function(width, height, graphicsNode){
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 10000);
+    this.renderer = new THREE.WebGLRenderer();
+    this.setSize(width, height);
+    graphicsNode.appendChild(this.renderer.domElement);
+    window.addEventListener("resize", this.setSize.bind(this));
+    this.camera.position.set(0, 0, 15);
 
-Blueprint = {}; // Just copy paste the existing Blueprint class
-
-Progress = {}; // An object that keeps state of the progress in loading the page
-
-function init () {} // The init function. Try to have as little logic in this as possible
-
-//After all of this, the WebGL detection code
-
-
-/* Refactored code goes above this comment, unrefactored code resides below */
-
-//The init function is used for initialization
-var init = function () {
-    systemExists = false;
-    timer = new Timer();
-    timer.start();
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 10000);
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById("graphics").appendChild(renderer.domElement);
-    window.addEventListener("resize", resizeCanvas);
-    controls = new THREE.OrbitControls(camera, document.getElementById("mouse"));
-    camera.position.set(0, 0, 15);
-    random = xor4096("meow");
-    sunMaterials = [];
-    planetMaterials = [];
-    ringMaterials = [];
-    rootGroup = new THREE.Group();
-    rootGroup.rotation.set(Math.PI / 2, 0, 0);
-    scene.add(rootGroup);
-    solSys = {};
-
-    orbitPathGeometry = new THREE.Geometry();
+    this.sunMaterials = [];
+    this.planetMaterials = [];
+    this.ringMaterials = [];
+    this.orbitPathMaterial = new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.4});
+    this.orbitPathGeometry = new THREE.Geometry();
     var orbitSegments = 256;
     for(var i = 0; i < orbitSegments; i++){
-        orbitPathGeometry.vertices.push(new THREE.Vector3(Math.cos(i * (2 * Math.PI / orbitSegments)), Math.sin(i * (2 * Math.PI / orbitSegments)), 0));
+        this.orbitPathGeometry.vertices.push(new THREE.Vector3(Math.cos(i * (2 * Math.PI / orbitSegments)), Math.sin(i * (2 * Math.PI / orbitSegments)), 0));
     }
-    orbitPathMaterial = new THREE.LineBasicMaterial({color: 0xffffff});
-    orbitPathMaterial.transparent = true;
-    orbitPathMaterial.opacity = 0.4;
 
-    genStars();
-
-    var start = Date.now();
-    genMaterials(function(progress){
-        //console.log(`${progress.loaded}/${progress.total}: ${progress.percent}%`);
-    }, function(time){
-        //console.log(`Material generation finished: ${time} seconds`);
-    });
+    this.rootGroup = new THREE.Group();
+    this.rootGroup.rotation.set(Math.PI / 2, 0, 0);
+    this.scene.add(this.rootGroup);
+    this.solSys = {};
+    this.systemExists = false;
 }
 
-//The genMaterials function is used to generate the materials and textures for planets and objects in the scene
-var genMaterials = function(onProgress, onFinished){
+// The loadMaterials function is used to load the materials and textures for planets and objects in the scene
+Graphics.prototype.loadMaterials = function(onProgress, onFinished){
     var start = Date.now();
     var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4]; //Add sun JSVGs
     var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4];
-    var ringJSVGs = [ring1a, ring1b];
-    var progress = {loaded: 0, total: sunJSVGs.length + planetJSVGs.length + ringJSVGs.length, percent: 0};
+    var ringJSVGs = []; // SVGTOJS.ring1, SVGTOJS.ring2, etc
+    var progress = {loaded: 0, total: sunJSVGs.length + planetJSVGs.length + ringJSVGs.length, percent: 0}; //CREATE OUTSIDE PROGRESS OBJ
     var textureLoader = new THREE.TextureLoader();
     var canvas = document.getElementById("planetCanvas");
     var ctx = canvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
-	sunJSVGs[i](ctx, 10.24, 10.24);
+	    sunJSVGs[i](ctx, 10.24, 10.24);
         let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
-        sunMaterials.push(material);
+        this.sunMaterials.push(material);
         progress.loaded++;
         progress.percent = progress.loaded / progress.total * 100;
         onProgress(progress);
     }
     for(var i = 0; i < planetJSVGs.length; i++){
-	planetJSVGs[i](ctx, 10.24, 10.24);
+	    planetJSVGs[i](ctx, 10.24, 10.24);
         let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
-        planetMaterials.push(material);
+        this.planetMaterials.push(material);
         progress.loaded++;
         progress.percent = progress.loaded / progress.total * 100;
         onProgress(progress);
@@ -97,7 +70,7 @@ var genMaterials = function(onProgress, onFinished){
 		ringJSVGs[i](ctx, 10.24, 10.24);
         let material = new THREE.SpriteMaterial({map: textureLoader.load(canvas.toDataURL())});
         material.depthTest = false;
-        ringMaterials.push(material);
+        this.ringMaterials.push(material);
         progress.loaded++;
         progress.percent = progress.loaded / progress.total * 100;
         onProgress(progress);
@@ -106,8 +79,8 @@ var genMaterials = function(onProgress, onFinished){
     onFinished((Date.now() - start) / 1000);
 }
 
-//The genStars function is used to randomly generate stars
-var genStars = function(){
+// The genStars function is used to randomly generate stars
+Graphics.prototype.genStars = function(){
     var starsColours = [0x774444, 0x447744, 0x444477, 0x777744, 0x774477, 0x447777];
     var starsGeometries = [];
     var starsMaterials = [];
@@ -125,105 +98,102 @@ var genStars = function(){
     var starsFields = [];
     for (var ii = 0; ii < starsColours.length; ii++) {
         starsFields[ii] = new THREE.Points(starsGeometries[ii], starsMaterials[ii]);
-        scene.add(starsFields[ii]);
+        this.scene.add(starsFields[ii]);
     }
 }
 
-//The genPlanets function is used to generate the planets of the solar system
-var genPlanets = function(profile){
-    systemExists = false;
+// The genPlanets function is used to generate the planets of the solar system
+Graphics.prototype.genPlanets = function(profile){
+    this.systemExists = false;
     var blueprint = new Blueprint(profile);
-    //console.log(blueprint);
-    solSys = JSON.parse(JSON.stringify(blueprint.system));
-    //Clear the previous system from the scene
-    for(var i = 0; i < rootGroup.children.length; i++){
-        rootGroup.remove(rootGroup.children[i]);
+    this.solSys = JSON.parse(JSON.stringify(blueprint.system));
+    for(var i = 0; i < this.rootGroup.children.length; i++){
+        this.rootGroup.remove(this.rootGroup.children[i]);
     }
-    var start = Date.now(); // What is this???????
-    addPlanets(solSys, rootGroup);
-    //console.log(`Planet adding finished: ${(Date.now() - start) / 1000} seconds`);
-    updatePlanets(solSys, solSys.spriteGroup.position);
-    systemExists = true;
+    this.addPlanets(this.solSys, this.rootGroup);
+    this.update();
+    this.systemExists = true;
 }
 
-//The addPlanets function is used to add the planets of the solSys object to the threejs scene
-var addPlanets = function(planet, parentGroup){
-    //Create orbit group
+// The addPlanets function is used to add the planets of the solSys object to the threejs scene
+Graphics.prototype.addPlanets = function(planet, parentGroup){
+    // Create orbit group
     var orbitGroup = new THREE.Group();
-    orbitGroup.rotation.set(Math.floor(random() * 2 * Math.PI), Math.floor(random() * 2 * Math.PI), Math.floor(random  () * 2 * Math.PI));
+    orbitGroup.rotation.set(Math.floor(Randomizer.random() * 2 * Math.PI), Math.floor(Randomizer.random() * 2 * Math.PI), Math.floor(Randomizer.random() * 2 * Math.PI));
     planet.orbitGroup = orbitGroup;
-    //Create sprite group
+    // Create sprite group
     var spriteGroup = new THREE.Group();
     planet.spriteGroup = spriteGroup;
-    //Create back ring
+    // Create back ring
     if(planet.ring){
         var ringScale = new THREE.Matrix4();
-        ringScale.makeScale(planet.scale, planet.scale, 1); //Maybe change this
-        var ringIndex = Math.floor(random() * ringMaterials.length / 2);
-        //var ringSpriteA = new THREE.Sprite(ringMaterials[ringIndex]);
+        ringScale.makeScale(planet.scale, planet.scale, 1); // Maybe change this
+        var ringIndex = Math.floor(Randomizer.random() * this.ringMaterials.length / 2);
+        // var ringSpriteA = new THREE.Sprite(this.ringMaterials[ringIndex]);
         var ringSpriteA = new THREE.Sprite();
         ringSpriteA.applyMatrix(ringScale);
         spriteGroup.add(ringSpriteA);
     }
-    //Create planet sprite
+    // Create planet sprite
     var planetScale = new THREE.Matrix4();
     planetScale.makeScale(planet.scale, planet.scale, 1);
-    var planetSprite = new THREE.Sprite((parentGroup === rootGroup) ? sunMaterials[Math.floor(random() * sunMaterials.length)] : planetMaterials[Math.floor(random() * planetMaterials.length)]);
+    var planetSprite = new THREE.Sprite((parentGroup === this.rootGroup) ? this.sunMaterials[Math.floor(Randomizer.random() * this.sunMaterials.length)] : this.planetMaterials[Math.floor(Randomizer.random() * this.planetMaterials.length)]);
     planetSprite.applyMatrix(planetScale);
     spriteGroup.add(planetSprite);
-    //Create front ring
+    // Create front ring
     if(planet.ring){
-        //var ringSpriteB = new THREE.Sprite(ringMaterials[ringIndex + 1]);
+        // var ringSpriteB = new THREE.Sprite(this.ringMaterials[ringIndex + 1]);
         var ringSpriteB = new THREE.Sprite();
         ringSpriteB.applyMatrix(ringScale);
         spriteGroup.add(ringSpriteB);
     }
-    //Create planet orbit path
-    var orbitPath = new THREE.LineLoop(orbitPathGeometry, orbitPathMaterial);
+    // Create planet orbit path
+    var orbitPath = new THREE.LineLoop(this.orbitPathGeometry, this.orbitPathMaterial);
     var orbitPathScale = new THREE.Matrix4();
     orbitPathScale.makeScale(planet.orbitRadius, planet.orbitRadius, 1);
     orbitPath.applyMatrix(orbitPathScale);
     orbitGroup.add(orbitPath, spriteGroup);
-    //Add to parent planet
+    // Add to parent planet
     parentGroup.add(orbitGroup);
-    //Add planet children
+    // Add planet children
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
-            addPlanets(planet.children[i], orbitGroup);
+            this.addPlanets(planet.children[i], orbitGroup);
         }
     }
 }
 
-//The updatePlanets function updates the positions of the planets of the solSys object
-var updatePlanets = function(planet, parentPosition){
-    planet.spriteGroup.position.set(Math.cos(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(timer.getElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
+// The setSize function is used to resize the renderer and camera with the given width and height
+Graphics.prototype.setSize = function(width, height){
+    this.renderer.setSize(width, height);
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+}
+
+// The updatePlanets function updates the positions of the planets of the solSys object
+Graphics.prototype.updatePlanets = function(planet, parentPosition){
+    planet.spriteGroup.position.set(Math.cos(RenderClock.getMultipliedElapsedSeconds() * planet.speed) * planet.orbitRadius, Math.sin(RenderClock.getMultipliedElapsedSeconds() * planet.speed) * planet.orbitRadius, 0);
     planet.orbitGroup.position.set(parentPosition.x, parentPosition.y, parentPosition.z);
     if(planet.children){
         for(var i = 0; i < planet.children.length; i++){
-            updatePlanets(planet.children[i], planet.spriteGroup.position);
+            this.updatePlanets(planet.children[i], planet.spriteGroup.position);
         }
     }
 }
 
-//The render function is the main render loop
-var render = function(){
-    requestAnimationFrame(render);
-    var delta = timer.getDeltaTime();
-    if (systemExists){
-        updatePlanets(solSys, solSys.spriteGroup.position);
-    }
-    renderer.render(scene, camera);
+// The update function updates the elements of the Graphics object
+Graphics.prototype.update = function(){
+    this.updatePlanets(this.solSys, this.solSys.spriteGroup.position);
 }
 
-//The resizeCanvas function is used to resize the renderer and camera with the window
-var resizeCanvas = function(){
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+// The render function renders the elements of the Graphics object
+Graphics.prototype.render = function(){
+    this.renderer.render(this.scene, this.camera);
 }
 
-// The Blueprint class turns factorization profiles into recursive collections of planets that can be easily parsed by the graphical functions like addPlanets
-var Blueprint = function (profile) {
+// The Blueprint class turns factorization profiles into recursive collections of planets
+//     that can be easily parsed by the graphical functions like addPlanets
+Blueprint = function(profile){
     this.profile = JSON.parse(profile);
     this.system = {
         type: Blueprint.POSITIVE,
@@ -238,16 +208,16 @@ var Blueprint = function (profile) {
     this.setSystemWidths(this.system, 0);
 }
 
-//The genChildren function takes in a FactorProfile node and decides what to do
+// The genChildren function takes in a FactorProfile node and decides what to do
 Blueprint.prototype.genChildren = function (node) {
     if (node.isPrime) {
         if (isNaN(node.piX) === true) {
             var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.SKIP,
-                ring: (Math.floor(random() * 10) === 0),
+                ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * random(),
+                speed: 0.5 * Randomizer.random(),
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -256,10 +226,10 @@ Blueprint.prototype.genChildren = function (node) {
         } else if (parseInt(node.piX) === 1) {
             this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.SKIP,
-                ring: (Math.floor(random() * 10) === 0),
+                ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * random(),
+                speed: 0.5 * Randomizer.random(),
                 children: []
             });
         } else if (parseInt(node.piX) === 0) {
@@ -271,10 +241,10 @@ Blueprint.prototype.genChildren = function (node) {
         if (isNaN(node.power) === true) {
             var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.POSITIVE,
-                ring: (Math.floor(random() * 10) === 0),
+                ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * random(),
+                speed: 0.5 * Randomizer.random(),
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -283,10 +253,10 @@ Blueprint.prototype.genChildren = function (node) {
         } else if (parseInt(node.power) === 1) {
             this.orbitHistory[this.orbitHistory.length - 1].children.push({
                 type: Blueprint.POSITIVE,
-                ring: (Math.floor(random() * 10) === 0),
+                ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * random(),
+                speed: 0.5 * Randomizer.random(),
                 children: []
             });
         } else if (parseInt(node.power) === 0) {
@@ -303,7 +273,7 @@ Blueprint.prototype.genChildren = function (node) {
     }
 }
 
-//The setSystemWidths function is used to calculate and set the widths of given planet systems, and in the process set radii.
+// The setSystemWidths function is used to calculate and set the widths of given planet systems, and in the process set radii.
 Blueprint.prototype.setSystemWidths = function(system, depth){
     var width = 1;
     var radius = 0.5;
@@ -327,15 +297,31 @@ Blueprint.NEGATIVE = -1;
 Blueprint.CHILD = 0.9;
 Blueprint.SPACING = /*Math.pow(0.618033988749894, 2)*/0.1;
 
-var ring1a = function(){
-    //Add jsvg
+Progress = {}; // An object that keeps state of the progress in loading the page
+
+// The init function. Try to have as little logic in this as possible
+function init () {
+    Randomizer.setSeed("meow");
+    Graphics = new Graphics(window.innerWidth, window.innerHeight, document.getElementById("graphics"));
+    Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
+    Graphics.genStars();
+    Graphics.loadMaterials(function(progress){
+        //console.log(`${progress.loaded}/${progress.total}: ${progress.percent}%`);
+    }, function(time){
+        //console.log(`Material generation finished: ${time} seconds`);
+    });
 }
 
-var ring1b = function(){
-    //Add jsvg
+// The render function is the main render loop
+var render = function(){
+    requestAnimationFrame(render);
+    if (Graphics.systemExists){
+        Graphics.update();
+    }
+    Graphics.render();
 }
 
-//WebGL detection
+// WebGL detection
 try {
     var canvas = document.createElement('canvas');
     supportsWebGL = !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
