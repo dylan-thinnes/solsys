@@ -41,9 +41,9 @@ Graphics = function(width, height, graphicsNode){
 // The loadMaterials function is used to load the materials and textures for planets and objects in the scene
 Graphics.prototype.loadMaterials = function(progress) {
     var start = Date.now();
-    var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4]; //Add sun JSVGs
-    var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4];
-    var ringJSVGs = []; // SVGTOJS.ring1, SVGTOJS.ring2, etc
+    var sunJSVGs = [SVGTOJS.planet-1, SVGTOJS.planet-2, SVGTOJS.planet-3, SVGTOJS.planet-4]; //Add sun JSVGs
+    var planetJSVGs = [SVGTOJS.planet-1, SVGTOJS.planet-2, SVGTOJS.planet-3, SVGTOJS.planet-4];
+    var ringJSVGs = []; // SVGTOJS.ring-1, SVGTOJS.ring-2, etc
     progress.init(sunJSVGs.length + planetJSVGs.length + ringJSVGs.length);
     var textureLoader = new THREE.TextureLoader();
     var canvas = document.getElementById("planetCanvas");
@@ -302,7 +302,7 @@ Progress = function () {
 Progress.prototype = Object.create(Emitter.prototype);
 Object.defineProperty(Progress.prototype, "percent", {
 	"get": function () {
-		return Math.floor(this.finished / this.total * 10) / 10
+		return Math.floor(this.finished / this.total * 1000) / 10
 	},
 	"set": function () {}
 });
@@ -326,6 +326,8 @@ function init () {
     Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
     Graphics.genStars();
     progressBar = new Progress();
+    progressBar.on("finishTask", console.log);
+    progressBar.on("finishTask", console.log.bind(this, "progressBar done!"));
     Graphics.loadMaterials(progressBar);
 }
 
