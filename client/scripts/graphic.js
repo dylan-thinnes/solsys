@@ -158,7 +158,7 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     var spriteGroup = new THREE.Group();
     planet.spriteGroup = spriteGroup;
     // Create front ring
-    if(planet.ring){
+    if(planet.ring && planet.type !== Blueprint.SKIP){
         var ringScale = new THREE.Matrix4();
         ringScale.makeScale(planet.scale * 3, planet.scale * 3, 1); // Maybe change this
         var ringIndex = Math.floor(Randomizer.random() * this.ringMaterials.length);
@@ -180,7 +180,7 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     planetSprite.applyMatrix(planetScale);
     spriteGroup.add(planetSprite);
     // Create back ring
-    if(planet.ring){
+    if(planet.ring && planet.type !== Blueprint.SKIP){
         ringScale.makeScale(-planet.scale * 3, planet.scale * 3, 1);
         var ringSpriteFront = new THREE.Sprite(this.ringMaterials[ringIndex][1]);
         ringSpriteFront.applyMatrix(ringScale);
