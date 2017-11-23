@@ -23,6 +23,7 @@ Graphics = function(width, height, graphicsNode){
     this.sunMaterials = [];
     this.planetMaterials = [];
     this.ringMaterials = [];
+    this.blackholeMaterials = [];
     this.orbitPathMaterial = new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.4});
     this.orbitPathGeometry = new THREE.Geometry();
     var orbitSegments = 256;
@@ -43,10 +44,11 @@ Graphics.prototype.loadMaterials = function(progress) {
     var sunJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4, SVGTOJS.planet5]; //Add sun JSVGs
     var planetJSVGs = [SVGTOJS.planet1, SVGTOJS.planet2, SVGTOJS.planet3, SVGTOJS.planet4, SVGTOJS.planet5];
     var ringJSVGs = [SVGTOJS.ring1, SVGTOJS.ring2, SVGTOJS.ring3, SVGTOJS.ring4];
+    var blackholeJSVGs = [SVGTOJS.blackholeBlue, SVGTOJS.blackholeGreen, SVGTOJS.blackholeGrey, SVGTOJS.blackholeOrange, SVGTOJS.blackholePurple];
     var primaryColors = ["#00ccff", "#0088aa", "#000080", "#00aad4", "#0000ff", "#0088aa", "#aa0044", "#deaa87", "#003380", "#2c2ca0", "#deaa87", "#0088aa"];
     var secondaryColors = ["#c87137", "#008000", "#c87137", "#008033", "#550000", "#217844", "#d35f8d", "#d45500", "#aa87de", "#aaccff", "#aa4400", "#b7c8c4"];
     var ringColors = ["#d40000", "#00f", "#c0f", "#00d400"]; // in groups of 4
-    progress.init(sunJSVGs.length * primaryColors.length/*<----TEMPORARY UNTIL SUN SPRITES*/ + planetJSVGs.length * primaryColors.length + ringJSVGs.length * ringColors.length / 4);
+    progress.init(sunJSVGs.length * primaryColors.length/*<----TEMPORARY UNTIL SUN SPRITES*/ + planetJSVGs.length * primaryColors.length + ringJSVGs.length * ringColors.length / 4 + blackholeJSVGs.length);
     var textureLoader = new THREE.TextureLoader();
     var planetCanvas = document.getElementById("planetCanvas");
     var planetCtx = planetCanvas.getContext("2d");
@@ -94,6 +96,16 @@ Graphics.prototype.loadMaterials = function(progress) {
             this.ringMaterials.push([front, back]);
             progress.finishTask();
         }
+    }
+    for(var i = 0; i < blackholeJSVGs.length; i++){
+        blackholeJSVGs[i](planetCtx, 10.24, 10.24);
+        let material = 0;
+        setTimeout(function(){
+            material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
+        }, 1);
+        material.depthTest = false;
+        this.blackholeMaterials.push(material);
+        progress.finishTask;
     }
     progress.finishTask();
     planetCanvas.parentNode.removeChild(planetCanvas);
@@ -157,7 +169,14 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     // Create planet sprite
     var planetScale = new THREE.Matrix4();
     planetScale.makeScale(planet.scale, planet.scale, 1);
-    var planetSprite = new THREE.Sprite((parentGroup === this.rootGroup) ? this.sunMaterials[Math.floor(Randomizer.random() * this.sunMaterials.length)] : this.planetMaterials[Math.floor(Randomizer.random() * this.planetMaterials.length)]);
+    var planetSprite;
+    if(parentGroup === this.rootGroup){ // Sun
+        planetSprite = new THREE.Sprite(this.sunMaterials[Math.floor(Randomizer.random() * this.sunMaterials.length)]);
+    } else if(planet.type === Blueprint.SKIP){ // Blackhole
+        planetSprite = new THREE.Sprite(this.blackholeMaterials[Math.floor(Randomizer.random() * this.blackholeMaterials.length)]);
+    } else{ // Ordinary planet
+        planetSprite = new THREE.Sprite(this.planetMaterials[Math.floor(Randomizer.random() * this.planetMaterials.length)]);
+    }
     planetSprite.applyMatrix(planetScale);
     spriteGroup.add(planetSprite);
     // Create back ring
