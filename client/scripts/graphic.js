@@ -46,8 +46,10 @@ Graphics.prototype.loadMaterials = function(progress) {
     var ringJSVGs = []; // SVGTOJS.ring1, SVGTOJS.ring2, etc
     progress.init(sunJSVGs.length + planetJSVGs.length + ringJSVGs.length + 1);
     var textureLoader = new THREE.TextureLoader();
-    var canvas = document.getElementById("planetCanvas");
-    var ctx = canvas.getContext("2d");
+    var planetCanvas = document.getElementById("planetCanvas");
+    var planetCtx = planetCanvas.getContext("2d");
+    var ringCanvas = document.getElementById("ringCanvas");
+    var ringCtx = ringCanvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
 	sunJSVGs[i](ctx, 10.24, 10.24);
 	let material = 0;
@@ -127,15 +129,14 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     // Create sprite group
     var spriteGroup = new THREE.Group();
     planet.spriteGroup = spriteGroup;
-    // Create back ring
+    // Create front ring
     if(planet.ring){
         var ringScale = new THREE.Matrix4();
-        ringScale.makeScale(planet.scale, planet.scale, 1); // Maybe change this
-        var ringIndex = Math.floor(Randomizer.random() * this.ringMaterials.length / 2);
-        // var ringSpriteA = new THREE.Sprite(this.ringMaterials[ringIndex]);
-        var ringSpriteA = new THREE.Sprite();
-        ringSpriteA.applyMatrix(ringScale);
-        spriteGroup.add(ringSpriteA);
+        ringScale.makeScale(planet.scale * 3, planet.scale * 3, 1); // Maybe change this
+        var ringIndex = Math.floor(Randomizer.random() * this.ringMaterials.length);
+        var ringSpriteBack = new THREE.Sprite(this.ringMaterials[ringIndex][0]);
+        ringSpriteBack.applyMatrix(ringScale);
+        spriteGroup.add(ringSpriteBack);
     }
     // Create planet sprite
     var planetScale = new THREE.Matrix4();
@@ -143,12 +144,13 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     var planetSprite = new THREE.Sprite((parentGroup === this.rootGroup) ? this.sunMaterials[Math.floor(Randomizer.random() * this.sunMaterials.length)] : this.planetMaterials[Math.floor(Randomizer.random() * this.planetMaterials.length)]);
     planetSprite.applyMatrix(planetScale);
     spriteGroup.add(planetSprite);
-    // Create front ring
+    // Create back ring
     if(planet.ring){
-        // var ringSpriteB = new THREE.Sprite(this.ringMaterials[ringIndex + 1]);
-        var ringSpriteB = new THREE.Sprite();
-        ringSpriteB.applyMatrix(ringScale);
-        spriteGroup.add(ringSpriteB);
+        ringScale.makeScale(-planet.scale * 3, planet.scale * 3, 1);
+        var ringSpriteFront = new THREE.Sprite(this.ringMaterials[ringIndex][1]);
+        ringSpriteFront.applyMatrix(ringScale);
+        spriteGroup.add(ringSpriteFront);
+        console.log("meow");
     }
     // Create planet orbit path
     var orbitPath = new THREE.LineLoop(this.orbitPathGeometry, this.orbitPathMaterial);
@@ -224,7 +226,8 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
+                //speed: 0.5 * Randomizer.random(),
+                speed: 0,
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -236,7 +239,8 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
+                //speed: 0.5 * Randomizer.random(),
+                speed: 0,
                 children: []
             });
         } else if (parseInt(node.piX) === 0) {
@@ -251,7 +255,8 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
+                //speed: 0.5 * Randomizer.random(),
+                speed: 0,
                 children: []
             });
             this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
@@ -263,7 +268,8 @@ Blueprint.prototype.genChildren = function (node) {
                 ring: (Math.floor(Randomizer.random() * 10) === 0),
                 orbitRadius: undefined,
                 scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
+                //speed: 0.5 * Randomizer.random(),
+                speed: 0,
                 children: []
             });
         } else if (parseInt(node.power) === 0) {
@@ -312,7 +318,7 @@ Progress = function () {
 Progress.prototype = Object.create(Emitter.prototype);
 Object.defineProperty(Progress.prototype, "percent", {
 	"get": function () {
-		return Math.floor(this.finished / this.total * 1000) / 10
+		return Math.floor(this.finished / this.total * 10) / 10
 	},
 	"set": function () {}
 });
