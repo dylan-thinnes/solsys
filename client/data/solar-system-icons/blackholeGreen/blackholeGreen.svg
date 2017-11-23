@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
-   sodipodi:docname="blackhole.svg"
+   sodipodi:docname="blackholeGreen.svg"
    inkscape:export-filename="C:\Users\hoove_000\Desktop\Art\Planets\planet-1-ink.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96">
@@ -28,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.9999999"
-     inkscape:cx="40.37484"
-     inkscape:cy="48.934293"
+     inkscape:zoom="4"
+     inkscape:cx="61.527791"
+     inkscape:cy="50.473338"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -60,7 +60,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -69,13 +69,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-270.54165)">
-    <rect
-       style="fill:#1a1a1a;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       id="rect4592"
-       width="45.706772"
-       height="37.041668"
-       x="-9.3927078"
-       y="265.84531" />
     <path
        sodipodi:nodetypes="czzsssssszzzzzc"
        inkscape:connector-curvature="0"
