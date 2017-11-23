@@ -4,7 +4,7 @@
 		<!-- favicon -->
 
 		<!-- responsive meta tags -->
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 		<meta charset="UTF-8">
 		<!-- stylesheets and standardization -->
 		<link rel="stylesheet" href="stylesheets/bootstrap-reboot.min.css" type="text/css"/>
@@ -50,73 +50,7 @@
 			</div>
 		</div>
 		<canvas id="planetCanvas" height="1024" width="1024" style="display: none;"></canvas>
-		<script>
-Ui = {
-	loading: new (function () {
-		this.queuedActions = 0;
-		this.allActionsQueued = false;
-		this.completedActions = 0;
-		this.descriptors = [];
-		this.queueAction = function (type, descriptor, total, isLast) {
-			this.descriptors[type] = descriptor;
-			this.queuedActions++;
-			if (isLast) {
-				this.allActionsQueued = true;
-				this.show();
-			}
-		}
-		this.completeAction = function () {
-		
-		}
-		this.show = function () {
-			this.node.style.width = this.completedActions / this.queuedActions
-		}
-	})(),
-	viewEdit: {
-	
-	},
-	dataEdit: {
-	
-	},
-	social: {
-	
-	}
-}
-uiNode = document.getElementById("ui");
-lastUserAction = 0;
-stayAwake = false;
-keepAwake = function (e) {
-	lastUserAction = Date.now();
-	uiWoke = true;
-	uiNode.className = "awake";
-	stayAwake = true;
-}
-unkeepAwake = function (e) {
-	lastUserAction = Date.now();
-	uiWoke = true;
-	uiNode.className = "awake";
-	stayAwake = false;
-}
-wake = function (e) {
-	lastUserAction = Date.now();
-	if (!uiWoke) {
-		uiWoke = true;
-		uiNode.className = "awake";
-	}
-}
-doze = function () {
-	if (Date.now() - lastUserAction > 10000 && uiWoke === true && stayAwake === false) {
-		uiWoke = false;
-		uiNode.className = "asleep";
-	}
-}
-uiWoke = null;
-window.addEventListener("mousemove", wake);
-document.getElementById("input").addEventListener("keydown", wake);
-document.getElementById("input").addEventListener("focus", keepAwake);
-document.getElementById("input").addEventListener("blur", unkeepAwake);
-window.setInterval(doze, 100);
-		</script>
+		<canvas id="ringCanvas" height="3072" width="3072" style="display: none;"></canvas>
 		<script src="scripts/xor4096.min.js"></script>
 		<script src="scripts/timer.min.js"></script>
 		<script src="scripts/three.min.js"></script>
