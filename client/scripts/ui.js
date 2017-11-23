@@ -176,13 +176,16 @@ var Button = function (node) {
 Button.prototype = Object.create(Emitter.prototype); // Makes it into an event emitter
 Object.defineProperty(Button.prototype, "focused", {
 	set: function (newFocused) {
+		console.log("setting new focused");
 		newFocused = newFocused ? true : false;
 		if (newFocused === this.focused) return;
 		else if (newFocused === true) {
+			console.log("focusing this, ", this);
 			this.node.classList.add("focused");
 			this.emit("focus");
 			this.emit("toggle");
 		} else {
+			console.log("unfocusing this, ", this);
 			this.node.classList.remove("focused");
 			this.emit("unfocus");
 			this.emit("toggle");
@@ -208,9 +211,9 @@ Button.prototype.toggle = function () {
 var Modal = function (node) {
 	this.node = node;
 	this.listeners = {};
-	this.node.getElementsByClassName("close")[0].addEventListener("click", this.emit.bind(this, "click"));
+	this.node.getElementsByClassName("close")[0].addEventListener("click", (function () {this.focused = false;}).bind(this));
 	this.node.getElementsByClassName("content")[0].addEventListener("click", this.unpropagateEvent.bind(this));
-	this.node.addEventListener("click", this.emit.bind(this, "click"));
+	this.node.addEventListener("click", (function () {this.focused = false;}).bind(this));
 }
 this.Modal.prototype = Object.create(Button.prototype);
 
@@ -248,52 +251,15 @@ var Wakeable = function (node) {
 	this.woke = null;
 }
 
-
-var loadUI = function () {
-	var wakeableUi = new Wakeable(document.getElementById("ui"));
-	window.addEventListener("mousemove", wakeableUi.wake.bind(wakeableUi));
-	document.getElementById("input").addEventListener("keydown", wakeableUi.wake.bind(wakeableUi));
-	document.getElementById("input").addEventListener("focus", wakeableUi.keepAwake.bind(wakeableUi));
-	document.getElementById("input").addEventListener("blur", wakeableUi.unkeepAwake.bind(wakeableUi));
-	window.setInterval(wakeableUi.sleep.bind(wakeableUi), 100);
-
-	view = new Radio(true, [
-		new Button(document.getElementById("orbit")),
-		new Button(document.getElementById("zoom")),
-		new Button(document.getElementById("move"))
-	]);
-	new Button(document.getElementById("download"));
-	new Button(document.getElementById("link"));
-	new Button(document.getElementById("share"));
-	var setSeed = function () {
-		currSeed = new Seed(document.getElementById("input").value);
-		document.getElementById("number").innerHTML = currSeed.value;
-		return currSeed.value;
-	}
-
-	modalContainerNode = document.getElementById("modalContainer");
-	modalContainer = new Radio(true, [
-		new Modal(document.getElementById("loading")),
-		new Modal(document.getElementById("sharing"))
-	]);
-	showModalContainer = function () {modalContainerNode.style.zIndex = "initial";}
-	hideModalContainer = function () { setTimeout(function () { modalContainerNode.style.zIndex = "";}, 1000); }
-	for (var index in modalContainer.buttons) {
-		var currModal = modalContainer.buttons[index];
-		currModal.on("focus", showModalContainer);
-		currModal.on("focus", wakeableUi.keepAwake.bind(wakeableUi));
-		currModal.on("unfocus", hideModalContainer);
-		currModal.on("unfocus", wakeableUi.unkeepAwake.bind(wakeableUi));
-	}
-
-	setSeed();
-	document.getElementById("input").addEventListener("keypress", function (event) {
-		if (event.keyCode === 13 || event.charCode === 13) {
-			event.preventDefault();
-			var value = setSeed();
-			random = xor4096(value);
-			var profile = getRemoteFactorization(value, Graphics.genPlanets.bind(Graphics));
-		}
-	});
+ProgressNode = function (node, defaultText) {
+	this.node = node;
+	this.bar = this.node.getElementsByClassName("bar")[0];
+	this.text = this.node.getElementsByClassName("text")[0];
+	this.defaultText = defaultText ? defaultText : this.text.innerHTML;
+	this.updatePercent(0);
 }
-document.body.onload = loadUI;
+ProgressNode.prototype.updatePercent = function (percent) {
+	this.bar.style.width = percent + "%";
+	console.log("updating percent...", this.defaultText + percent + "%");
+	this.text.innerHTML = this.defaultText + percent + "%";
+}

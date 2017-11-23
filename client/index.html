@@ -33,12 +33,16 @@
 			</div>
 			<div id="mouse"></div>
 		</div>
-		<div id="modalContainer">
-			<div class="modal" id="loading">
+		<div id="modalContainer" style="z-index: 1000000;">
+			<div class="modal focused" id="intro">
 				<div class="content">
 					<div class="icon close" id="close"></div>
-					<div class="title"><span>Content</span></div>
-					Hiya there, this is a modal dialogue!
+					<div id="credits">Conceived, Created, and Programmed by <a href="https://dylant.org">Dylan Thinnes</a> 
+Graphics Programming by <a href="https://aaronshappell.github.io">Aaron Shappell</a>
+Artwork by <a href="https://ryanshappell.github.io">Ryan Shappell</a> 
+
+Many thanks to our parents, friends, and Mozilla.</div>
+					<div class="progress" id="startLoad"><div class="bar"></div><span class="text">Loading Textures ... </span></div>
 				</div>
 			</div>
 			<div class="modal" id="sharing">
@@ -59,5 +63,6 @@
 		<script src="scripts/planets.js"></script>
 		<script src="scripts/graphic.js"></script>
 		<script src="scripts/ui.js"></script>
+		<script src="scripts/main.js"></script>
 	</body>
 </html>
