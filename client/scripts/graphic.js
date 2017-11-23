@@ -46,7 +46,7 @@ Graphics.prototype.loadMaterials = function(progress) {
     var primaryColors = ["#00ccff", "#0088aa", "#000080", "#00aad4", "#0000ff", "#0088aa", "#aa0044", "#deaa87", "#003380", "#2c2ca0", "#deaa87", "#0088aa"];
     var secondaryColors = ["#c87137", "#008000", "#c87137", "#008033", "#550000", "#217844", "#d35f8d", "#d45500", "#aa87de", "#aaccff", "#aa4400", "#b7c8c4"];
     var ringColors = ["#d40000", "#00f", "#c0f", "#00d400"]; // in groups of 4
-    progress.init(sunJSVGs.length + primaryColors.length/*<----TEMPORARY UNTIL SUN SPRITES*/ + planetJSVGs.length + primaryColors.length + ringJSVGs.length + ringColors.length / 4);
+    progress.init(sunJSVGs.length * primaryColors.length/*<----TEMPORARY UNTIL SUN SPRITES*/ + planetJSVGs.length * primaryColors.length + ringJSVGs.length * ringColors.length / 4);
     var textureLoader = new THREE.TextureLoader();
     var planetCanvas = document.getElementById("planetCanvas");
     var planetCtx = planetCanvas.getContext("2d");
@@ -86,14 +86,18 @@ Graphics.prototype.loadMaterials = function(progress) {
                 front = new THREE.SpriteMaterial({map: texture});
             }, 1);
             front.depthTest = false;
-            let back = front.clone();
+            let back = 0;
+            setTimeout(function(){
+                back = front.clone();
+            }, 1);
             back.rotation = Math.PI;
             this.ringMaterials.push([front, back]);
             progress.finishTask();
         }
     }
     progress.finishTask();
-    canvas.parentNode.removeChild(canvas);
+    planetCanvas.parentNode.removeChild(planetCanvas);
+    ringCanvas.parentNode.removeChild(ringCanvas);
 }
 
 // The genStars function is used to randomly generate stars
