@@ -738,18 +738,9 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		//this.startTime = Date.now();
 		this.callback = AWSCallback;
 		this.onCompletelyDone = function () {
-			//console.log("Root factorization ending...", Date.now(), Date.now() - this.startTime);
-			console.log("Blueprint is: ");
-			console.log(Blueprint);
-			console.log("Blueprint prototype is: ");
-			console.log(Blueprint.prototype);
-			console.log(new Blueprint(this.deepClone()));
-			this.callback(null, {
-				statusCode: 200,
-				body: this.deepClone()
-				//body: JSON.stringify((new Blueprint(this.deepClone())).system)
-			});
 			Prime.close();
+			//console.log("Root factorization ending...", Date.now(), Date.now() - this.startTime);
+			this.callback(null, (new Blueprint(this.deepClone())).system);
 		}
 		this.isPrime = false;
 		this.factors = new Array();
@@ -761,7 +752,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Prime.launchAsyncProcesses();
 	var currfactor = new RootFactor(number, AWSCallback);
 };
-module.exports.factorize({
+/*module.exports.factorize({
 	"number": "785678245376894397546786",
-	"piXDepth": "999999"
-}, null, console.log);
+	"piXDepth": "1"
+}, null, console.log);*/
