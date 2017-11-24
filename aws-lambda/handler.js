@@ -80,7 +80,7 @@ ArbInt.prototype.subtract = function (operand) {
 		this.subtractDigit(ii, operand.getDigit(ii));
 	}
 }
-ArbInt.POW2 = [
+ArbInt.POW2 = [ // Higher-performance hard-coded version of ArbInt.POW2
 	new ArbInt("1"),
 	new ArbInt("2"),
 	new ArbInt("4"),
@@ -249,6 +249,104 @@ ArbInt.POW2 = [
 	new ArbInt("46768052394588893382517914646921056628989841375232"),
 	new ArbInt("93536104789177786765035829293842113257979682750464")
 ];
+
+// The Blueprint class turns factorization profiles into recursive collections of planets
+//     that can be easily parsed by the graphical functions like addPlanets
+var Blueprint = function(profile){
+    this.profile = JSON.parse(profile);
+    this.system = {
+        type: Blueprint.POSITIVE,
+        orbitRadius: 0,
+        scale: 1,
+        children: []
+    }
+    this.orbitHistory = [this.system];
+    this.genChildren(this.profile);
+    this.setSystemWidths(this.system, 0);
+}
+
+// The genChildren function takes in a FactorProfile node and decides what to do
+Blueprint.prototype.genChildren = function (node) {
+    if (node.isPrime) {
+        if (isNaN(node.piX) === true) {
+            var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
+                type: Blueprint.SKIP,
+                orbitRadius: undefined,
+                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
+                children: []
+            });
+            this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
+            this.genChildren(node.piX);
+            this.orbitHistory.pop();
+        } else if (parseInt(node.piX) === 1) {
+            this.orbitHistory[this.orbitHistory.length - 1].children.push({
+                type: Blueprint.SKIP,
+                orbitRadius: undefined,
+                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
+                children: []
+            });
+        } else if (parseInt(node.piX) === 0) {
+            // Do nothing
+        } else {
+            throw "piX type error: " + node.piX;
+        }
+
+        if (isNaN(node.power) === true) {
+            var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
+                type: Blueprint.POSITIVE,
+                orbitRadius: undefined,
+                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
+                children: []
+            });
+            this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
+            this.genChildren(node.power);
+            this.orbitHistory.pop();
+        } else if (parseInt(node.power) === 1) {
+            this.orbitHistory[this.orbitHistory.length - 1].children.push({
+                type: Blueprint.POSITIVE,
+                orbitRadius: undefined,
+                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
+                children: []
+            });
+        } else if (parseInt(node.power) === 0) {
+            throw "power type error: 0";
+        } else {
+            throw "power type error: " + node.power;
+        }        
+    } else {
+        if(node.factors){
+            for (var ii = node.factors.length - 1; ii >= 0; ii--) {
+                this.genChildren(node.factors[ii]);
+            }
+        }
+    }
+}
+
+// The setSystemWidths function is used to calculate and set the widths of given planet systems, and in the process set radii.
+Blueprint.prototype.setSystemWidths = function(system, depth){
+    var width = 1;
+    var radius = 0.5;
+    if(system.children){
+        width += 2 * system.children.length * Blueprint.SPACING;
+        for(var i = 0; i < system.children.length; i++){
+            radius += Blueprint.SPACING;
+            width += 2 * Blueprint.CHILD * this.setSystemWidths(system.children[i], depth + 1);
+            radius += Blueprint.CHILD * system.children[i].width / 2;
+            system.children[i].orbitRadius = Math.pow(Blueprint.CHILD, depth) * radius;
+            radius += Blueprint.CHILD * system.children[i].width / 2;
+        }
+    }
+    system.width = width;
+    return width;
+}
+
+Blueprint.SKIP = 0;
+Blueprint.POSITIVE = 1;
+Blueprint.NEGATIVE = -1;
+Blueprint.CHILD = 0.9;
+Blueprint.SPACING = /*Math.pow(0.618033988749894, 2)*/0.1;
+
+
 
 module.exports.factorize = (event, context, AWSCallback) => {
 	var number = event.number;
@@ -635,14 +733,15 @@ module.exports.factorize = (event, context, AWSCallback) => {
 
 	// The RootFactor is a unique extension to Factor that adds functionality necessary to administrate all other Factor nodes. In effect, it gets the ball rolling.
 	const RootFactor = function (value, AWSCallback, piX, isPrime) {
-		//console.log("Root factorization beginning...");
+		console.log("Root factorization beginning...", Date.now());
+		this.startTime = Date.now();
 		this.callback = AWSCallback;
 		this.onCompletelyDone = function () {
 			Prime.close();
-			//console.log("Root factorization ending...");
+			console.log("Root factorization ending...", Date.now(), Date.now() - this.startTime);
 			this.callback(null, {
 				statusCode: 200,
-				body: this.deepClone()
+				body: (new Blueprint(this.deepClone())).system
 			});
 		}
 		this.isPrime = false;
@@ -654,8 +753,8 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	RootFactor.prototype = Factor.prototype;
 	Prime.launchAsyncProcesses();
 	var currfactor = new RootFactor(number, AWSCallback);
-};/*
+};
 module.exports.factorize({
-	"number": "233943789437",
+	"number": "469920081273",
 	"piXDepth": "1"
-}, null, console.log);*/
+}, null, console.log);
