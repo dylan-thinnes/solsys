@@ -28,7 +28,8 @@ var main = function () {
 		]);
 		new Button(document.getElementById("download"));
 		new Button(document.getElementById("link"));
-		new Button(document.getElementById("share"));
+		var share = new Button(document.getElementById("share"));
+		var info = new Button(document.getElementById("info"));
 		var setSeed = function () {
 			currSeed = new Seed(document.getElementById("input").value);
 			document.getElementById("number").innerHTML = currSeed.value;
@@ -38,8 +39,15 @@ var main = function () {
 		var modalContainer = document.getElementById("modalContainer");
 		modals = {
 			intro: new Modal(document.getElementById("intro"), modalContainer),
+			credits: new Modal(document.getElementById("credits"), modalContainer),
 			sharing: new Modal(document.getElementById("sharing"), modalContainer)
 		}
+		var creditsClose = new Button(modals.credits.node.getElementsByClassName("close")[0]);
+		creditsClose.node.addEventListener("click", (function () { this.focused = false; }).bind(modals.credits));
+		info.on("click", (function () { this.focused = true; }).bind(modals.credits));
+		var sharingClose = new Button(modals.sharing.node.getElementsByClassName("close")[0]);
+		sharingClose.node.addEventListener("click", (function () { this.focused = false; }).bind(modals.sharing));
+		share.on("click", (function () { this.focused = true; }).bind(modals.sharing));
 		modals.intro.on("unfocus", wakeableUi.wake.bind(wakeableUi));
 
 		var start = document.getElementsByClassName("start")[0];

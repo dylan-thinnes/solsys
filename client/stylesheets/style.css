@@ -145,7 +145,6 @@ a {
 .modal > .content {
 	transition: margin-top 1s;
 	margin-top: 2rem;
-	min-height: 100px;
 	position: relative;
 	color: rgba(249,249,249,0.9);
 	padding: 0.5rem;
@@ -154,7 +153,7 @@ a {
 	cursor: default;
 }
 
-#credits {
+#credits > .content > div:nth-child(2) {
 	white-space: pre;
 }
 .progress {
@@ -196,7 +195,7 @@ a {
 #logo {
 	display: block;
 	margin: 0;
-	animation: spin 200s infinite linear;
+	animation: spin 150s infinite linear;
 }
 #logoText {
 	display: block;
@@ -210,6 +209,9 @@ a {
 
 .icon#close {
 	background-image: url(../data/mi/close.svg);
+}
+.icon#info {
+	background-image: url(../data/mi/info.svg);
 }
 .icon#view {
 	/*background-image: url(../data/interface-icons/min2/view.svg);
