@@ -258,6 +258,9 @@ ProgressNode = function (node, defaultText) {
 	this.defaultText = defaultText ? defaultText : this.text.innerHTML;
 	this.updatePercent(0);
 }
+ProgressNode.prototype.requestFrameForPercent = function (percent) {
+	requestAnimationFrame(this.updatePercent.bind(this, percent));
+}
 ProgressNode.prototype.updatePercent = function (percent) {
 	this.bar.style.width = percent + "%";
 	console.log("updating percent...", this.defaultText + percent + "%");
