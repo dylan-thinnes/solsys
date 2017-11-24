@@ -129,9 +129,10 @@ Graphics.prototype.genStars = function(){
 }
 
 // The genPlanets function is used to generate the planets of the solar system
-Graphics.prototype.genPlanets = function(blueprint){
+Graphics.prototype.genPlanets = function(system){
     this.systemExists = false;
-    this.solSys = JSON.parse(JSON.stringify(blueprint.system));
+    //this.solSys = JSON.parse(JSON.stringify(blueprint.system));
+    this.solSys = system;
     for(var i = 0; i < this.rootGroup.children.length; i++){
         this.rootGroup.remove(this.rootGroup.children[i]);
     }
@@ -153,7 +154,7 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     var spriteGroup = new THREE.Group();
     planet.spriteGroup = spriteGroup;
     // Create front ring
-    if(planet.ring && planet.type !== Blueprint.SKIP){
+    if(planet.ring && planet.type !== 0){
         var ringScale = new THREE.Matrix4();
         ringScale.makeScale(planet.scale * 3, planet.scale * 3, 1); // Maybe change this
         var ringIndex = Math.floor(Randomizer.random() * this.ringMaterials.length);
@@ -167,7 +168,7 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     var planetSprite;
     if(parentGroup === this.rootGroup){ // Sun
         planetSprite = new THREE.Sprite(this.sunMaterials[Math.floor(Randomizer.random() * this.sunMaterials.length)]);
-    } else if(planet.type === Blueprint.SKIP){ // Blackhole
+    } else if(planet.type === 0){ // Blackhole
         planetScale.makeScale(planet.scale / 1.5, planet.scale / 1.5, 1);
         planetSprite = new THREE.Sprite(this.blackholeMaterials[Math.floor(Randomizer.random() * this.blackholeMaterials.length)]);
     } else{ // Ordinary planet
@@ -176,7 +177,7 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     planetSprite.applyMatrix(planetScale);
     spriteGroup.add(planetSprite);
     // Create back ring
-    if(planet.ring && planet.type !== Blueprint.SKIP){
+    if(planet.ring && planet.type !== 0){
         ringScale.makeScale(-planet.scale * 3, planet.scale * 3, 1);
         var ringSpriteFront = new THREE.Sprite(this.ringMaterials[ringIndex][1]);
         ringSpriteFront.applyMatrix(ringScale);
@@ -229,8 +230,6 @@ Graphics.prototype.update = function(){
 Graphics.prototype.render = function(){
     this.renderer.render(this.scene, this.camera);
 }
-
-Blueprint.SKIP = 0;
 
 // An object that keeps state of the progress in loading the page
 Progress = function () {
