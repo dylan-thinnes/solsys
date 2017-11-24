@@ -12,3 +12,4 @@ svgo -i planet5/*.svg -o optimizedSVGs/planet5.min.svg
 svgo -i ring1/*.svg -o optimizedSVGs/ring1.min.svg
 svgo -i ring2/*.svg -o optimizedSVGs/ring2.min.svg
 svgo -i ring3/*.svg -o optimizedSVGs/ring3.min.svg
+svgo -i ring4/*.svg -o optimizedSVGs/ring4.min.svg
