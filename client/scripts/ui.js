@@ -98,7 +98,7 @@ getRemoteBlueprint = function (number, callback) {
 	req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
 	req.onreadystatechange = function (event) {
 		if (this.readyState === 4) {
-			callback(JSON.parse(this.response)["body"]);
+			callback(JSON.parse(this.response));
 		}
 	}
 	req.send();
