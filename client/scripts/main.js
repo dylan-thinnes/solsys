@@ -61,7 +61,7 @@ var main = function () {
 				event.preventDefault();
 				var value = setSeed();
 				Randomizer.setSeed(value);
-				var profile = getRemoteFactorization(value, Graphics.genPlanets.bind(Graphics));
+				var profile = getRemoteBlueprint(value, Graphics.genPlanets.bind(Graphics));
 			}
 		});
 

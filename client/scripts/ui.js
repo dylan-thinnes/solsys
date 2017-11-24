@@ -90,8 +90,8 @@ for (var ii = 0; ii < 167; ii++) {
 	ArbInt.POW2.push(newNum);
 }
 
-// getRemoteFactorization gets the profile for any number from AWS factorize API endpoint.
-getRemoteFactorization = function (number, callback) {
+// getRemoteBlueprint gets the solar system blueprint for any number from AWS factorize API endpoint.
+getRemoteBlueprint = function (number, callback) {
 	number = (!isNaN(number) && number !== null) ? number.toString() : "1";
 	var req = new XMLHttpRequest();
 	req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=" + number.toString() + "&piXDepth=1");
