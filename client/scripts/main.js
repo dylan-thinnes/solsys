@@ -48,10 +48,10 @@ var main = function () {
 		}
 
 		var startLoad = new ProgressNode(document.getElementById("startLoad")); 
-		progressBar.on("finishTask", startLoad.requestFrameForPercent.bind(startLoad));
+		progressBar.on("finishTask", startLoad.updatePercent.bind(startLoad));
 		var showStartButton = function () {
 			document.getElementById("startLoad").style.opacity = "0.5";
-			//document.getElementById("startButton").style.display = "inline-block";
+			document.getElementById("startButton").style.display = "inline-block";
 		}
 		progressBar.on("finishAll", showStartButton);
 

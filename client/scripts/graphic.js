@@ -59,8 +59,15 @@ Graphics.prototype.loadMaterials = function(progress) {
     var ringCtx = ringCanvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
         for(var j = 0; j < primaryColors.length; j++){
-            sunJSVGs[i](planetCtx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
-            let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
+	    let canvas = document.createElement("canvas");
+	    canvas.style.display = "none";
+	    canvas.width = 1024;
+	    canvas.height = 1024;
+	    ctx = canvas.getContext("2d");
+            sunJSVGs[i](ctx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
+            let texture = new THREE.Texture(canvas);
+	    texture.needsUpdate = true;
+            let material = new THREE.SpriteMaterial({map: texture});
             material.depthTest = false;
             this.sunMaterials.push(material);
             progress.finishTask();
@@ -68,8 +75,15 @@ Graphics.prototype.loadMaterials = function(progress) {
     }
     for(var i = 0; i < planetJSVGs.length; i++){
         for(var j = 0; j < primaryColors.length; j++){
-            planetJSVGs[i](planetCtx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
-            let material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
+	    let canvas = document.createElement("canvas");
+	    canvas.style.display = "none";
+	    canvas.width = 1024;
+	    canvas.height = 1024;
+	    ctx = canvas.getContext("2d");
+            planetJSVGs[i](ctx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
+            let texture = new THREE.Texture(canvas);
+	    texture.needsUpdate = true;
+            let material = new THREE.SpriteMaterial({map: texture});
             material.depthTest = false;
             this.planetMaterials.push(material);
             progress.finishTask();
@@ -78,8 +92,14 @@ Graphics.prototype.loadMaterials = function(progress) {
 	console.log("starting ringJSVGs", blackholeJSVGs)
     for(var i = 0; i < ringJSVGs.length; i++){
         for(var j = 0; j < ringColors.length; j += 4){
-            ringJSVGs[i](ringCtx, 20.48 / 3, 20.48 / 3, ringColors[j], ringColors[j + 1], ringColors[j + 2], ringColors[j + 3]);
-            let texture = textureLoader.load(ringCanvas.toDataURL());
+	    let canvas = document.createElement("canvas");
+	    canvas.style.display = "none";
+	    canvas.width = 2048;
+	    canvas.height = 2048;
+	    ctx = canvas.getContext("2d");
+            ringJSVGs[i](ctx, 20.48 / 3, 20.48 / 3, ringColors[j], ringColors[j + 1], ringColors[j + 2], ringColors[j + 3]);
+            let texture = new THREE.Texture(canvas);
+	    texture.needsUpdate = true;
             texture.offset.y = -0.0008;
             let front = new THREE.SpriteMaterial({map: texture});
             front.depthTest = false;
@@ -93,9 +113,16 @@ Graphics.prototype.loadMaterials = function(progress) {
     for(var i = 0; i < blackholeJSVGs.length; i++){
 	    console.log("blackhole " + i, blackholeBrights.length);
 	for (var j = 0; j < blackholeBrights.length; j++) {
-		console.log("blackholde colour " + j);
-		blackholeJSVGs[i](planetCtx, 10.24, 10.24, blackholeDarks[j], blackholeMediums[j], blackholeBrights[j]);
-		material = new THREE.SpriteMaterial({map: textureLoader.load(planetCanvas.toDataURL())});
+		let canvas = document.createElement("canvas");
+		canvas.style.display = "none";
+		canvas.width = 1024;
+		canvas.height = 1024;
+		ctx = canvas.getContext("2d");
+		blackholeJSVGs[i](ctx, 10.24, 10.24, blackholeDarks[j], blackholeMediums[j], blackholeBrights[j]);
+		let texture = new THREE.Texture(canvas);
+		texture.needsUpdate = true;
+        	let material = new THREE.SpriteMaterial({map: texture});
+		material.needsUpdate = true;
 		material.depthTest = false;
 		this.blackholeMaterials.push(material);
 		progress.finishTask();
@@ -262,7 +289,7 @@ function init () {
     Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
     Graphics.genStars();
     progressBar = new Progress();
-    //progressBar.on("finishTask", console.log);
+    progressBar.on("finishTask", console.log);
     progressBar.on("finishAll", console.log.bind(this, "progressBar done!"));
 }
 
