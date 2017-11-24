@@ -129,9 +129,8 @@ Graphics.prototype.genStars = function(){
 }
 
 // The genPlanets function is used to generate the planets of the solar system
-Graphics.prototype.genPlanets = function(profile){
+Graphics.prototype.genPlanets = function(blueprint){
     this.systemExists = false;
-    var blueprint = new Blueprint(profile);
     this.solSys = JSON.parse(JSON.stringify(blueprint.system));
     for(var i = 0; i < this.rootGroup.children.length; i++){
         this.rootGroup.remove(this.rootGroup.children[i]);
@@ -143,6 +142,9 @@ Graphics.prototype.genPlanets = function(profile){
 
 // The addPlanets function is used to add the planets of the solSys object to the threejs scene
 Graphics.prototype.addPlanets = function(planet, parentGroup){
+    // Set random speed and rings
+    planet.ring = Math.floor(Randomizer.random() * 10) === 0;
+    planet.speed = 0.5 * Randomizer.random();
     // Create orbit group
     var orbitGroup = new THREE.Group();
     orbitGroup.rotation.set(Math.floor(Randomizer.random() * 2 * Math.PI), Math.floor(Randomizer.random() * 2 * Math.PI), Math.floor(Randomizer.random() * 2 * Math.PI));
@@ -228,111 +230,7 @@ Graphics.prototype.render = function(){
     this.renderer.render(this.scene, this.camera);
 }
 
-// The Blueprint class turns factorization profiles into recursive collections of planets
-//     that can be easily parsed by the graphical functions like addPlanets
-Blueprint = function(profile){
-    this.profile = JSON.parse(profile);
-    this.system = {
-        type: Blueprint.POSITIVE,
-        ring: false,
-        orbitRadius: 0,
-        scale: 1,
-        speed: 0,
-        children: []
-    }
-    this.orbitHistory = [this.system];
-    this.genChildren(this.profile);
-    this.setSystemWidths(this.system, 0);
-}
-
-// The genChildren function takes in a FactorProfile node and decides what to do
-Blueprint.prototype.genChildren = function (node) {
-    if (node.isPrime) {
-        if (isNaN(node.piX) === true) {
-            var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
-                type: Blueprint.SKIP,
-                ring: (Math.floor(Randomizer.random() * 10) === 0),
-                orbitRadius: undefined,
-                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
-                children: []
-            });
-            this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
-            this.genChildren(node.piX);
-            this.orbitHistory.pop();
-        } else if (parseInt(node.piX) === 1) {
-            this.orbitHistory[this.orbitHistory.length - 1].children.push({
-                type: Blueprint.SKIP,
-                ring: (Math.floor(Randomizer.random() * 10) === 0),
-                orbitRadius: undefined,
-                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
-                children: []
-            });
-        } else if (parseInt(node.piX) === 0) {
-            // Do nothing
-        } else {
-            throw "piX type error: " + node.piX;
-        }
-
-        if (isNaN(node.power) === true) {
-            var newLength = this.orbitHistory[this.orbitHistory.length - 1].children.push({
-                type: Blueprint.POSITIVE,
-                ring: (Math.floor(Randomizer.random() * 10) === 0),
-                orbitRadius: undefined,
-                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
-                children: []
-            });
-            this.orbitHistory.push(this.orbitHistory[this.orbitHistory.length - 1].children[newLength - 1]);
-            this.genChildren(node.power);
-            this.orbitHistory.pop();
-        } else if (parseInt(node.power) === 1) {
-            this.orbitHistory[this.orbitHistory.length - 1].children.push({
-                type: Blueprint.POSITIVE,
-                ring: (Math.floor(Randomizer.random() * 10) === 0),
-                orbitRadius: undefined,
-                scale: Math.pow(Blueprint.CHILD, this.orbitHistory.length),
-                speed: 0.5 * Randomizer.random(),
-                children: []
-            });
-        } else if (parseInt(node.power) === 0) {
-            throw "power type error: 0";
-        } else {
-            throw "power type error: " + node.power;
-        }        
-    } else {
-        if(node.factors){
-            for (var ii = node.factors.length - 1; ii >= 0; ii--) {
-                this.genChildren(node.factors[ii]);
-            }
-        }
-    }
-}
-
-// The setSystemWidths function is used to calculate and set the widths of given planet systems, and in the process set radii.
-Blueprint.prototype.setSystemWidths = function(system, depth){
-    var width = 1;
-    var radius = 0.5;
-    if(system.children){
-        width += 2 * system.children.length * Blueprint.SPACING;
-        for(var i = 0; i < system.children.length; i++){
-            radius += Blueprint.SPACING;
-            width += 2 * Blueprint.CHILD * this.setSystemWidths(system.children[i], depth + 1);
-            radius += Blueprint.CHILD * system.children[i].width / 2;
-            system.children[i].orbitRadius = Math.pow(Blueprint.CHILD, depth) * radius;
-            radius += Blueprint.CHILD * system.children[i].width / 2;
-        }
-    }
-    system.width = width;
-    return width;
-}
-
 Blueprint.SKIP = 0;
-Blueprint.POSITIVE = 1;
-Blueprint.NEGATIVE = -1;
-Blueprint.CHILD = 0.9;
-Blueprint.SPACING = /*Math.pow(0.618033988749894, 2)*/0.1;
 
 // An object that keeps state of the progress in loading the page
 Progress = function () {
