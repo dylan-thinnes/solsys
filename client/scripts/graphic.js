@@ -52,11 +52,6 @@ Graphics.prototype.loadMaterials = function(progress) {
     var secondaryColors = ["#c87137", "#008000", "#c87137", "#008033", "#550000", "#217844", "#d35f8d", "#d45500", "#aa87de", "#aaccff", "#aa4400", "#b7c8c4"];
     var ringColors = ["#d40000", "#00f", "#c0f", "#00d400"]; // in groups of 4
     progress.init(sunJSVGs.length * primaryColors.length/*<----TEMPORARY UNTIL SUN SPRITES*/ + planetJSVGs.length * primaryColors.length + ringJSVGs.length * ringColors.length / 4 + blackholeJSVGs.length * blackholeBrights.length);
-    var textureLoader = new THREE.TextureLoader();
-    var planetCanvas = document.getElementById("planetCanvas");
-    var planetCtx = planetCanvas.getContext("2d");
-    var ringCanvas = document.getElementById("ringCanvas");
-    var ringCtx = ringCanvas.getContext("2d");
     for(var i = 0; i < sunJSVGs.length; i++){
         for(var j = 0; j < primaryColors.length; j++){
 	    let canvas = document.createElement("canvas");
@@ -89,7 +84,6 @@ Graphics.prototype.loadMaterials = function(progress) {
             progress.finishTask();
         }
     }
-	console.log("starting ringJSVGs", blackholeJSVGs)
     for(var i = 0; i < ringJSVGs.length; i++){
         for(var j = 0; j < ringColors.length; j += 4){
 	    let canvas = document.createElement("canvas");
@@ -109,9 +103,7 @@ Graphics.prototype.loadMaterials = function(progress) {
             progress.finishTask();
         }
     }
-	console.log("starting blackHoles", blackholeJSVGs);
     for(var i = 0; i < blackholeJSVGs.length; i++){
-	    console.log("blackhole " + i, blackholeBrights.length);
 	for (var j = 0; j < blackholeBrights.length; j++) {
 		let canvas = document.createElement("canvas");
 		canvas.style.display = "none";
@@ -128,8 +120,6 @@ Graphics.prototype.loadMaterials = function(progress) {
 		progress.finishTask();
 	}
     }
-    planetCanvas.parentNode.removeChild(planetCanvas);
-    ringCanvas.parentNode.removeChild(ringCanvas);
 }
 
 // The genStars function is used to randomly generate stars
