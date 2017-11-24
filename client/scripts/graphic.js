@@ -131,7 +131,6 @@ Graphics.prototype.genStars = function(){
 // The genPlanets function is used to generate the planets of the solar system
 Graphics.prototype.genPlanets = function(system){
     this.systemExists = false;
-    //this.solSys = JSON.parse(JSON.stringify(blueprint.system));
     this.solSys = system;
     for(var i = 0; i < this.rootGroup.children.length; i++){
         this.rootGroup.remove(this.rootGroup.children[i]);
