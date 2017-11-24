@@ -59,7 +59,7 @@ a {
 	flex-direction: row;
 	justify-content: center;
 }
-.icon, #input {
+.icon, #input, .start {
 	opacity: 0.6;
 	background-color: transparent;
 	box-sizing: content-box;
@@ -76,10 +76,10 @@ a {
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 }
-.icon:hover, #input:hover { opacity: 0.75; }
-.icon.focused, #input:focus { opacity: 0.9; border-bottom-width: 2px; }
+.icon:hover, #input:hover, #loaded:hover { opacity: 0.75; }
+.icon.focused, #input:focus, #loaded:focus { opacity: 0.9; border-bottom-width: 2px; }
 #input:focus { margin-bottom: -1px; }
-.icon.active { opacity: 0.9; background-color: #222; }
+.icon.active, #loaded:active { opacity: 0.9; background-color: #222; }
 #input, #number {
 	color: #eee;
 	text-align: center;
@@ -165,25 +165,21 @@ a {
 	white-space: pre;
 }
 .progress {
+	font-size: 1.25rem;
+	font-weight: bold;
 	margin-top: 0.5rem;
 	text-align: center;
-	position: relative;
+	display: block;
+	cursor: pointer;
+	padding: 0.5rem;
 }
-.bar {
-	position: absolute;
-	width: 0%;
-	height: 100%;
-	background-color: rgba(249,249,249,0.60);
-	top: 0;
-	left: 0;
+#intro > .content {
+	border-bottom: 0;
 }
-#startButton {
-	display: none;
-	width: 50%;
-	height: 30px;
-	background-color: blue;
+#loaded {
+	background-color: rgba(249,249,249,0.2);
+	color: white;
 }
-
 
 .icon#close {
 	background-image: url(../data/mi/close.svg);

@@ -208,15 +208,16 @@ Button.prototype.toggle = function () {
 }
 
 
-var Modal = function (node) {
+var Modal = function (node, container) {
 	this.node = node;
+	this.container = container;
 	this.listeners = {};
-	this.node.getElementsByClassName("close")[0].addEventListener("click", (function () {this.focused = false;}).bind(this));
-	this.node.getElementsByClassName("content")[0].addEventListener("click", this.unpropagateEvent.bind(this));
-	this.node.addEventListener("click", (function () {this.focused = false;}).bind(this));
+	this.on("focus", this.showContainer.bind(this));
+	this.on("unfocus", this.hideContainer.bind(this));
 }
-this.Modal.prototype = Object.create(Button.prototype);
-
+Modal.prototype = Object.create(Button.prototype);
+Modal.prototype.showContainer = function () { this.container.style.zIndex = "1000000"; }
+Modal.prototype.hideContainer = function () { this.container.style.zIndex = ""; }
 
 var Wakeable = function (node) {
 	this.node = node;
@@ -252,6 +253,7 @@ var Wakeable = function (node) {
 }
 
 ProgressNode = function (node, defaultText) {
+	this.listeners = {};
 	this.node = node;
 	this.bar = this.node.getElementsByClassName("bar")[0];
 	this.text = this.node.getElementsByClassName("text")[0];
@@ -263,6 +265,5 @@ ProgressNode.prototype.requestFrameForPercent = function (percent) {
 }
 ProgressNode.prototype.updatePercent = function (percent) {
 	this.bar.style.width = percent + "%";
-	console.log("updating percent...", this.defaultText + percent + "%");
 	this.text.innerHTML = this.defaultText + percent + "%";
 }

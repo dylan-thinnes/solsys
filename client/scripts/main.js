@@ -8,15 +8,18 @@ var main = function () {
 	}
 	if (supportsWebGL) {
 		init();
-		render();
 	
 
 		var wakeableUi = new Wakeable(document.getElementById("ui"));
-		window.addEventListener("mousemove", wakeableUi.wake.bind(wakeableUi));
+		document.getElementById("graphics").addEventListener("mousemove", wakeableUi.wake.bind(wakeableUi));
+		document.getElementById("ui").addEventListener("mousemove", wakeableUi.wake.bind(wakeableUi));
+		document.getElementById("graphics").addEventListener("touchstart", wakeableUi.wake.bind(wakeableUi));
+		document.getElementById("ui").addEventListener("touchstart", wakeableUi.wake.bind(wakeableUi));
 		document.getElementById("input").addEventListener("keydown", wakeableUi.wake.bind(wakeableUi));
 		document.getElementById("input").addEventListener("focus", wakeableUi.keepAwake.bind(wakeableUi));
 		document.getElementById("input").addEventListener("blur", wakeableUi.unkeepAwake.bind(wakeableUi));
 		window.setInterval(wakeableUi.sleep.bind(wakeableUi), 100);
+		wakeableUi.sleep();
 
 		var view = new Radio(true, [
 			new Button(document.getElementById("orbit")),
@@ -32,26 +35,18 @@ var main = function () {
 			return currSeed.value;
 		}
 
+		var modalContainer = document.getElementById("modalContainer");
 		modals = {
-			intro: new Modal(document.getElementById("intro")),
-			sharing: new Modal(document.getElementById("sharing"))
+			intro: new Modal(document.getElementById("intro"), modalContainer),
+			sharing: new Modal(document.getElementById("sharing"), modalContainer)
 		}
-		var modalContainerNode = document.getElementById("modalContainer");
-		var showModalContainer = function () {modalContainerNode.style.zIndex = "1000000";}
-		var hideModalContainer = function () {modalContainerNode.style.zIndex = "";}
-		for (var index in modals) {
-			var currModal = modals[index];
-			currModal.on("focus", showModalContainer);
-			currModal.on("focus", wakeableUi.keepAwake.bind(wakeableUi));
-			currModal.on("unfocus", wakeableUi.unkeepAwake.bind(wakeableUi));
-			currModal.on("unfocus", hideModalContainer);
-		}
+		modals.intro.on("unfocus", wakeableUi.wake.bind(wakeableUi));
 
-		var startLoad = new ProgressNode(document.getElementById("startLoad")); 
-		progressBar.on("finishTask", startLoad.updatePercent.bind(startLoad));
+		var start = document.getElementsByClassName("start")[0];
 		var showStartButton = function () {
-			document.getElementById("startLoad").style.opacity = "0.5";
-			document.getElementById("startButton").style.display = "inline-block";
+			start.innerHTML = "Start the Program >";
+			start.id = "loaded";
+			start.addEventListener("click", (function () { this.focused = false; }).bind(modals.intro));
 		}
 		progressBar.on("finishAll", showStartButton);
 
@@ -70,5 +65,6 @@ var main = function () {
 	} else {
 	    document.getElementById("webgl-unsupported").innerHTML = "Your graphics card does not seem to support WebGL. <br/><br/> Find out how to get it here: <a href=\"https://get.webgl.org/\" target=\"_blank\">https://get.webgl.org/</a>";
 	}
+		render();
 }
 document.body.onload = main;
