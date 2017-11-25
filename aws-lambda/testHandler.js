@@ -1,3 +1,6 @@
 const factorize = require("./handler.js").factorize;
-
-factorize({"number": "234"}, null, console.log);
+var number = process.argv[2];
+factorize({
+	"number": number,
+	"piXDepth": "1"
+}, null, (_, res) => {console.log(JSON.stringify(res));});

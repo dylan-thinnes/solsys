@@ -254,6 +254,7 @@ ArbInt.POW2 = [ // Higher-performance hard-coded version of ArbInt.POW2
 
 module.exports.factorize = (event, context, AWSCallback) => {
 	var number = event.number;
+	//console.log(number);
 	//var baseDeltaPiX = (!isNaN(event.baseDeltaPiX)) ? event.baseDeltaPiX : null;
 	//var isPrime = (event.isPrime.toLowerCase() === "true") ? true : false;
 	if (isNaN(number) || number === "") {
@@ -533,7 +534,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	// The Factor class is used to organize and guide the factorization process and, as a result, the calls to msieve, logint, and primecount.
 	const Factor = function (value, power, isPrime, onCompletelyDone, piXChainID) {
 		this.onCompletelyDone = function () {
-			if (this.value === "4" && process.setting31 === true) console.log("value done, deepClone is: ", this.deepClone());
+			//if (this.value === "4" && process.setting31 === true) console.log("value done, deepClone is: ", this.deepClone());
 			onCompletelyDone();
 		};
 		this.isPrime = isPrime;
@@ -597,7 +598,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 	Factor.prototype.setPiX = function (newPiX) {
 		if (this.value === "31") {
 			process.setting31 = true;
-			console.log("Setting piX for 31: " + newPiX);
+			//console.log("Setting piX for 31: " + newPiX);
 		}
 		//console.log(newPiX, typeof newPiX, newPiX === null);
 		var postponePiX = false;
@@ -642,15 +643,15 @@ module.exports.factorize = (event, context, AWSCallback) => {
 					this.piX = newPiX;
 					this.childDone("piX");
 				} else {
-					if (process.setting31 === true) console.log("setting a piX with value " + newPiX);
+					//if (process.setting31 === true) console.log("setting a piX with value " + newPiX);
 					this.piX = new Factor(newPiX, "1", false, this.childDone.bind(this, "piX"));
-					if (process.setting31 === true) console.log("hello?"); //console.log(this.value, "this.piX: ", this.piX !== undefined);
+					//if (process.setting31 === true) console.log("hello?"); //console.log(this.value, "this.piX: ", this.piX !== undefined);
 				}
 			}
 		}
 	}
 	Factor.prototype.subtractPiX = function (subtraction) {
-		console.log("subtracting from piX for " + this.value);
+		//console.log("subtracting from piX for " + this.value);
 		var deltaNewPiX = new ArbInt(this.tempPiX);
 		deltaNewPiX.subtract(new ArbInt(subtraction));
 		deltaNewPiX.subtract(ArbInt.POW2[0]);
@@ -660,7 +661,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 			this.childDone("piX");
 		} else {
 			this.piX = new Factor(newPiX, "1", false, this.childDone.bind(this, "piX"));
-			if (this.value === "31") console.log("this.piX: ", this.piX !== undefined);
+			//if (this.value === "31") console.log("this.piX: ", this.piX !== undefined);
 		}
 	}
 	/*Factor.prototype.subtractPiX = function (subtraction) {
@@ -674,7 +675,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		} else this.piX = new Factor(newPiX, "1", false, this.childDone.bind(this, "piX"));
 	}*/
 	Factor.prototype.deepClone = function () {
-		console.log("calling deepClone on " + this.value);
+		//console.log("calling deepClone on " + this.value);
 		if (this.value === 1) {
 			return "1";
 		} else if (this.factors.length === 1) {
@@ -713,7 +714,7 @@ module.exports.factorize = (event, context, AWSCallback) => {
 		if (type === "power") this.powerDone = true;
 		else if (type === "init") this.initDone = true;
 		else if (type === "piX") {
-			if (process.setting31) console.log("calling childDone on " + this.value + "where piX is " + this.piX);
+			//if (process.setting31) console.log("calling childDone on " + this.value + "where piX is " + this.piX);
 			this.piXDone = true;
 		}
 		else if (type === "factorsInit") this.factorsInitDone = true;
