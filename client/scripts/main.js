@@ -11,8 +11,10 @@ var main = function () {
 	
 
 		var wakeableUi = new Wakeable(document.getElementById("ui"));
+		document.getElementById("graphics-background").addEventListener("mousemove", wakeableUi.wake.bind(wakeableUi));
 		document.getElementById("graphics").addEventListener("mousemove", wakeableUi.wake.bind(wakeableUi));
 		document.getElementById("ui").addEventListener("mousemove", wakeableUi.wake.bind(wakeableUi));
+		document.getElementById("graphics-background").addEventListener("touchstart", wakeableUi.wake.bind(wakeableUi));
 		document.getElementById("graphics").addEventListener("touchstart", wakeableUi.wake.bind(wakeableUi));
 		document.getElementById("ui").addEventListener("touchstart", wakeableUi.wake.bind(wakeableUi));
 		document.getElementById("input").addEventListener("keydown", wakeableUi.wake.bind(wakeableUi));

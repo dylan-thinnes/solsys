@@ -12,10 +12,14 @@ Randomizer = new (function () {
 })();
 
 // The Graphics class handles....
-Graphics = function(width, height, graphicsNode){
+Graphics = function(width, height, backgroundNode, graphicsNode){
+    this.backgroundScene = new THREE.Scene();
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 10000);
-    this.renderer = new THREE.WebGLRenderer();
+    this.backgroundRenderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({alpha: true});
+    this.renderer.setClearColor(0x000000, 0);
+    backgroundNode.appendChild(this.backgroundRenderer.domElement);
     graphicsNode.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.setSize.bind(this));
     this.camera.position.set(0, 0, 15);
@@ -54,14 +58,14 @@ Graphics.prototype.loadMaterials = function(progress) {
     progress.init(sunJSVGs.length * primaryColors.length/*<----TEMPORARY UNTIL SUN SPRITES*/ + planetJSVGs.length * primaryColors.length + ringJSVGs.length * ringColors.length / 4 + blackholeJSVGs.length * blackholeBrights.length);
     for(var i = 0; i < sunJSVGs.length; i++){
         for(var j = 0; j < primaryColors.length; j++){
-	    let canvas = document.createElement("canvas");
-	    canvas.style.display = "none";
-	    canvas.width = 1024;
-	    canvas.height = 1024;
-	    ctx = canvas.getContext("2d");
+            let canvas = document.createElement("canvas");
+            canvas.style.display = "none";
+            canvas.width = 1024;
+            canvas.height = 1024;
+            ctx = canvas.getContext("2d");
             sunJSVGs[i](ctx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
             let texture = new THREE.Texture(canvas);
-	    texture.needsUpdate = true;
+	        texture.needsUpdate = true;
             let material = new THREE.SpriteMaterial({map: texture});
             material.depthTest = false;
             this.sunMaterials.push(material);
@@ -70,14 +74,14 @@ Graphics.prototype.loadMaterials = function(progress) {
     }
     for(var i = 0; i < planetJSVGs.length; i++){
         for(var j = 0; j < primaryColors.length; j++){
-	    let canvas = document.createElement("canvas");
-	    canvas.style.display = "none";
-	    canvas.width = 1024;
-	    canvas.height = 1024;
-	    ctx = canvas.getContext("2d");
+            let canvas = document.createElement("canvas");
+            canvas.style.display = "none";
+            canvas.width = 1024;
+            canvas.height = 1024;
+            ctx = canvas.getContext("2d");
             planetJSVGs[i](ctx, 10.24, 10.24, primaryColors[j], secondaryColors[j]);
             let texture = new THREE.Texture(canvas);
-	    texture.needsUpdate = true;
+	        texture.needsUpdate = true;
             let material = new THREE.SpriteMaterial({map: texture});
             material.depthTest = false;
             this.planetMaterials.push(material);
@@ -86,14 +90,14 @@ Graphics.prototype.loadMaterials = function(progress) {
     }
     for(var i = 0; i < ringJSVGs.length; i++){
         for(var j = 0; j < ringColors.length; j += 4){
-	    let canvas = document.createElement("canvas");
-	    canvas.style.display = "none";
-	    canvas.width = 2048;
-	    canvas.height = 2048;
-	    ctx = canvas.getContext("2d");
+            let canvas = document.createElement("canvas");
+            canvas.style.display = "none";
+            canvas.width = 2048;
+            canvas.height = 2048;
+            ctx = canvas.getContext("2d");
             ringJSVGs[i](ctx, 20.48 / 3, 20.48 / 3, ringColors[j], ringColors[j + 1], ringColors[j + 2], ringColors[j + 3]);
             let texture = new THREE.Texture(canvas);
-	    texture.needsUpdate = true;
+	        texture.needsUpdate = true;
             texture.offset.y = -0.0008;
             let front = new THREE.SpriteMaterial({map: texture});
             front.depthTest = false;
@@ -104,21 +108,21 @@ Graphics.prototype.loadMaterials = function(progress) {
         }
     }
     for(var i = 0; i < blackholeJSVGs.length; i++){
-	for (var j = 0; j < blackholeBrights.length; j++) {
-		let canvas = document.createElement("canvas");
-		canvas.style.display = "none";
-		canvas.width = 1024;
-		canvas.height = 1024;
-		ctx = canvas.getContext("2d");
-		blackholeJSVGs[i](ctx, 10.24, 10.24, blackholeDarks[j], blackholeMediums[j], blackholeBrights[j]);
-		let texture = new THREE.Texture(canvas);
-		texture.needsUpdate = true;
-        	let material = new THREE.SpriteMaterial({map: texture});
-		material.needsUpdate = true;
-		material.depthTest = false;
-		this.blackholeMaterials.push(material);
-		progress.finishTask();
-	}
+        for (var j = 0; j < blackholeBrights.length; j++) {
+            let canvas = document.createElement("canvas");
+            canvas.style.display = "none";
+            canvas.width = 1024;
+            canvas.height = 1024;
+            ctx = canvas.getContext("2d");
+            blackholeJSVGs[i](ctx, 10.24, 10.24, blackholeDarks[j], blackholeMediums[j], blackholeBrights[j]);
+            let texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            let material = new THREE.SpriteMaterial({map: texture});
+            material.needsUpdate = true;
+            material.depthTest = false;
+            this.blackholeMaterials.push(material);
+            progress.finishTask();
+        }
     }
 }
 
@@ -141,7 +145,7 @@ Graphics.prototype.genStars = function(){
     var starsFields = [];
     for (var ii = 0; ii < starsColours.length; ii++) {
         starsFields[ii] = new THREE.Points(starsGeometries[ii], starsMaterials[ii]);
-        this.scene.add(starsFields[ii]);
+        this.backgroundScene.add(starsFields[ii]);
     }
 }
 
@@ -221,6 +225,7 @@ Graphics.prototype.setSize = function (width, height) {
         width = window.innerWidth;
         height = window.innerHeight;
     }
+    this.backgroundRenderer.setSize(width, height);
     this.renderer.setSize(width, height);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
@@ -244,6 +249,7 @@ Graphics.prototype.update = function(){
 
 // The render function renders the elements of the Graphics object
 Graphics.prototype.render = function(){
+    this.backgroundRenderer.render(this.backgroundScene, this.camera);
     this.renderer.render(this.scene, this.camera);
 }
 
@@ -275,7 +281,7 @@ Progress.prototype.finishTask = function () {
 // The init function. Try to have as little logic in this as possible
 function init () {
     Randomizer.setSeed("meow");
-    Graphics = new Graphics(window.innerWidth, window.innerHeight, document.getElementById("graphics"));
+    Graphics = new Graphics(window.innerWidth, window.innerHeight, document.getElementById("graphics-background"), document.getElementById("graphics"));
     Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
     Graphics.genStars();
     progressBar = new Progress();
