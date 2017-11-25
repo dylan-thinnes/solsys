@@ -29,16 +29,27 @@ var main = function () {
 		new Button(document.getElementById("download"));
 		var share = new Button(document.getElementById("share"));
 		var info = new Button(document.getElementById("info"));
-		var link = new Button(document.getElementById("link"));
-		var facebook = new Button(document.getElementById("facebook"));
-		var twitter = new Button(document.getElementById("twitter"));
-		var reddit = new Button(document.getElementById("reddit"));
+		var link = new Button(document.getElementById("link"), true);
+		var facebook = new Button(document.getElementById("facebook"), true);
+		var twitter = new Button(document.getElementById("twitter"), true);
+		var reddit = new Button(document.getElementById("reddit"), true);
+		var mail = new Button(document.getElementById("mail"), true);
 		var sharingTooltip = document.getElementById("tooltip");
+		var setSharingLinks = function () {
+			mail.node.href = "";
+			facebook.node.href = "";
+			twitter.node.href = "";
+			reddit.node.href = "";
+		}
 		var setSharingTooltip = function (text) {
 			sharingTooltip.innerHTML = text;
 		}
-		link.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Get this System's Link"));
+		mail.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Mail to a Friend"));
+		mail.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
+		link.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Copy this System's Link to Clipboard"));
 		link.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
+		link.on("click", copyUrlToClipboard);
+		link.on("click", setSharingTooltip.bind(this, "Copied URL to clipboard!"));
 		facebook.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Update Your Status"));
 		facebook.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
 		twitter.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Tweet About It"));
@@ -70,6 +81,7 @@ var main = function () {
 
 		var setValue = function (input) {
 			console.log("setValue called");
+			updateSharingUrls();
 			var value = new Seed(location.hash.slice(1)).value;
 			document.getElementById("number").innerHTML = value;
 			Randomizer.setSeed(value);

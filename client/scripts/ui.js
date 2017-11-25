@@ -164,11 +164,11 @@ Radio.prototype.click = function (id, event) {
 }
 
 
-var Button = function (node) {
+var Button = function (node, doNotCapture) {
 	this.node = node;
 	this.listeners = {};
 	this.node.addEventListener("click", this.emit.bind(this, "click"));
-	this.node.addEventListener("click", this.captureEvent.bind(this));
+	if (doNotCapture !== true) this.node.addEventListener("click", this.captureEvent.bind(this));
 	this.node.addEventListener("mousedown", this.activate.bind(this));
 	this.node.addEventListener("mouseup", this.deactivate.bind(this));
 	this.node.addEventListener("mouseleave", this.deactivate.bind(this));
@@ -252,3 +252,24 @@ var Wakeable = function (node) {
 	this.woke = null;
 }
 
+var copyUrlToClipboard = function () {
+	var textArea = document.createElement("textarea");
+	textArea.value = location.href;
+	document.body.appendChild(textArea);
+	textArea.select();
+	try {
+		var successful = document.execCommand('copy');
+		var msg = successful ? 'successful' : 'unsuccessful';
+		console.log('Copying text command was ' + msg);
+	} catch (err) {
+		console.log('Oops, unable to copy');
+	}
+	document.body.removeChild(textArea);
+}
+
+var updateSharingUrls = function () {
+	document.getElementById("facebook").href = "https://www.facebook.com/sharer/sharer.php?u=" + location.href;
+	document.getElementById("twitter").href = "https://twitter.com/intent/tweet?url=" + location.href + "&via=solsys";
+	document.getElementById("reddit").href = "https://www.reddit.com/submit?url=" + location.href;
+	document.getElementById("mail").href = "mailto:user@example.com?body=" + location.href;
+}
