@@ -252,18 +252,3 @@ var Wakeable = function (node) {
 	this.woke = null;
 }
 
-ProgressNode = function (node, defaultText) {
-	this.listeners = {};
-	this.node = node;
-	this.bar = this.node.getElementsByClassName("bar")[0];
-	this.text = this.node.getElementsByClassName("text")[0];
-	this.defaultText = defaultText ? defaultText : this.text.innerHTML;
-	this.updatePercent(0);
-}
-ProgressNode.prototype.requestFrameForPercent = function (percent) {
-	requestAnimationFrame(this.updatePercent.bind(this, percent));
-}
-ProgressNode.prototype.updatePercent = function (percent) {
-	this.bar.style.width = percent + "%";
-	this.text.innerHTML = this.defaultText + percent + "%";
-}
