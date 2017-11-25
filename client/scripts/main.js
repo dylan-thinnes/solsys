@@ -79,21 +79,21 @@ var main = function () {
 		}
 		progressBar.on("finishAll", showStartButton);
 
-		var setValue = function (input) {
-			console.log("setValue called");
+		var setValue = function () {
 			updateSharingUrls();
 			var value = new Seed(location.hash.slice(1)).value;
 			document.getElementById("number").innerHTML = value;
 			Randomizer.setSeed(value);
 			var profile = getRemoteBlueprint(value, Graphics.genPlanets.bind(Graphics));
 		}
-		location.hash = document.getElementById("input").innerHTML;
+		var input = document.getElementById("input");
+		if (location.hash.slice(1) === "") location.hash = (["Alfa","Brav","Char","Delt","Echo","Foxt","Golf","Hote","Indi","Juli","Kilo","Lima","Mike","Nove","Osca","Papa","Queb","Rome","Sier","Tang","Unif","Vict","Whis","XRay","Yank","Zulu"])[Math.floor(Math.random()*26)];
+		input.value = location.hash.slice(1);
+		setValue();
 		document.getElementById("input").addEventListener("keypress", function (event) {
 			if (event.keyCode === 13 || event.charCode === 13) {
 				event.preventDefault();
-				var input = document.getElementById("input").value;
-				console.log("value entered", input);
-				location.hash = input;
+				location.hash = input.value;
 			}
 		});
 		window.addEventListener("hashchange", setValue);
