@@ -232,13 +232,6 @@ a {
 .icon#info {
 	background-image: url(../data/mi/info.svg);
 }
-.icon#view {
-	/*background-image: url(../data/interface-icons/min2/view.svg);
-	*/background-image: url(../data/mi/view.svg);
-}
-.icon#edit {
-	background-image: url(../data/interface-icons/min2/edit.svg);
-}
 .icon#share {
 	background-image: url(../data/mi/share.svg);
 	background-size: 80% 80%;
@@ -248,40 +241,16 @@ a {
 	background-image: url(../data/mi/orbit.svg);
 }
 .icon#move {
-	/*background-image: url(../data/interface-icons/min2/move.svg);
-	*/
-	/*background-image: url(../data/mi/pan.svg);
-	background-size: 70% 70%;
-	background-position: 35% 50%;*/
 	background-image: url(../data/mi/move.svg);
-}
-.icon#zoom-in {
-	/*background-image: url(../data/interface-icons/min2/zoom-in.svg);
-	*/background-image: url(../data/mi/zi.svg);
-}
-.icon#zoom-out {
-	/*background-image: url(../data/interface-icons/min2/zoom-out.svg);
-	*/background-image: url(../data/mi/zo.svg);
 }
 .icon#zoom {
 	background-image: url(../data/mi/z.svg);
-}
-.icon#rotate {
-	background-image: url(../data/interface-icons/min2/rotate.svg);
-}
-.icon#paint {
-	background-image: url(../data/interface-icons/min2/paint.svg);
 }
 .icon#link {
 	background-image: url(../data/mi/link.svg);
 }
 .icon#download {
-	/*background-image: url(../data/interface-icons/min2/download.svg);
-	*/background-image: url(../data/mi/dl.svg);
-	/*border: 1px solid #eee;
-	background-size: 80% 80%;
-	background-repeat: no-repeat;
-	background-position: 50% 50%;*/
+	background-image: url(../data/mi/dl.svg);
 }
 .icon#mail {
 	background-image: url(../data/mi/mail.svg);
