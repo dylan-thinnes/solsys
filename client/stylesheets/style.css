@@ -207,6 +207,24 @@ a {
 	width: 200px;
 }
 
+#sharing {
+	text-align: center;
+}
+#sharing #bar {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+#sharing #bar > div {
+	box-sizing: content-box;
+}
+#sharing .icon {
+	margin: 0;
+	border-bottom: 0;
+	width: 75px;
+	height: 75px;
+}
+
 .icon#close {
 	background-image: url(../data/mi/close.svg);
 }
@@ -254,7 +272,7 @@ a {
 	background-image: url(../data/interface-icons/min2/paint.svg);
 }
 .icon#link {
-	background-image: url(../data/mi/link.svg);
+	background-image: url(../data/interface-icons/min2/link.svg);
 }
 .icon#download {
 	/*background-image: url(../data/interface-icons/min2/download.svg);

@@ -27,9 +27,24 @@ var main = function () {
 			new Button(document.getElementById("move"))
 		]);
 		new Button(document.getElementById("download"));
-		new Button(document.getElementById("link"));
 		var share = new Button(document.getElementById("share"));
 		var info = new Button(document.getElementById("info"));
+		var link = new Button(document.getElementById("link"));
+		var facebook = new Button(document.getElementById("facebook"));
+		var twitter = new Button(document.getElementById("twitter"));
+		var reddit = new Button(document.getElementById("reddit"));
+		var sharingTooltip = document.getElementById("tooltip");
+		var setSharingTooltip = function (text) {
+			sharingTooltip.innerHTML = text;
+		}
+		link.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Get this System's Link"));
+		link.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
+		facebook.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Update Your Status"));
+		facebook.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
+		twitter.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Tweet About It"));
+		twitter.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
+		reddit.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Post on Reddit"));
+		reddit.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
 		var setSeed = function () {
 			currSeed = new Seed(document.getElementById("input").value);
 			document.getElementById("number").innerHTML = currSeed.value;
