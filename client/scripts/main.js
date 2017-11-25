@@ -45,11 +45,6 @@ var main = function () {
 		twitter.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
 		reddit.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Post on Reddit"));
 		reddit.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
-		var setSeed = function () {
-			currSeed = new Seed(document.getElementById("input").value);
-			document.getElementById("number").innerHTML = currSeed.value;
-			return currSeed.value;
-		}
 
 		var modalContainer = document.getElementById("modalContainer");
 		modals = {
@@ -73,15 +68,23 @@ var main = function () {
 		}
 		progressBar.on("finishAll", showStartButton);
 
-		setSeed();
+		var setValue = function (input) {
+			console.log("setValue called");
+			var value = new Seed(location.hash.slice(1)).value;
+			document.getElementById("number").innerHTML = value;
+			Randomizer.setSeed(value);
+			var profile = getRemoteBlueprint(value, Graphics.genPlanets.bind(Graphics));
+		}
+		location.hash = document.getElementById("input").innerHTML;
 		document.getElementById("input").addEventListener("keypress", function (event) {
 			if (event.keyCode === 13 || event.charCode === 13) {
 				event.preventDefault();
-				var value = setSeed();
-				Randomizer.setSeed(value);
-				var profile = getRemoteBlueprint(value, Graphics.genPlanets.bind(Graphics));
+				var input = document.getElementById("input").value;
+				console.log("value entered", input);
+				location.hash = input;
 			}
 		});
+		window.addEventListener("hashchange", setValue);
 
 
     		setTimeout(Graphics.loadMaterials.bind(Graphics, progressBar), 1);
