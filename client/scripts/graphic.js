@@ -159,6 +159,9 @@ Graphics.prototype.genPlanets = function(system){
     this.addPlanets(this.solSys, this.rootGroup);
     this.update();
     this.systemExists = true;
+    this.camera.position.set(0, 0, this.solSys.width * 1.8);
+    this.camera.rotation.set(0, 0, 0);
+    Controls.update();
 }
 
 // The addPlanets function is used to add the planets of the solSys object to the threejs scene
