@@ -226,41 +226,23 @@ a {
 	height: 75px;
 }
 
-.icon#close {
-	background-image: url(../data/mi/close.svg);
-}
-.icon#info {
-	background-image: url(../data/mi/info.svg);
-}
+.icon#close { background-image: url(../data/mi/close.svg); }
+.icon#info { background-image: url(../data/mi/info.svg); }
+.icon#slower { background-image: url(../data/mi/slower.svg); }
+.icon#faster { background-image: url(../data/mi/faster.svg); }
+.icon#pause { background-image: url(../data/mi/pause.svg); }
+.icon#play { background-image: url(../data/mi/play.svg); }
 .icon#share {
 	background-image: url(../data/mi/share.svg);
 	background-size: 80% 80%;
 	background-position: 20% 50%;
 }
-.icon#orbit {
-	background-image: url(../data/mi/orbit.svg);
-}
-.icon#move {
-	background-image: url(../data/mi/move.svg);
-}
-.icon#zoom {
-	background-image: url(../data/mi/z.svg);
-}
-.icon#link {
-	background-image: url(../data/mi/link.svg);
-}
-.icon#download {
-	background-image: url(../data/mi/dl.svg);
-}
-.icon#mail {
-	background-image: url(../data/mi/mail.svg);
-}
-.icon#reddit {
-	background-image: url(../data/mi/reddit.svg);
-}
-.icon#facebook {
-	background-image: url(../data/mi/facebook.svg);
-}
-.icon#twitter {
-	background-image: url(../data/mi/twitter.svg);
-}
+.icon#orbit { background-image: url(../data/mi/orbit.svg); }
+.icon#move { background-image: url(../data/mi/move.svg); }
+.icon#zoom { background-image: url(../data/mi/z.svg); }
+.icon#link { background-image: url(../data/mi/link.svg); }
+.icon#download { background-image: url(../data/mi/dl.svg); }
+.icon#mail { background-image: url(../data/mi/mail.svg); }
+.icon#reddit { background-image: url(../data/mi/reddit.svg); }
+.icon#facebook { background-image: url(../data/mi/facebook.svg); }
+.icon#twitter { background-image: url(../data/mi/twitter.svg); }
