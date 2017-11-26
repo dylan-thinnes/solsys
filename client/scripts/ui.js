@@ -90,11 +90,11 @@ for (var ii = 0; ii < 167; ii++) {
 	ArbInt.POW2.push(newNum);
 }
 
-// getRemoteBlueprint gets the solar system blueprint for any number from AWS factorize API endpoint.
+// getRemoteBlueprint gets the solar system blueprint for any number from AWS blueprint API endpoint.
 getRemoteBlueprint = function (number, callback) {
 	number = (!isNaN(number) && number !== null) ? number.toString() : "1";
 	var req = new XMLHttpRequest();
-	req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/factorize/?number=" + number.toString() + "&piXDepth=1");
+	req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/blue/?number=" + number.toString() + "&piXDepth=1");
 	req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
 	req.onreadystatechange = function (event) {
 		if (this.readyState === 4) {
