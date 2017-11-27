@@ -19,6 +19,7 @@ Graphics = function(width, height, backgroundNode, graphicsNode){
     this.backgroundRenderer = new THREE.WebGLRenderer();
     this.renderer = new THREE.WebGLRenderer({alpha: true});
     this.renderer.setClearColor(0x000000, 0);
+    this.renderer.domElement.style.opacity = "0";
     backgroundNode.appendChild(this.backgroundRenderer.domElement);
     graphicsNode.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.setSize.bind(this));
@@ -39,8 +40,10 @@ Graphics = function(width, height, backgroundNode, graphicsNode){
     this.rootGroup.rotation.set(Math.PI / 2, 0, 0);
     this.scene.add(this.rootGroup);
     this.solSys = {};
-    this.systemExists = false;
+    this.nextSolSys = {};
+    this.firstSystem = true;
     this.setSize();
+    this.fade = 0;
 }
 
 // The loadMaterials function is used to load the materials and textures for planets and objects in the scene
@@ -151,17 +154,22 @@ Graphics.prototype.genStars = function(){
 
 // The genPlanets function is used to generate the planets of the solar system
 Graphics.prototype.genPlanets = function(system){
-    this.systemExists = false;
-    this.solSys = system;
-    for(var i = 0; i < this.rootGroup.children.length; i++){
-        this.rootGroup.remove(this.rootGroup.children[i]);
+    if(this.firstSystem){
+        this.firstSystem = false;
+        this.fade = 1;
+        this.solSys = system;
+        for(var i = 0; i < this.rootGroup.children.length; i++){
+            this.rootGroup.remove(this.rootGroup.children[i]);
+        }
+        this.addPlanets(this.solSys, this.rootGroup);
+        this.update();
+        this.camera.position.set(0, 0, this.solSys.width * 1.8);
+        this.camera.rotation.set(0, 0, 0);
+        Controls.update();
+    } else{
+        this.fade = -1;
+        this.nextSolSys = system;
     }
-    this.addPlanets(this.solSys, this.rootGroup);
-    this.update();
-    this.systemExists = true;
-    this.camera.position.set(0, 0, this.solSys.width * 1.8);
-    this.camera.rotation.set(0, 0, 0);
-    Controls.update();
 }
 
 // The addPlanets function is used to add the planets of the solSys object to the threejs scene
@@ -247,7 +255,31 @@ Graphics.prototype.updatePlanets = function(planet, parentPosition){
 
 // The update function updates the elements of the Graphics object
 Graphics.prototype.update = function(){
-    this.updatePlanets(this.solSys, this.solSys.spriteGroup.position);
+    if(!this.firstSystem){
+        this.updatePlanets(this.solSys, this.solSys.spriteGroup.position);
+    }
+    if(this.fade < 0){
+        this.renderer.domElement.style.opacity = (Number(this.renderer.domElement.style.opacity) - 0.02).toString();
+        if(Number(this.renderer.domElement.style.opacity) <= 0){
+            this.renderer.domElement.style.opacity = "0";
+            this.fade = 1;
+            this.solSys = this.nextSolSys;
+            for(var i = 0; i < this.rootGroup.children.length; i++){
+                this.rootGroup.remove(this.rootGroup.children[i]);
+            }
+            this.addPlanets(this.solSys, this.rootGroup);
+            this.update();
+            this.camera.position.set(0, 0, this.solSys.width * 1.8);
+            this.camera.rotation.set(0, 0, 0);
+            Controls.update();
+        }
+    } else if(this.fade > 0){
+        this.renderer.domElement.style.opacity = (Number(this.renderer.domElement.style.opacity) + 0.02).toString();
+        if(Number(this.renderer.domElement.style.opacity) >= 1){
+            this.renderer.domElement.style.opacity = "1";
+            this.fade = 0;
+        }
+    }
 }
 
 // The render function renders the elements of the Graphics object
@@ -296,9 +328,7 @@ function init () {
 var render = function(){
     requestAnimationFrame(render);
     var deltaTime = RenderClock.update();
-    if (Graphics.systemExists){
-        Graphics.update();
-    }
+    Graphics.update();
     Graphics.render();
 }
 
