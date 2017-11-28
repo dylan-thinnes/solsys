@@ -23,7 +23,7 @@ Graphics = function(width, height, backgroundNode, graphicsNode){
     backgroundNode.appendChild(this.backgroundRenderer.domElement);
     graphicsNode.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.setSize.bind(this));
-    this.camera.position.set(0, 0, 15);
+    this.camera.position.set(0, 0, 1);
 
     this.sunMaterials = [];
     this.planetMaterials = [];
@@ -163,8 +163,8 @@ Graphics.prototype.genPlanets = function(system){
         }
         this.addPlanets(this.solSys, this.rootGroup);
         this.update();
-        this.camera.position.set(0, 0, this.solSys.width * 1.8);
-        this.camera.rotation.set(0, 0, 0);
+	Controls.reset();
+	Controls.setScale(this.solSys.width * 1.8);
         Controls.update();
     } else{
         this.fade = -1;
@@ -269,8 +269,8 @@ Graphics.prototype.update = function(){
             }
             this.addPlanets(this.solSys, this.rootGroup);
             this.update();
-            this.camera.position.set(0, 0, this.solSys.width * 1.8);
-            this.camera.rotation.set(0, 0, 0);
+	    Controls.reset();
+	    Controls.setScale(this.solSys.width * 1.8);
             Controls.update();
         }
     } else if(this.fade > 0){
