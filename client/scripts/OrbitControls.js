@@ -404,6 +404,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 		}
 
 	}
+	this.dollyIn = dollyIn;
 
 	function dollyOut( dollyScale ) {
 
@@ -425,6 +426,17 @@ THREE.OrbitControls = function ( object, domElement ) {
 		}
 
 	}
+	this.dollyOut = dollyOut;
+	
+	function setScale (newScale) {
+		scale = newScale;
+	}
+	this.setScale = setScale;
+
+	function getScale () {
+		return scale;
+	}
+	this.getScale = getScale;
 
 	//
 	// event callbacks - update the object state
