@@ -40,7 +40,7 @@ a {
 .awake {
 	opacity: 1;
 }
-.asleep {
+.asleep, .notStarted {
 	opacity: 0;
 }
 #ui > #data {
@@ -149,10 +149,12 @@ a {
 	border-bottom: 1px solid rgba(249,249,249,0.60);
 	background-color: rgba(0,0,0,0.75);
 	cursor: default;
+	max-width: 100%;
 }
 
 #credits > .content > div:nth-child(2) {
-	white-space: pre;
+	white-space: pre-wrap;
+	max-width: 57ch;
 }
 .progress {
 	font-size: 1.25rem;
@@ -212,6 +214,7 @@ a {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	flex-wrap: wrap;
 }
 #sharing #bar > div {
 	box-sizing: content-box;

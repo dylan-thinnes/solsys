@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<!-- favicon -->
-
+		<title>SolSys - A Puzzle</title>
 		<!-- responsive meta tags -->
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 		<meta charset="UTF-8">
 		<!-- stylesheets and standardization -->
 		<link rel="stylesheet" href="stylesheets/bootstrap-reboot.min.css" type="text/css"/>
 		<link rel="stylesheet" href="stylesheets/style.css" type="text/css"/>
+		<!-- favicon and app image styling -->
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon1/apple-touch-icon.png?v=2bQo5pEvXP">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon1/favicon-32x32.png?v=2bQo5pEvXP">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon1/favicon-16x16.png?v=2bQo5pEvXP">
+		<link rel="manifest" href="/favicon1/manifest.json?v=2bQo5pEvXP">
+		<link rel="mask-icon" href="/favicon1/safari-pinned-tab.svg?v=2bQo5pEvXP" color="#111111">
+		<link rel="shortcut icon" href="/favicon1/favicon.ico?v=2bQo5pEvXP">
+		<meta name="msapplication-config" content="/favicon1/browserconfig.xml?v=2bQo5pEvXP">
+		<meta name="theme-color" content="#111111">
 	</head>
 	<body>
 		<div id="graphics-background"></div>
 		<div id="graphics"></div>
-		<div id="ui" class="asleep">
+		<div id="ui" class="asleep notStarted">
 			<div class="uibar">
+				<div class="icon" id="info"></div>
 				<div class="icon" id="slower"></div>
 				<div class="icon pauseplay"><div id="speedometer">1x</div></div>
 				<div class="icon" id="faster"></div>
-
-				<div class="icon" id="orbit"></div>
-				<div class="icon" id="move"></div>
-				<div class="icon" id="zoom"></div>
-
 				<div class="icon" id="share"></div>
-				<div class="icon" id="info"></div>
 			</div>
 			<div id="data">
-				<textarea id="input" type="text" rows="1" placeholder="type here"></textarea>
+				<textarea id="input" type="text" rows="2" placeholder="type here" autocorrect="false" spellcheck="false" autocomplete="false" autocapitalize="false"></textarea>
 				<div id="number"></div>
 			</div>
 			<div id="mouse"></div>
@@ -47,8 +50,7 @@
 Graphics Programming by <a href="https://aaronshappell.github.io">Aaron Shappell</a>
 Artwork by <a href="https://ryanshappell.github.io">Ryan Shappell</a> 
 
-Many thanks to our parents, sisters, friends, and Mozilla
-for your insights, support, feedback, and documentation.</div>
+Many thanks to our parents, sisters, friends, and Mozilla for your insights, support, feedback, and documentation.</div>
 				</div>
 			</div>
 			<div class="modal" id="sharing">

@@ -23,11 +23,11 @@ var main = function () {
 		window.setInterval(wakeableUi.sleep.bind(wakeableUi), 100);
 		wakeableUi.sleep();
 
-		var view = new Radio(true, [
+		/*var view = new Radio(true, [
 			new Button(document.getElementById("orbit")),
 			new Button(document.getElementById("zoom")),
 			new Button(document.getElementById("move"))
-		]);
+		]);*/
 		var share = new Button(document.getElementById("share"));
 		var info = new Button(document.getElementById("info"));
 		var link = new Button(document.getElementById("link"), true);
@@ -74,7 +74,7 @@ var main = function () {
 			intro: new Modal(document.getElementById("intro"), modalContainer),
 			credits: new Modal(document.getElementById("credits"), modalContainer),
 			sharing: new Modal(document.getElementById("sharing"), modalContainer),
-			screenshot: new Modal(document.getElementById("screenshot"), modalContainer),
+			screenshot: new Modal(document.getElementById("screenshot"), modalContainer)
 		}
 		var creditsClose = new Button(modals.credits.node.getElementsByClassName("close")[0]);
 		creditsClose.node.addEventListener("click", (function () { this.focused = false; }).bind(modals.credits));
@@ -83,6 +83,10 @@ var main = function () {
 		sharingClose.node.addEventListener("click", (function () { this.focused = false; }).bind(modals.sharing));
 		share.on("click", (function () { this.focused = true; }).bind(modals.sharing));
 		modals.intro.on("unfocus", wakeableUi.wake.bind(wakeableUi));
+		modals.intro.on("unfocus", function () {
+			input.focus();
+			wakeableUi.node.classList.remove("notStarted");
+		});
 
 		var start = document.getElementsByClassName("start")[0];
 		var showStartButton = function () {
@@ -103,7 +107,7 @@ var main = function () {
 		if (location.hash.slice(1) === "") location.hash = (["Alfa","Brav","Char","Delt","Echo","Foxt","Golf","Hote","Indi","Juli","Kilo","Lima","Mike","Nove","Osca","Papa","Queb","Rome","Sier","Tang","Unif","Vict","Whis","XRay","Yank","Zulu"])[Math.floor(Math.random()*26)];
 		input.value = location.hash.slice(1);
 		setValue();
-		document.getElementById("input").addEventListener("keypress", function (event) {
+		input.addEventListener("keypress", function (event) {
 			if (event.keyCode === 13 || event.charCode === 13) {
 				event.preventDefault();
 				location.hash = input.value;
@@ -113,9 +117,9 @@ var main = function () {
 
 
     		setTimeout(Graphics.loadMaterials.bind(Graphics, progressBar), 1);
+		render();
 	} else {
 	    document.getElementById("webgl-unsupported").innerHTML = "Your graphics card does not seem to support WebGL. <br/><br/> Find out how to get it here: <a href=\"https://get.webgl.org/\" target=\"_blank\">https://get.webgl.org/</a>";
 	}
-		render();
 }
 document.body.onload = main;
