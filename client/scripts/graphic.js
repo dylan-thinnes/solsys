@@ -259,7 +259,7 @@ Graphics.prototype.update = function(){
         this.updatePlanets(this.solSys, this.solSys.spriteGroup.position);
     }
     if(this.fade < 0){
-        this.renderer.domElement.style.opacity = (Number(this.renderer.domElement.style.opacity) - 0.02).toString();
+        this.renderer.domElement.style.opacity = (Number(this.renderer.domElement.style.opacity) - 0.03).toString();
         if(Number(this.renderer.domElement.style.opacity) <= 0){
             this.renderer.domElement.style.opacity = "0";
             this.fade = 1;
@@ -274,7 +274,7 @@ Graphics.prototype.update = function(){
             Controls.update();
         }
     } else if(this.fade > 0){
-        this.renderer.domElement.style.opacity = (Number(this.renderer.domElement.style.opacity) + 0.02).toString();
+        this.renderer.domElement.style.opacity = (Number(this.renderer.domElement.style.opacity) + 0.03).toString();
         if(Number(this.renderer.domElement.style.opacity) >= 1){
             this.renderer.domElement.style.opacity = "1";
             this.fade = 0;
