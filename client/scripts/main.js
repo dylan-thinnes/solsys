@@ -28,7 +28,6 @@ var main = function () {
 			new Button(document.getElementById("zoom")),
 			new Button(document.getElementById("move"))
 		]);
-		new Button(document.getElementById("download"));
 		var share = new Button(document.getElementById("share"));
 		var info = new Button(document.getElementById("info"));
 		var link = new Button(document.getElementById("link"), true);
@@ -59,11 +58,23 @@ var main = function () {
 		reddit.node.addEventListener("mouseenter", setSharingTooltip.bind(this, "Post on Reddit"));
 		reddit.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
 
+		var speedometer = document.getElementById("speedometer");
+		var faster = new Button(document.getElementById("faster"));
+		faster.on("click", RenderClock.faster.bind(RenderClock));
+		faster.on("click", function () {speedometer.innerHTML = (RenderClock.multiplier >= 1 ? RenderClock.multiplier : "1/" + (1 / RenderClock.multiplier)) + "x"});
+		var slower = new Button(document.getElementById("slower"));
+		slower.on("click", RenderClock.slower.bind(RenderClock));
+		slower.on("click", function () {speedometer.innerHTML = (RenderClock.multiplier >= 1 ? RenderClock.multiplier : "1/" + (1 / RenderClock.multiplier)) + "x"});
+		var pauseplay = new Button(document.getElementsByClassName("pauseplay")[0]);
+		pauseplay.on("click", RenderClock.toggle.bind(RenderClock));
+		var pauseplayRadio = new Radio(true, [pauseplay]);
+
 		var modalContainer = document.getElementById("modalContainer");
 		modals = {
 			intro: new Modal(document.getElementById("intro"), modalContainer),
 			credits: new Modal(document.getElementById("credits"), modalContainer),
-			sharing: new Modal(document.getElementById("sharing"), modalContainer)
+			sharing: new Modal(document.getElementById("sharing"), modalContainer),
+			screenshot: new Modal(document.getElementById("screenshot"), modalContainer),
 		}
 		var creditsClose = new Button(modals.credits.node.getElementsByClassName("close")[0]);
 		creditsClose.node.addEventListener("click", (function () { this.focused = false; }).bind(modals.credits));
