@@ -16,12 +16,15 @@ Graphics = function(width, height, backgroundNode, graphicsNode){
     this.backgroundScene = new THREE.Scene();
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 10000);
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
     this.backgroundRenderer = new THREE.WebGLRenderer();
     this.renderer = new THREE.WebGLRenderer({alpha: true});
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.domElement.style.opacity = "0";
     backgroundNode.appendChild(this.backgroundRenderer.domElement);
     graphicsNode.appendChild(this.renderer.domElement);
+    document.addEventListener("mousemove", this.onMouseMove.bind(this));
     window.addEventListener("resize", this.setSize.bind(this));
     this.camera.position.set(0, 0, 15);
 
@@ -44,6 +47,7 @@ Graphics = function(width, height, backgroundNode, graphicsNode){
     this.firstSystem = true;
     this.setSize();
     this.fade = 0;
+    this.selectedPlanet = null;
 }
 
 // The loadMaterials function is used to load the materials and textures for planets and objects in the scene
@@ -230,6 +234,12 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
     }
 }
 
+Graphics.prototype.onMouseMove = function(event){
+    event.preventDefault();
+    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
 // The setSize function is used to resize the renderer and camera with the given width and height
 Graphics.prototype.setSize = function (width, height) {
     if (isNaN(width) || isNaN(height)) {
@@ -279,6 +289,22 @@ Graphics.prototype.update = function(){
             this.renderer.domElement.style.opacity = "1";
             this.fade = 0;
         }
+    }
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    var intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    if(intersects.length > 0){
+        for(var index in intersects){
+            if(intersects[index].object.type === "Sprite"){
+                if(this.selectedPlanet != intersects[index].object){
+                    this.selectedPlanet = intersects[index].objeect;
+                    console.log("selected");
+                }
+                break;
+            }
+        }
+    } else{
+        this.selectedPlanet = null;
+        //console.log("deselected");
     }
 }
 
