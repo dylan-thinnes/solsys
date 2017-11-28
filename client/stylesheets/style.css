@@ -40,7 +40,7 @@ a {
 .awake {
 	opacity: 1;
 }
-.asleep {
+.asleep, .notStarted {
 	opacity: 0;
 }
 #ui > #data {
