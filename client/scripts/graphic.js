@@ -210,6 +210,7 @@ Graphics.prototype.addPlanets = function(planet, parentGroup){
         planetSprite = new THREE.Sprite(this.planetMaterials[Math.floor(Randomizer.random() * this.planetMaterials.length)]);
     }
     planetSprite.applyMatrix(planetScale);
+    planetSprite.material.rotation = Randomizer.random() * Math.PI * 2;
     spriteGroup.add(planetSprite);
     // Create back ring
     if(planet.ring && planet.type !== 0){
