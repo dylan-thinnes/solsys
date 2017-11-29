@@ -133,8 +133,6 @@ var Seed = function (input) {
 			else if (codePoints[inputLength - ii - 1] < 4294967296) smallLength = 32;
 			else throw "codePoint out of bounds error!";
 			while (cursor < smallLength) {
-				console.log(currBitIndex);
-				if (currBitIndex > 166) throw "ETL";
 				if (codePoints[inputLength - ii - 1] & cursorMask) this.result.add(ArbInt.POW2[currBitIndex]);
 				cursor++;
 				currBitIndex++;
