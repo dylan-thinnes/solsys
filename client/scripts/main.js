@@ -98,7 +98,15 @@ var main = function () {
 
 		var setValue = function () {
 			updateSharingUrls();
-			var value = new Seed(location.hash.slice(1)).value;
+			try {
+				var value = new Seed(location.hash.slice(1)).value;
+			} catch (e) {
+				if (e === "ETL") {
+					document.getElementById("number").innerHTML = "<span style='color: red;'>Number too large.</span>";
+					return;
+				}
+				else throw e;
+			}
 			document.getElementById("number").innerHTML = value;
 			Randomizer.setSeed(value);
 			var profile = getRemoteBlueprint(value, Graphics.genPlanets.bind(Graphics));
