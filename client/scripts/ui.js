@@ -118,7 +118,10 @@ var Seed = function (input) {
 		codePoints[ii] = input.codePointAt(ii);
 		if (codePoints[ii] > maxCodePoint || codePoints[ii] < 48) maxCodePoint = codePoints[ii];
 	}
+	console.log(maxCodePoint);
 	if (maxCodePoint === 57) {
+		console.log(this.input.length, this.input);
+		if (this.input.length > 51 || (this.input.length === 51 && this.input > "187072209578355573530071658587684226515959365500927")) throw "ETL";
 		this.result = new ArbInt(this.input);
 		this.value = this.result.value;
 	} else {
