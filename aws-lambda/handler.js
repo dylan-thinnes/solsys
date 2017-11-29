@@ -251,19 +251,16 @@ ArbInt.POW2 = [ // Higher-performance hard-coded version of ArbInt.POW2
 ];
 
 
-
 module.exports.factorize = (event, context, AWSCallback) => {
+	var maxNum = "187072209578355573530071658587684226515959365500927";
 	var number = event.number;
 	//console.log(number);
 	//var baseDeltaPiX = (!isNaN(event.baseDeltaPiX)) ? event.baseDeltaPiX : null;
 	//var isPrime = (event.isPrime.toLowerCase() === "true") ? true : false;
-	if (isNaN(number) || number === "") {
+	if (isNaN(number) || number === "" || number.length > 51 || (number.length === 51 && number > maxNum)) {
 		number = "1";
 		//console.log("Factorization being done with 1");
-		AWSCallback(null, {
-			statusCode: 200,
-			body: "{\"value\": \"1\"}"
-		})
+		AWSCallback(null, {"type":1,"orbitRadius":0,"scale":1,"children":[],"width":1});
 		return;
 	}
 	//console.log("Factorization being done with number: " + number);
