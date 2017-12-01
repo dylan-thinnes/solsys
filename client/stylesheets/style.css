@@ -161,11 +161,13 @@ a {
 	font-weight: bold;
 	margin-top: 0.5rem;
 	border-radius: 0.2rem;
-	padding: 0.5rem;
+	padding: 0.5rem 0 0.5rem 0;
 	text-align: center;
+	box-sizing: border-box;
 	display: block;
 	cursor: pointer;
-	transition: background-color 2s;
+	width: 23ch;
+	display: block;
 }
 #intro > .content {
 	border-bottom: 0;

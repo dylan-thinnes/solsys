@@ -89,12 +89,14 @@ var main = function () {
 		});
 
 		var start = document.getElementsByClassName("start")[0];
-		var showStartButton = function () {
+		var showLoadingSystem = function () {
+			start.innerHTML = "Loading System...";
+		}
+		window.showStartButton = function () {
 			start.innerHTML = "Start the Program >";
 			start.id = "loaded";
 			start.addEventListener("click", (function () { this.focused = false; }).bind(modals.intro));
 		}
-		progressBar.on("finishAll", showStartButton);
 
 		var setValue = function () {
 			updateSharingUrls();
@@ -114,7 +116,6 @@ var main = function () {
 		var input = document.getElementById("input");
 		if (location.hash.slice(1) === "") location.hash = (["Alfa","Brav","Char","Delt","Echo","Foxt","Golf","Hote","Indi","Juli","Kilo","Lima","Mike","Nove","Osca","Papa","Queb","Rome","Sier","Tang","Unif","Vict","Whis","XRay","Yank","Zulu"])[Math.floor(Math.random()*26)];
 		input.value = location.hash.slice(1);
-		setValue();
 		input.addEventListener("keypress", function (event) {
 			if (event.keyCode === 13 || event.charCode === 13) {
 				event.preventDefault();
@@ -124,7 +125,11 @@ var main = function () {
 		window.addEventListener("hashchange", setValue);
 
 
-    		setTimeout(Graphics.loadMaterials.bind(Graphics, progressBar), 1);
+		progressBar = new Progress();
+		//progressBar.on("finishAll", console.log.bind(this, "progressBar done!"));
+		progressBar.on("finishAll", showLoadingSystem);
+		progressBar.on("finishAll", setValue);
+    		Graphics.loadMaterials(progressBar);
 		render();
 	} else {
 	    document.getElementById("webgl-unsupported").innerHTML = "Your graphics card does not seem to support WebGL. <br/><br/> Find out how to get it here: <a href=\"https://get.webgl.org/\" target=\"_blank\">https://get.webgl.org/</a>";

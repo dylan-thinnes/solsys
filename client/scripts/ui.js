@@ -118,9 +118,7 @@ var Seed = function (input) {
 		codePoints[ii] = input.codePointAt(ii);
 		if (codePoints[ii] > maxCodePoint || codePoints[ii] < 48) maxCodePoint = codePoints[ii];
 	}
-	console.log(maxCodePoint);
 	if (maxCodePoint === 57) {
-		console.log(this.input.length, this.input);
 		if (this.input.length > 51 || (this.input.length === 51 && this.input > "187072209578355573530071658587684226515959365500927")) throw "ETL";
 		this.result = new ArbInt(this.input);
 		this.value = this.result.value;
@@ -136,7 +134,6 @@ var Seed = function (input) {
 			else if (codePoints[inputLength - ii - 1] < 4294967296) smallLength = 32;
 			else throw "codePoint out of bounds error!";
 			while (cursor < smallLength) {
-				console.log(currBitIndex);
 				if (currBitIndex > 166) throw "ETL";
 				if (codePoints[inputLength - ii - 1] & cursorMask) this.result.add(ArbInt.POW2[currBitIndex]);
 				cursor++;
@@ -181,16 +178,13 @@ var Button = function (node, doNotCapture) {
 Button.prototype = Object.create(Emitter.prototype); // Makes it into an event emitter
 Object.defineProperty(Button.prototype, "focused", {
 	set: function (newFocused) {
-		console.log("setting new focused");
 		newFocused = newFocused ? true : false;
 		if (newFocused === this.focused) return;
 		else if (newFocused === true) {
-			console.log("focusing this, ", this);
 			this.node.classList.add("focused");
 			this.emit("focus");
 			this.emit("toggle");
 		} else {
-			console.log("unfocusing this, ", this);
 			this.node.classList.remove("focused");
 			this.emit("unfocus");
 			this.emit("toggle");
@@ -265,7 +259,6 @@ var copyUrlToClipboard = function () {
 	try {
 		var successful = document.execCommand('copy');
 		var msg = successful ? 'successful' : 'unsuccessful';
-		console.log('Copying text command was ' + msg);
 	} catch (err) {
 		console.log('Oops, unable to copy');
 	}

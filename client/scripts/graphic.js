@@ -166,6 +166,7 @@ Graphics.prototype.genPlanets = function(system){
 	Controls.reset();
 	Controls.setScale(this.solSys.width * 1.8);
         Controls.update();
+	window.showStartButton();
     } else{
         this.fade = -1;
         this.nextSolSys = system;
@@ -320,9 +321,6 @@ function init () {
     Graphics = new Graphics(window.innerWidth, window.innerHeight, document.getElementById("graphics-background"), document.getElementById("graphics"));
     Controls = new THREE.OrbitControls(Graphics.camera, document.getElementById("mouse"));
     Graphics.genStars();
-    progressBar = new Progress();
-    progressBar.on("finishTask", console.log);
-    progressBar.on("finishAll", console.log.bind(this, "progressBar done!"));
 }
 
 // The render function is the main render loop
