@@ -59,12 +59,15 @@ var main = function () {
 		reddit.node.addEventListener("mouseleave", setSharingTooltip.bind(this, "Share on Social Media"));
 
 		var speedometer = document.getElementById("speedometer");
+		var setSpeedometer = function () {
+			speedometer.innerHTML = (RenderClock.multiplier >= 1 ? RenderClock.multiplier : "1/" + (1 / RenderClock.multiplier)) + "x";
+		}
 		var faster = new Button(document.getElementById("faster"));
 		faster.on("click", RenderClock.faster.bind(RenderClock));
-		faster.on("click", function () {speedometer.innerHTML = (RenderClock.multiplier >= 1 ? RenderClock.multiplier : "1/" + (1 / RenderClock.multiplier)) + "x"});
+		faster.on("click", setSpeedometer);
 		var slower = new Button(document.getElementById("slower"));
 		slower.on("click", RenderClock.slower.bind(RenderClock));
-		slower.on("click", function () {speedometer.innerHTML = (RenderClock.multiplier >= 1 ? RenderClock.multiplier : "1/" + (1 / RenderClock.multiplier)) + "x"});
+		slower.on("click", setSpeedometer);
 		var pauseplay = new Button(document.getElementsByClassName("pauseplay")[0]);
 		pauseplay.on("click", RenderClock.toggle.bind(RenderClock));
 		var pauseplayRadio = new Radio(true, [pauseplay]);
