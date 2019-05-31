@@ -96,6 +96,8 @@ getRemoteBlueprint = function (number, callback) {
 	var req = new XMLHttpRequest();
 	req.open("GET", "https://n3dl2qh6kj.execute-api.us-west-2.amazonaws.com/prod/blue/?number=" + number.toString() + "&piXDepth=1");
 	req.setRequestHeader("x-api-key", "LtXAQm6tm05M7sd42Tcl72fyF328LCWd3wrXvWHM");
+	//req.open("GET", "http://localhost:3000/hs?number=" + number.toString() + "&piXDepth=1");
+	//req.open("GET", "http://localhost:3000/node?number=" + number.toString() + "&piXDepth=1");
 	req.onreadystatechange = function (event) {
 		if (this.readyState === 4) {
 			callback(JSON.parse(this.response));
