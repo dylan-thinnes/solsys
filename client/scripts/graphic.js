@@ -16,13 +16,8 @@ Graphics = function(width, height, backgroundNode, graphicsNode){
     this.backgroundScene = new THREE.Scene();
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 10000);
-    if(supportsWebGL){
-        this.backgroundRenderer = new THREE.WebGLRenderer();
-        this.renderer = new THREE.WebGLRenderer({alpha: true});
-    } else{
-        this.backgroundRenderer = new THREE.CanvasRenderer();
-        this.renderer = new THREE.CanvasRenderer({alpha: true});
-    }
+    this.backgroundRenderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({alpha: true});
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.domElement.style.opacity = "0";
     backgroundNode.appendChild(this.backgroundRenderer.domElement);
